@@ -1,9 +1,9 @@
 import React from 'react'
 
-const page = () => {
+export default function page() {
   return (
-    <div>DevBoard</div>
+    <>
+    <h1>DevBoard</h1>
+    </>
   )
 }
-
-export default page
