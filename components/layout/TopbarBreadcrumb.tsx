@@ -13,7 +13,7 @@ export default function TopbarBreadcrumb() {
   const meta = PageMeta[pathname] ?? { title: "DevBoard", sub: "" };
 
   return (
-    <div>
+    <div className="flex items-center gap-3">
       <span>{meta.title}</span>
       <span>{meta.sub}</span>
     </div>
