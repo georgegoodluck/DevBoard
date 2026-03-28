@@ -15,7 +15,8 @@ export default function TopbarBreadcrumb() {
   return (
     <div className="flex items-center gap-3">
       <span>{meta.title}</span>
-      <span>{meta.sub}</span>
+      <span className="text-[var(--text3)] select-none">/</span>
+      <span className="text-[var(--text3)]">{meta.sub}</span>
     </div>
   );
 }
