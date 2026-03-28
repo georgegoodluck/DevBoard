@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavItem } from "@/types/nav";
+import { NavItems } from "@/types/nav";
 
-export default function NavLink({ item }: { item: NavItem }) {
+export default function NavLink({ item }: { item: NavItems }) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
 
