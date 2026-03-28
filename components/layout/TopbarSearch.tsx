@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 
 export default function TopbarSearch() {
   return (
-    <div className="flex items-center gap-3 px-3 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] h-[30px] w-[180px] cursor-text">
+    <div className="flex items-center gap-3 px-3 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] h-[30px] w-[180px] cursor-text text-[var(--text3)]">
       <Search size={14} />
       <span className="font-mono">Search...</span>
       <kbd className="bg-[var(--bg3)] border border-[var(--border)] rounded-[var(--radius)] px-[5px] py-[2px] ml-auto">
