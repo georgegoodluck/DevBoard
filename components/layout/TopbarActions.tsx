@@ -1,4 +1,3 @@
-import { div } from "framer-motion/client";
 import { Plus } from "lucide-react";
 
 export default function TopbarActions() {
