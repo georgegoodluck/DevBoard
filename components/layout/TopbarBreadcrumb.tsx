@@ -1,8 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
 
-const PageMeta: Record<string, { title: string; sub: string }> = {
-  "/": { title: "Overview", sub: "Devboard workspace" },
+const pageMeta: Record<string, { title: string; sub: string }> = {
+  "/overview": { title: "Overview", sub: "Devboard workspace" },
   "/projects": { title: "Projects", sub: "6 active projects" },
   "/activity": { title: "Activity", sub: "Team feed" },
   "/settings": { title: "Settings", sub: "Account & workspace settings" },
@@ -10,7 +10,7 @@ const PageMeta: Record<string, { title: string; sub: string }> = {
 
 export default function TopbarBreadcrumb() {
   const pathname = usePathname();
-  const meta = PageMeta[pathname] ?? { title: "DevBoard", sub: "" };
+  const meta = pageMeta[pathname] ?? { title: "DevBoard", sub: "" };
 
   return (
     <div className="flex items-center gap-3">
