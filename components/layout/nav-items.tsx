@@ -9,22 +9,22 @@ export const navItems: NavItems[] = [
   },
   {
     label: "Projects",
-    badge: 12,
+    badge: 6,
     href: "/projects",
     icon: <FolderKanban size={14} />,
   },
   {
-      label: "Activity",
-      href: "/activity",
-      badge: 6,
-      icon: <Activity size={14} />,
-    },
+    label: "Activity",
+    href: "/activity",
+    badge: 12,
+    icon: <Activity size={14} />,
+  },
 ];
 
-export const accountItems : NavItems[] = [
-    {
-        label: "Settings",
-        href: '/settings',
-        icon: <Settings size={14} />
-    }
-]
+export const accountItems: NavItems[] = [
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: <Settings size={14} />,
+  },
+];

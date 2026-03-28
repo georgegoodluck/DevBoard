@@ -1,26 +1,38 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavItems } from "@/types/nav";
+import { NavItem } from "@/types/nav";
 
-export default function NavLink({ item }: { item: NavItems }) {
+export default function NavLink({ item }: { item: NavItem }) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
 
   return (
     <Link
       href={item.href}
-      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-        isActive
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      }`}
+      className={`
+        relative flex items-center gap-[9px] mx-[6px] px-[14px] py-[7px]
+        rounded-[var(--radius)] text-[12px] no-underline
+        transition-colors duration-100
+        ${
+          isActive
+            ? "bg-[var(--accent-dim)] text-[var(--accent)]"
+            : "text-[var(--text2)] hover:bg-[var(--bg3)] hover:text-[var(--text)]"
+        }
+      `}
     >
+      {/* Active indicator bar */}
+      {isActive && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-[16px] bg-[var(--accent)] rounded-r-[2px]" />
+      )}
+
       {item.icon}
-      {item.label}
-      {item.badge && (
-        <span className="ml-auto flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+      <span>{item.label}</span>
+
+      {/* Badge */}
+      {item.badge !== undefined && (
+        <span className="ml-auto font-mono text-[10px] font-medium px-[6px] py-[1px] rounded-[3px] bg-[var(--accent-dim)] text-[var(--accent)]">
           {item.badge}
         </span>
       )}
