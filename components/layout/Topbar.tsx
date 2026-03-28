@@ -1,3 +1,4 @@
+import TopbarActions from "./TopbarActions";
 import TopbarBreadcrumb from "./TopbarBreadcrumb";
 import TopbarSearch from "./TopbarSearch";
 
@@ -7,6 +8,7 @@ export default function Topbar() {
     style={{ height: "var(--topbar-height)" }}>
       <TopbarBreadcrumb />
       <TopbarSearch />
+      <TopbarActions />
     </header>
   );
 }
