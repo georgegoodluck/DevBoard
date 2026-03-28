@@ -1,12 +1,5 @@
-import React from "react";
-import Sidebar from "@/components/layout/Sidebar";
-import Topbar from "@/components/layout/Topbar";
+import { redirect } from "next/navigation";
 
-export default function page() {
-  return (
-    <div className="flex">
-      <Sidebar />
-        <Topbar />
-    </div>
-  );
+export default function RootPage() {
+  redirect("/overview");
 }
