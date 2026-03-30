@@ -1,7 +1,9 @@
+import StatGrid from "@/components/layout/overview/StatGrid";
+
 export default function OverviewPage() {
-    return (
-        <div>
-            <h1>Overview</h1>
-        </div>
-    )
+  return (
+    <div>
+      <StatGrid />
+    </div>
+  );
 }
