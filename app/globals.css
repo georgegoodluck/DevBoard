@@ -43,7 +43,7 @@
   body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: var(--font-ibm-plex-sans), sans-serif;
     font-size: 13px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
