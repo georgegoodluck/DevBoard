@@ -14,8 +14,10 @@
     --text2: #9090a8;
     --text3: #55556a;
 
-    --accent: #4f8eff;
-    --accent-dim: rgba(79, 142, 255, 0.12);
+    /* Updated accent — matches logo gradient midpoint */
+    --accent: #8b5cf6;
+    --accent-end: #06b6d4;
+    --accent-dim: rgba(139, 92, 246, 0.12);
 
     --green: #2dd4a0;
     --green-dim: rgba(45, 212, 160, 0.1);
@@ -32,6 +34,18 @@
     --sidebar-width: 220px;
     --topbar-height: 48px;
     --radius: 5px;
+  }
+
+  @layer utilities {
+    .brand-gradient {
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    }
+    .brand-gradient-text {
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 
   * {
