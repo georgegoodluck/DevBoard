@@ -39,7 +39,7 @@ export default function StatCard({
       <div className="flex items-baseline text(--text) font-mono text-[24px] font-semibold tracking-tight leading-none">
         {value}
         {unit && (
-          <span className="text-[14px] text-(--text3) font-normal">{unit}</span>
+          <span className="text-[20px] text-(--text3) font-normal ml-1">{unit}</span>
         )}
       </div>
       {/* Delta */}

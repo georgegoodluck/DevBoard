@@ -9,7 +9,7 @@ export default function StatGrid() {
         value="142"
         delta="8"
         unit=""
-        subLabel=""
+        subLabel="last week"
         deltaType="up"
         icon={SquareCheckBig}
       />
@@ -18,7 +18,7 @@ export default function StatGrid() {
         value="38"
         delta="3"
         unit=""
-        subLabel=""
+        subLabel="last week"
         deltaType="up"
         icon={Clock}
       />
@@ -36,7 +36,7 @@ export default function StatGrid() {
         value="68"
         delta="4%"
         unit="%"
-        subLabel="last week"
+        subLabel="this sprint"
         deltaType="up"
         icon={Star}
       />
