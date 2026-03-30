@@ -1,16 +1,21 @@
-import { LayoutDashboard } from "lucide-react";
+import Image from "next/image";
 
 export default function SidebarLogo() {
   return (
     <div
-      className="flex items-center gap-2 px-4 border-b border-[var(--border)] shrink-0"
+      className="flex items-center gap-2 px-4 border-b border-(--border) shrink-0"
       style={{ height: "var(--topbar-height)" }}
     >
-      <div className="flex items-center justify-center w-[22px] h-[22px] rounded-[4px] bg-[var(--accent)] shrink-0">
-        <LayoutDashboard size={13} color="white" />
-      </div>
-      <span className="font-mono text-[13px] font-semibold tracking-tight text-[var(--text)]">
-        Dev<span className="text-[var(--accent)]">Board</span>
+      <Image
+        src="/icon.svg"
+        alt="DevBoard"
+        width={22}
+        height={22}
+        className="shrink-0"
+      />
+      <span className="font-mono text-[13px] font-semibold tracking-tight">
+        <span className="text-(--text)">Dev</span>
+        <span className="brand-gradient-text">Board</span>
       </span>
     </div>
   );

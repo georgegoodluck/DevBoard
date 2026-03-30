@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   title: "DevBoard",
   description: "Project & team collaboration dashboard",
   icons: {
-    icon: "/icon.svg",
+    icon: "/favicon.svg",
+    apple: "/icon.svg",
   },
 };
 
