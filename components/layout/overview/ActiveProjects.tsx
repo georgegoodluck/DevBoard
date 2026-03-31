@@ -1,4 +1,4 @@
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "../../ui/ProgressBar";
 
 type Projects = {
   name: string;
@@ -47,10 +47,10 @@ const statusStyles: Record<Projects["status"], string> = {
 };
 
 const progressColors: Record<Projects["status"], string> = {
-  "In Progress": "bg-(--amber-dim) text-(--amber)",
-  Planning: "bg-(--accent-dim) text-(--accent)",
-  Review: "bg-(--purple-dim) text-(--purple)",
-  Active: "bg-(--green-dim) text-(--green)",
+  "In Progress": "var(--amber)",
+  Planning: "var(--accent)",
+  Review: "var(--purple)",
+  Active: "var(--green)",
 };
 
 export default function ActiveProjects() {
@@ -106,11 +106,16 @@ export default function ActiveProjects() {
 
               <td className="px-3.5 py-2.5">
                 {/* Progress bar */}
-                <ProgressBar />
+                <ProgressBar
+                  value={p.progress}
+                  color={progressColors[p.status]}
+                />
               </td>
 
               <td className="px-3.5 py-2.5">
-                <span className="text-(--text3) text-[10px] font-mono">{p.due}</span>
+                <span className="text-(--text3) text-[10px] font-mono">
+                  {p.due}
+                </span>
               </td>
             </tr>
           ))}
