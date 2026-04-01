@@ -20,6 +20,7 @@
     --amber-dim: rgba(245, 158, 11, 0.1);
     --red: #f87171;
     --red-dim: rgba(248, 113, 113, 0.1);
+    --danger: #b30707;
     --purple: #a78bfa;
     --purple-dim: rgba(167, 139, 250, 0.1);
     --sidebar-width: 220px;
@@ -27,7 +28,11 @@
     --radius: 5px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
   body {
     background-color: var(--bg);
@@ -38,9 +43,16 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border2);
+    border-radius: 3px;
+  }
 }
 
 @layer utilities {

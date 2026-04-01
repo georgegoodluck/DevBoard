@@ -58,7 +58,7 @@ export default function ActiveProjects() {
     <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
-        <div className="flex items-center gap-2 font-mono text-(--text3) uppercase text-[12px] tracking-[0.02em]">
+        <div className="flex items-center gap-2 font-mono text-(--text3) uppercase text-[13px] tracking-[0.02em] font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-(--accent)" />
           Active Project
         </div>
