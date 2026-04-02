@@ -64,7 +64,7 @@ const statusStyle: Record<Task["status"], string> = {
 
 export default function RecentTasks() {
   return (
-    <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden">
+    <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden mb-2">
       {/* Header */}
       <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
         <div className="flex items-center gap-2 text-[13px] text-(--text3) font-mono tracking-[0.02em] uppercase font-semibold">

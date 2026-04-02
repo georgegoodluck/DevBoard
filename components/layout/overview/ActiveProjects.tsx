@@ -55,7 +55,7 @@ const progressColors: Record<Projects["status"], string> = {
 
 export default function ActiveProjects() {
   return (
-    <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden">
+    <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden mb-2">
       {/* Header */}
       <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
         <div className="flex items-center gap-2 font-mono text-(--text3) uppercase text-[13px] tracking-[0.02em] font-semibold">
