@@ -82,7 +82,7 @@ export default function RecentTasks() {
         {tasks.map((t) => (
           <div
             key={t.id}
-            className="flex items-center gap-2 px-3 py-2 border-b border-(--border)"
+            className="flex items-center gap-2 px-3 py-2 border-b border-(--border) hover:bg-(--bg2)"
           >
             {/* Priority Dot */}
             <span
