@@ -3,6 +3,7 @@ import ActiveProjects from "@/components/layout/overview/ActiveProjects";
 import RecentTasks from "@/components/layout/overview/RecentTasks";
 import SprintVelocity from "@/components/layout/overview/SprintVelocity";
 import TeamPanel from "@/components/layout/overview/TeamPanel";
+import Deadline from "@/components/layout/overview/Deadline"
 
 export default function OverviewPage() {
   return (
@@ -21,6 +22,7 @@ export default function OverviewPage() {
         <div className="flex flex-col w-80">
           <SprintVelocity />
           <TeamPanel />
+          <Deadline />
         </div>
       </div>
     </div>
