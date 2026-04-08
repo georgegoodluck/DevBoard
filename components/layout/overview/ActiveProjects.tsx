@@ -85,7 +85,10 @@ export default function ActiveProjects() {
 
         <tbody>
           {projects.map((p) => (
-            <tr key={p.name} className="border-b border-(--border)">
+            <tr
+              key={p.name}
+              className="border-b border-(--border) hover:bg-(--bg2) transition-colors"
+            >
               <td className="px-3.5 py-2.5">
                 <div className="text-[13px] font-medium text-(--text)">
                   {p.name}
