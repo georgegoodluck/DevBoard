@@ -37,6 +37,12 @@ const members: Member[] = [
   },
 ];
 
+const statusConfig = {
+  online:  { color: "var(--green)",  label: "Online",  glow: "0 0 6px var(--green)" },
+  away:    { color: "var(--amber)",  label: "Away",    glow: "none" },
+  offline: { color: "var(--text3)", label: "Offline", glow: "none" },
+};
+
 export default function TeamPanel() {
   return (
     <div>
