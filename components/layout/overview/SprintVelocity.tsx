@@ -37,9 +37,9 @@ export default function SprintVelocity() {
   };
 
   return (
-    <div className="bg-(--bg1) border border-(--border) rounded-md overflow-hidden">
+    <div className="bg-(--bg1) border border-(--border) rounded-md overflow-hidden mb-2">
       <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-(--text2)">
+        <div className="flex items-center gap-2 font-mono text-[13px] uppercase tracking-[0.08em] text-(--text2) font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-(--purple)" />
           Sprint Velocity
         </div>
@@ -49,7 +49,7 @@ export default function SprintVelocity() {
       </div>
 
       <div className="p-3.5">
-        <div className="flex items-end gap-1.5 h-15">
+        <div className="flex items-end gap-1.5 h-12">
           {sprints.map((s, i) => {
             const isLast = i === sprints.length - 1;
             const barHeight = (s.value / max) * MAX_BAR_HEIGHT;
