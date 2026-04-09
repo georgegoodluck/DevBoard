@@ -5,7 +5,10 @@ export default function SidebarUser() {
         {/* Avatar */}
         <div
           className="flex items-center justify-center w-[26px] h-[26px] rounded-full font-mono text-[10px] font-semibold text-white shrink-0"
-          style={{ background: "linear-gradient(135deg, #4f8eff, #a78bfa)" }}
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
+          }}
         >
           GG
         </div>

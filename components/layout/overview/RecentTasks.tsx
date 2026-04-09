@@ -13,8 +13,9 @@ const tasks: Task[] = [
     name: "Implement Supabase with auth middleware",
     status: "In Progress",
     priority: "high",
-    assignee: "GE",
-    assigneeColor: "red",
+    assignee: "GG",
+    assigneeColor:
+      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
   },
   {
     id: "DBD-040",
@@ -22,7 +23,8 @@ const tasks: Task[] = [
     status: "Todo",
     priority: "medium",
     assignee: "JD",
-    assigneeColor: "red",
+    assigneeColor:
+      "linear-gradient(0deg,rgba(34, 193, 195, 1) 0%, rgba(187, 189, 90, 1) 73%, rgba(253, 187, 45, 1) 100%);",
   },
   {
     id: "DBD-039",
@@ -30,7 +32,8 @@ const tasks: Task[] = [
     status: "Done",
     priority: "low",
     assignee: "TM",
-    assigneeColor: "red",
+    assigneeColor:
+      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%);",
   },
   {
     id: "DBD-038",
@@ -38,15 +41,17 @@ const tasks: Task[] = [
     status: "Done",
     priority: "low",
     assignee: "MO",
-    assigneeColor: "red",
+    assigneeColor:
+      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(126, 30, 148, 1) 35%, rgba(148, 187, 233, 1) 100%);",
   },
   {
     id: "DBD-037",
     name: "Write Playwright E2E for auth flow",
     status: "Todo",
     priority: "medium",
-    assignee: "GE",
-    assigneeColor: "red",
+    assignee: "GG",
+    assigneeColor:
+      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
   },
 ];
 
@@ -104,7 +109,10 @@ export default function RecentTasks() {
               <span className="w-1.5 h-1.5 bg-current rounded-full" />
               {t.status}
             </span>
-            <div className="text-right bg-(--danger) rounded-full px-1 py-1">
+            <div
+              className="text-right rounded-full px-1.5 py-1"
+              style={{ background: t.assigneeColor }}
+            >
               {t.assignee}
             </div>
           </div>
