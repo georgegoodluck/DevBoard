@@ -21,7 +21,8 @@ export default function BottomNav() {
     >
       <div className="flex items-center">
         {tabs.map((tab) => {
-          const isActive = pathname === tab.href;
+          const isActive =
+            pathname === tab.href || pathname.startsWith(`${tab.href}/`);
           const Icon = tab.icon;
 
           return (
