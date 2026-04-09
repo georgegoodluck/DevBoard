@@ -30,8 +30,10 @@ export default function BottomNav() {
               href={tab.href}
               className={`flex-1 flex flex-col px-3 py-3 transition-colors ${isActive ? "text-(--accent)" : "text-(--text3)"}`}
             >
-              <Icon />
-              <span>{tab.label}</span>
+              <Icon size={20} />
+              <span className="font-mono text-[9px] font-medium">
+                {tab.label}
+              </span>
             </Link>
           );
         })}
