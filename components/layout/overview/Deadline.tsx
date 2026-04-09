@@ -22,6 +22,20 @@ const deadlines: Deadline[] = [
   },
 ];
 
+const urgencyConfig = {
+  critical: { border: "var(--red)", bg: "var(--red-dim)", text: "var(--red)" },
+  warning: {
+    border: "var(--amber)",
+    bg: "var(--amber-dim)",
+    text: "var(--amber)",
+  },
+  good: {
+    border: "var(--green)",
+    bg: "var(--green-dim)",
+    text: "var(--green)",
+  },
+};
+
 export default function Deadline() {
   return (
     <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
