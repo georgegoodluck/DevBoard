@@ -18,7 +18,9 @@ export default function DashboardLayout({
         <main className="flex-1 overflow-y-auto p-5 w-full">{children}</main>
       </div>
 
-      <div>
+
+      {/* BottomNav - visible on mobile display */}
+      <div className="lg:hidden">
         <BottomNav />
       </div>
       

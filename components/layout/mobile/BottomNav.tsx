@@ -12,9 +12,22 @@ const tabs = [
 ];
 
 export default function BottomNav() {
+  const pathname = usePathname();
   return (
-    <div>
-      <h1>Hello</h1>
-    </div>
+    <nav>
+      <div>
+        {tabs.map((tab) => {
+          const isActive = pathname === tab.href;
+          const Icon = tab.icon;
+
+          return (
+            <Link key={tab.href} href={tab.href}>
+              <Icon />
+              <span>{tab.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
