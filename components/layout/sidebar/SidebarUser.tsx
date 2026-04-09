@@ -18,9 +18,7 @@ export default function SidebarUser() {
           <span className="text-[12px] font-medium text-(--text) truncate">
             George G.
           </span>
-          <span className="font-mono text-[10px] text-(--text3)">
-            admin
-          </span>
+          <span className="font-mono text-[10px] text-(--text3)">admin</span>
         </div>
 
         {/* Online dot */}
