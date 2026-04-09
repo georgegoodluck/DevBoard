@@ -6,11 +6,13 @@ import MobileTopbar from "../mobile/MobileTopbar";
 export default function Topbar() {
   return (
     <>
-      <div>
+      {/* Mobile Topbar */}
+      <div className="lg:hidden">
         <MobileTopbar />
       </div>
+      {/* Desktop Topbar */}
       <header
-        className="flex items-center gap-3 px-5 bg-[var(--bg1)] border-b border-[var(--border)]"
+        className="hidden lg:flex items-center gap-3 px-5 bg-[var(--bg1)] border-b border-[var(--border)]"
         style={{ height: "var(--topbar-height)" }}
       >
         <TopbarBreadcrumb />
