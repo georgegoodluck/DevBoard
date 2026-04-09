@@ -15,10 +15,10 @@ export default function TopbarBreadcrumb() {
   return (
     <div className="flex items-center gap-3">
       <span className="font-mono text-[15px] font-semibold">{meta.title}</span>
-      <span className="text-[var(--border2)] text-base leading-none select-none">
+      <span className="text-(--border2) text-base leading-none select-none">
         /
       </span>
-      <span className="text-[12px] text-[var(--text3)]">{meta.sub}</span>
+      <span className="text-[12px] text-(--text3)">{meta.sub}</span>
     </div>
   );
 }
