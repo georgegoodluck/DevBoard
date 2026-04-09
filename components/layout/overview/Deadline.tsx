@@ -1,3 +1,9 @@
+type deadline = {
+    name: string;
+    timeLeft: string;
+    urgency: "critical" | "warning" | "good";
+}
+
 export default function Deadline() {
   return (
     <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
