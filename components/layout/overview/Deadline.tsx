@@ -1,8 +1,26 @@
-type deadline = {
-    name: string;
-    timeLeft: string;
-    urgency: "critical" | "warning" | "good";
-}
+type Deadline = {
+  name: string;
+  timeLeft: string;
+  urgency: "critical" | "warning" | "good";
+};
+
+const deadlines: Deadline[] = [
+  {
+    name: "SubTrack v1 launch",
+    timeLeft: "3 days",
+    urgency: "critical",
+  },
+  {
+    name: "Fin·snap final review",
+    timeLeft: "9 days",
+    urgency: "warning",
+  },
+  {
+    name: "TickrPay alpha",
+    timeLeft: "24 days",
+    urgency: "good",
+  },
+];
 
 export default function Deadline() {
   return (
