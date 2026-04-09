@@ -17,7 +17,7 @@ export default function DashboardLayout({
         <Topbar />
         <main className="flex-1 overflow-y-auto p-5 pb-20 lg:pb-5">
           {children}
-        </main>{" "}
+        </main>
       </div>
 
       {/* BottomNav - visible on mobile display */}
