@@ -1,3 +1,5 @@
+import CardHeader from "@/components/ui/CardHeader";
+
 type Member = {
   initials: string;
   name: string;
@@ -54,7 +56,7 @@ const statusConfig = {
 export default function TeamPanel() {
   return (
     <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden mb-2">
-      <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
+      {/* <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
         <div className="flex items-center gap-2 font-mono text-[13px] uppercase tracking-[0.08em] text-(--text3) font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-(--green)" />
           Team
@@ -62,7 +64,13 @@ export default function TeamPanel() {
         <span className="text-(--green) font-mono cursor-pointer text-[10px] hover:opacity-70">
           Manage &#8594;
         </span>
-      </div>
+      </div> */}
+
+      <CardHeader
+        title="Team"
+        dotColor="var(--green)"
+        action={{ label: "View all \u2192" }}
+      />
 
       <div>
         {members.map((m) => {

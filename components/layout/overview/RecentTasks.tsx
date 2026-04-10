@@ -1,3 +1,5 @@
+import CardHeader from "@/components/ui/CardHeader";
+
 type Task = {
   id: string;
   name: string;
@@ -71,15 +73,11 @@ export default function RecentTasks() {
   return (
     <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden mb-2">
       {/* Header */}
-      <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
-        <div className="flex items-center gap-2 text-[13px] text-(--text3) font-mono tracking-[0.02em] uppercase font-semibold">
-          <span className="w-1.5 h-1.5 rounded-full bg-(--accent-end)" />
-          Recent Tasks
-        </div>
-        <span className="text-(--accent-end) font-mono text-[10px] cursor-pointer hover:opacity-70">
-          View all &#8594;
-        </span>
-      </div>
+      <CardHeader
+        title="Recent Tasks"
+        dotColor="var(--orange)"
+        action={{ label: "View all \u2192" }}
+      />
 
       {/* Tasks */}
 
