@@ -5,4 +5,25 @@ type Props = {
   right?: React.ReactNode;
 };
 
-export default function CardHeader() {}
+export default function CardHeader({ title, dotColor, action, right }: Props) {
+  return (
+    <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
+      <div className="flex items-center gap-2 text-[13px] text-(--text3) font-mono tracking-[0.02em] uppercase font-semibold">
+        <span
+          className="w-1.5 h-1.5 rounded-full bg-(--accent-end)"
+          style={{ background: dotColor }}
+        />
+        {title}
+      </div>
+      {action && (
+        <span
+          onClick={action.onClick}
+          className="text-(--accent-end) font-mono text-[10px] cursor-pointer hover:opacity-70"
+        >
+          {action.label}
+        </span>
+      )}
+      {right && !action && right}
+    </div>
+  );
+}
