@@ -23,7 +23,7 @@ export default function StatCard({
     deltaType === "up"
       ? "text-(--green)"
       : deltaType === "down"
-        ? "text-(--red)"
+        ? "text-(--danger)"
         : "text-(--text3)";
   // Arrow logic
   const arrow = deltaType === "up" ? "↑" : deltaType === "down" ? "↓" : "";
