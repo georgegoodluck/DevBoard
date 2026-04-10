@@ -17,7 +17,7 @@ const tasks: Task[] = [
     priority: "high",
     assignee: "GG",
     assigneeColor:
-      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
+      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
   },
   {
     id: "DBD-040",
@@ -26,7 +26,7 @@ const tasks: Task[] = [
     priority: "medium",
     assignee: "JD",
     assigneeColor:
-      "linear-gradient(0deg,rgba(34, 193, 195, 1) 0%, rgba(187, 189, 90, 1) 73%, rgba(253, 187, 45, 1) 100%);",
+      "linear-gradient(0deg,rgba(34, 193, 195, 1) 0%, rgba(187, 189, 90, 1) 73%, rgba(253, 187, 45, 1) 100%)",
   },
   {
     id: "DBD-039",
@@ -35,7 +35,7 @@ const tasks: Task[] = [
     priority: "low",
     assignee: "TM",
     assigneeColor:
-      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%);",
+      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%)",
   },
   {
     id: "DBD-038",
@@ -44,7 +44,7 @@ const tasks: Task[] = [
     priority: "low",
     assignee: "MO",
     assigneeColor:
-      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(126, 30, 148, 1) 35%, rgba(148, 187, 233, 1) 100%);",
+      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(126, 30, 148, 1) 35%, rgba(148, 187, 233, 1) 100%)",
   },
   {
     id: "DBD-037",
@@ -53,7 +53,7 @@ const tasks: Task[] = [
     priority: "medium",
     assignee: "GG",
     assigneeColor:
-      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
+      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
   },
 ];
 
