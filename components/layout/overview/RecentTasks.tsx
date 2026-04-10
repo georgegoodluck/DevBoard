@@ -70,7 +70,7 @@ export default function RecentTasks() {
       {/* Header */}
       <CardHeader
         title="Recent Tasks"
-        dotColor="var(--accent)"
+        dotColor="var(--orange)"
         action={{ label: "View all \u2192" }}
       />
 

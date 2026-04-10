@@ -42,7 +42,7 @@ export default function SprintVelocity() {
     <div className="bg-(--bg1) border border-(--border) rounded-md overflow-hidden mb-2">
       <CardHeader
         title="Sprint Velocity"
-        dotColor="var(--purple)"
+        dotColor="var(--accent-end)"
         action={{ label: "Last 8 sprints" }}
       />
 
