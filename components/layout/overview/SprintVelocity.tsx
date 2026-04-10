@@ -60,7 +60,7 @@ export default function SprintVelocity() {
                 className="flex flex-col items-center gap-1 flex-1"
               >
                 <div
-                  className="w-full rounded-t-xs transition-all duration-300"
+                  className={`w-full rounded-t-xs transition-all duration-300 ${isLast ? "hover:opacity-70" : ""} `}
                   style={{
                     height: `${barHeight}px`,
                     background: getGradient(s.value, isLast),
