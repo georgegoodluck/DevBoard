@@ -1,4 +1,5 @@
 import ProgressBar from "../../ui/ProgressBar";
+import CardHeader from "@/components/ui/CardHeader";
 
 type Projects = {
   name: string;
@@ -57,16 +58,11 @@ export default function ActiveProjects() {
   return (
     <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden mb-2">
       {/* Header */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-(--border)">
-        <div className="flex items-center gap-2 font-mono text-(--text3) uppercase text-[13px] tracking-[0.02em] font-semibold">
-          <span className="w-1.5 h-1.5 rounded-full bg-(--accent)" />
-          Active Project
-        </div>
-        <span className="text-(--accent) font-mono text-[10px] cursor-pointer hover:opacity-70">
-          View all &#8594;
-        </span>
-      </div>
-
+      <CardHeader
+        title="Active Project"
+        dotColor="var(--accent)"
+        action={{ label: "View all \u2192" }}
+      />
       {/* Table */}
 
       <table className="w-full border-collapse">
