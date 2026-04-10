@@ -42,7 +42,7 @@ const urgencyConfig = {
   },
 };
 
-export default function Deadline() {
+export default function Deadlines() {
   return (
     <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
       <CardHeader title="Deadlines" dotColor="var(--danger)" />
