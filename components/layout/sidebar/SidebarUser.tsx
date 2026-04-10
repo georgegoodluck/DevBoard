@@ -1,13 +1,13 @@
 export default function SidebarUser() {
   return (
     <div className="border-t border-(--border) p-[10px_6px]">
-      <div className="flex items-center gap-2.25 px-2.5 py-2 rounded-(--radius) cursor-pointer transition-colors hover:bg-[var(--bg3)]">
+      <div className="flex items-center gap-2.25 px-2.5 py-2 rounded-(--radius) cursor-pointer transition-colors hover:bg-(--bg3)">
         {/* Avatar */}
         <div
           className="flex items-center justify-center w-6.5 h-6.5 rounded-full font-mono text-[10px] font-semibold text-white shrink-0"
           style={{
             background:
-              "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
+              "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
           }}
         >
           GG
