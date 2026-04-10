@@ -12,19 +12,19 @@ export default function NavLink({ item }: { item: NavItems }) {
     <Link
       href={item.href}
       className={`
-        relative flex items-center gap-[9px] mx-[6px] px-[14px] py-[7px]
-        rounded-[var(--radius)] text-[12px] no-underline
+        relative flex items-center gap-2.25 mx-1.5 px-3.5 py-1.75
+        rounded-(--radius) text-[12px] no-underline
         transition-colors duration-100
         ${
           isActive
-            ? "bg-[var(--accent-dim)] text-[var(--accent)]"
-            : "text-[var(--text2)] hover:bg-[var(--bg3)] hover:text-[var(--text)]"
+            ? "bg-(--accent-dim) text-(--accent)"
+            : "text-(--text2) hover:bg-(--bg3) hover:text-(--text)"
         }
       `}
     >
       {/* Active indicator bar */}
       {isActive && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-[16px] bg-[var(--accent)] rounded-r-[2px]" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-(--accent) rounded-r-0.5" />
       )}
 
       {item.icon}
@@ -32,7 +32,7 @@ export default function NavLink({ item }: { item: NavItems }) {
 
       {/* Badge */}
       {item.badge !== undefined && (
-        <span className="ml-auto font-mono text-[10px] font-medium px-[6px] py-[1px] rounded-[3px] bg-[var(--accent-dim)] text-[var(--accent)]">
+        <span className="ml-auto font-mono text-[10px] font-medium px-1.5 py-px rounded-[3px] bg-(--accent-dim) text-(--accent)">
           {item.badge}
         </span>
       )}

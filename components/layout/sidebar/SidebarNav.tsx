@@ -3,7 +3,7 @@ import { navItems, accountItems } from "./nav-items";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="pt-4 pb-1 pl-[14px] font-mono text-[10px] font-medium tracking-[0.12em] uppercase text-[var(--text3)]">
+    <div className="pt-4 pb-1 pl-3.5 font-mono text-[10px] font-medium tracking-[0.12em] uppercase text-(--text3)">
       {children}
     </div>
   );

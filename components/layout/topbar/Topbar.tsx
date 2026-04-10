@@ -12,7 +12,7 @@ export default function Topbar() {
       </div>
       {/* Desktop Topbar */}
       <header
-        className="hidden lg:flex items-center gap-3 px-5 bg-[var(--bg1)] border-b border-[var(--border)]"
+        className="hidden lg:flex items-center gap-3 px-5 bg-(--bg1) border-b border-(--border)"
         style={{ height: "var(--topbar-height)" }}
       >
         <TopbarBreadcrumb />
