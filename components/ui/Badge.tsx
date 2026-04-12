@@ -8,7 +8,7 @@ type Props = {
 const variantStyles: Record<BadgeVariant, string> = {
   green: "bg-[var(--green-dim)] text-[var(--green)]",
   amber: "bg-[var(--amber-dim)] text-[var(--amber)]",
-  red: "bg-[var(--red-dim)] text-[var(--red)]",
+  red: "bg-[var(--danger-dim)] text-[var(--danger)]",
   blue: "bg-[var(--accent-dim)] text-[var(--accent)]",
   purple: "bg-[var(--purple-dim)] text-[var(--purple)]",
 };

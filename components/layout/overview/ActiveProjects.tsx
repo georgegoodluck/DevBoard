@@ -6,7 +6,7 @@ import type { BadgeVariant } from "@/components/ui/Badge";
 type Projects = {
   name: string;
   description: string;
-  status: "In Progress" | "Planning" | "Review" | "Active";
+  status: "In Progress" | "Planning" | "Review" | "Active" | "Closed";
   progress: number;
   due: string;
 };
@@ -40,6 +40,13 @@ const projects: Projects[] = [
     progress: 95,
     due: "Mar 22",
   },
+  {
+    name: "MediPager",
+    description: "Healthcare SaaS",
+    status: "Closed",
+    progress: 5,
+    due: "Dec 01",
+  },
 ];
 
 const statusToVariant: Record<Projects["status"], BadgeVariant> = {
@@ -47,6 +54,7 @@ const statusToVariant: Record<Projects["status"], BadgeVariant> = {
   Planning: "blue",
   Review: "purple",
   Active: "green",
+  Closed: "red",
 };
 
 const progressColors: Record<Projects["status"], string> = {
@@ -54,6 +62,7 @@ const progressColors: Record<Projects["status"], string> = {
   Planning: "var(--accent)",
   Review: "var(--purple)",
   Active: "var(--green)",
+  Closed: "var(--danger)",
 };
 
 export default function ActiveProjects() {
