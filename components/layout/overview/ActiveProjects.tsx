@@ -1,5 +1,7 @@
 import ProgressBar from "../../ui/ProgressBar";
 import CardHeader from "@/components/ui/CardHeader";
+import Badge from "@/components/ui/Badge";
+import type { BadgeVariant } from "@/components/ui/Badge";
 
 type Projects = {
   name: string;
@@ -40,11 +42,11 @@ const projects: Projects[] = [
   },
 ];
 
-const statusStyles: Record<Projects["status"], string> = {
-  "In Progress": "bg-(--amber-dim) text-(--amber)",
-  Planning: "bg-(--accent-dim) text-(--accent)",
-  Review: "bg-(--purple-dim) text-(--purple)",
-  Active: "bg-(--green-dim) text-(--green)",
+const statusToVariant: Record<Projects["status"], BadgeVariant> = {
+  "In Progress": "amber",
+  Planning: "blue",
+  Review: "purple",
+  Active: "green",
 };
 
 const progressColors: Record<Projects["status"], string> = {
@@ -95,12 +97,7 @@ export default function ActiveProjects() {
               </td>
 
               <td className="px-3.5 py-2.5">
-                <span
-                  className={`inline-flex items-center gap-1 font-mono text-[10px] font-medium px-1.75 py-0.5 rounded-(--radius) ${statusStyles[p.status]}`}
-                >
-                  <span className="w-2 h-2 rounded-full bg-current" />
-                  {p.status}
-                </span>
+                <Badge label={p.status} variant={statusToVariant[p.status]} />
               </td>
 
               <td className="px-3.5 py-2.5">
