@@ -1,6 +1,7 @@
 import CardHeader from "@/components/ui/CardHeader";
 import Badge from "@/components/ui/Badge";
 import { BadgeVariant } from "@/components/ui/Badge";
+import Avatar from "@/components/ui/Avatar";
 
 type Task = {
   id: string;
@@ -110,12 +111,17 @@ export default function RecentTasks() {
               {t.status}
             </span> */}
             <Badge label={t.status} variant={statusToStyle[t.status]} />
-            <div
+            <Avatar
+              initials={t.assignee}
+              gradient={t.assigneeColor}
+              size={26}
+            />
+            {/* <div
               className="text-right rounded-full px-1.5 py-1"
               style={{ background: t.assigneeColor }}
             >
               {t.assignee}
-            </div>
+            </div> */}
           </div>
         ))}
       </div>
