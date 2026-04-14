@@ -1,4 +1,6 @@
 import CardHeader from "@/components/ui/CardHeader";
+import Badge from "@/components/ui/Badge";
+import { BadgeVariant } from "@/components/ui/Badge";
 
 type Task = {
   id: string;
@@ -63,10 +65,10 @@ const priorityColors: Record<Task["priority"], string> = {
   high: "var(--danger)",
 };
 
-const statusStyle: Record<Task["status"], string> = {
-  "In Progress": "bg-(--amber-dim) text-(--amber)",
-  Todo: "bg-(--accent-dim) text-(--accent)",
-  Done: "bg-(--green-dim) text-(--green)",
+const statusToStyle: Record<Task["status"], BadgeVariant> = {
+  "In Progress": "amber",
+  Todo: "blue",
+  Done: "green",
 };
 
 export default function RecentTasks() {
@@ -101,12 +103,13 @@ export default function RecentTasks() {
               {t.name}
             </div>
             {/* Status Badge */}
-            <span
+            {/* <span
               className={`inline-flex items-center gap-2 px-1.5 py-0.2 rounded-(--radius) ${statusStyle[t.status]}`}
             >
               <span className="w-1.5 h-1.5 bg-current rounded-full" />
               {t.status}
-            </span>
+            </span> */}
+            <Badge label={t.status} variant={statusToStyle[t.status]} />
             <div
               className="text-right rounded-full px-1.5 py-1"
               style={{ background: t.assigneeColor }}
