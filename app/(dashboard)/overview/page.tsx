@@ -1,9 +1,9 @@
-import StatGrid from "@/components/layout/overview/StatGrid";
-import ActiveProjects from "@/components/layout/overview/ActiveProjects";
-import RecentTasks from "@/components/layout/overview/RecentTasks";
-import SprintVelocity from "@/components/layout/overview/SprintVelocity";
-import TeamPanel from "@/components/layout/overview/TeamPanel";
-import Deadlines from "@/components/layout/overview/Deadlines";
+import StatGrid from "@/components/overview/StatGrid";
+import ActiveProjects from "@/components/overview/ActiveProjects";
+import RecentTasks from "@/components/overview/RecentTasks";
+import SprintVelocity from "@/components/overview/SprintVelocity";
+import TeamPanel from "@/components/overview/TeamPanel";
+import Deadlines from "@/components/overview/Deadlines";
 
 export default function OverviewPage() {
   return (

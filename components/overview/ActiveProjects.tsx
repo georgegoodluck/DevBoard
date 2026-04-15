@@ -1,4 +1,4 @@
-import ProgressBar from "../../ui/ProgressBar";
+import ProgressBar from "../ui/ProgressBar";
 import CardHeader from "@/components/ui/CardHeader";
 import Badge from "@/components/ui/Badge";
 import type { BadgeVariant } from "@/components/ui/Badge";
