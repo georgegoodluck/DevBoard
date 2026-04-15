@@ -6,10 +6,10 @@ export type Projects = {
   name: string;
   description: string;
   emoji: string;
-  progress: number;
-  progressColor: string;
   status: string;
   statusVariant: BadgeVariant;
+  progress: number;
+  progressColor: string;
   tags: string;
   members: { initials: string; gradient: string }[];
   taskCount: number;
