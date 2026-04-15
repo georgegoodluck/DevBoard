@@ -1,5 +1,5 @@
-import ProjectCard, { Projects } from "./ProjectCard";
-import EmptyState from "../ui/EmptyState";
+import ProjectCard, { Project } from "./ProjectCard";
+import EmptyState from "@/components/ui/EmptyState";
 import { FolderKanban } from "lucide-react";
 
 const projects: Project[] = [
@@ -86,10 +86,41 @@ const projects: Project[] = [
   },
 ];
 
-export default function ProjectGrid() {
+type Props = { filter: "all" | "active" | "archived" };
+
+export default function ProjectsGrid({ filter }: Props) {
+  const filtered =
+    filter === "active"
+      ? projects.filter((p) => p.status !== "Planning")
+      : filter === "archived"
+        ? []
+        : projects;
+
+  if (filtered.length === 0) {
+    return (
+      <EmptyState
+        icon={FolderKanban}
+        title="No projects here"
+        description="Archived projects will appear here once you archive them."
+      />
+    );
+  }
+
   return (
-    <div>
-      <h1>Hello</h1>
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-2.5">
+      {filtered.map((p) => (
+        <ProjectCard key={p.name} project={p} />
+      ))}
+
+      {/* New project placeholder */}
+      <div className="bg-(--bg1) border border-dashed border-(--border2) rounded-1.5 p-3.5 cursor-pointer flex flex-col items-center justify-center gap-2 min-h-40 transition-colors hover:border-(--accent)">
+        <div className="w-8 h-8 rounded-1.5 border border-dashed border-(--border2) flex items-center justify-center text-(--text3) text-[18px]">
+          +
+        </div>
+        <span className="font-mono text-[11px] text-(--text3)">
+          New project
+        </span>
+      </div>
     </div>
   );
 }

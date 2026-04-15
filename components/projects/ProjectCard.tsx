@@ -2,7 +2,7 @@ import Avatar from "@/components/ui/Avatar";
 import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import ProgressBar from "@/components/ui/ProgressBar";
 
-export type Projects = {
+export type Project = {
   name: string;
   description: string;
   emoji: string;
@@ -10,44 +10,53 @@ export type Projects = {
   statusVariant: BadgeVariant;
   progress: number;
   progressColor: string;
-  tags: string;
+  tags: string[];
   members: { initials: string; gradient: string }[];
   taskCount: number;
   due: string;
 };
 
-export default function ProjectCard({ projects: p }: { projects: Projects }) {
+export default function ProjectCard({ project: p }: { project: Project }) {
   return (
-    <div>
-      {/* Top Row */}
-      <div>
+    <div className="bg-(--bg1) border border-(--border) rounded-1.5 p-3.5 cursor-pointer hover:border-(--border2) transition-colors flex flex-col gap-2.5">
+      {/* Top row */}
+      <div className="flex items-start justify-between">
         <div>
-          <div>{p.name}</div>
-          <div>{p.description}</div>
+          <div className="text-[13px] font-semibold text-(--text) mb-0.75">
+            {p.name}
+          </div>
+          <div className="text-[11.5px] text-(--text3) leading-relaxed">
+            {p.description}
+          </div>
         </div>
-        <div>{p.emoji}</div>
+        <div className="w-7.5 h-7.5 rounded-1.5 bg-(--bg3) flex items-center justify-center text-[14px] shrink-0">
+          {p.emoji}
+        </div>
       </div>
+
       {/* Progress */}
       <ProgressBar value={p.progress} color={p.progressColor} />
+
       {/* Tags */}
-      <div>
+      <div className="flex flex-wrap gap-1.25">
         <Badge label={p.status} variant={p.statusVariant} />
         {p.tags.map((tag) => (
-          <Badge key={tag} label={tag} variant="red" />
+          <Badge key={tag} label={tag} variant="danger" />
         ))}
       </div>
+
       {/* Footer */}
-      <div>
-        {/* Stacked Avatars */}
-        <div>
+      <div className="flex items-center gap-2">
+        {/* Stacked avatars */}
+        <div className="flex">
           {p.members.map((m, i) => (
-            <div key={m.initials} style={{ marginLeft: 1 === 0 ? 0 : -6 }}>
+            <div key={m.initials} style={{ marginLeft: i === 0 ? 0 : -6 }}>
               <Avatar initials={m.initials} gradient={m.gradient} size={20} />
             </div>
           ))}
         </div>
-        <span>
-          {p.taskCount} tasks &middot; {p.due}
+        <span className="font-mono text-[10px] text-(--text3)ml-auto">
+          {p.taskCount} tasks · {p.due}
         </span>
       </div>
     </div>
