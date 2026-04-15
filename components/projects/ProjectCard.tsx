@@ -41,7 +41,7 @@ export default function ProjectCard({ project: p }: { project: Project }) {
       <div className="flex flex-wrap gap-1.25">
         <Badge label={p.status} variant={p.statusVariant} />
         {p.tags.map((tag) => (
-          <Badge key={tag} label={tag} variant="danger" />
+          <Badge key={tag} label={tag} variant="gray" />
         ))}
       </div>
 
