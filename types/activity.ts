@@ -1,4 +1,4 @@
-export type Activity = {
+export type ActivityEvent = {
   id: string;
   actor: string;
   action: string;
