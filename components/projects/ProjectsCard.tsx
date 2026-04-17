@@ -2,6 +2,7 @@ import Avatar from "@/components/ui/Avatar";
 import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import ProgressBar from "@/components/ui/ProgressBar";
 
+// Project types
 export type Project = {
   name: string;
   description: string;
@@ -16,7 +17,7 @@ export type Project = {
   due: string;
 };
 
-export default function ProjectCard({ project: p }: { project: Project }) {
+export default function ProjectsCard({ project: p }: { project: Project }) {
   return (
     <div className="bg-(--bg1) border border-(--border) rounded-1.5 p-3.5 cursor-pointer hover:border-(--border2) transition-colors flex flex-col gap-2.5">
       {/* Top row */}

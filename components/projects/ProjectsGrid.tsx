@@ -1,4 +1,4 @@
-import ProjectCard, { Project } from "./ProjectCard";
+import ProjectsCard, { Project } from "./ProjectsCard";
 import EmptyState from "@/components/ui/EmptyState";
 import { FolderKanban } from "lucide-react";
 
@@ -109,7 +109,7 @@ export default function ProjectsGrid({ filter }: Props) {
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-2.5">
       {filtered.map((p) => (
-        <ProjectCard key={p.name} project={p} />
+        <ProjectsCard key={p.name} project={p} />
       ))}
 
       {/* New project placeholder */}
