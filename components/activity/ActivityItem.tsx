@@ -21,7 +21,10 @@ const iconConfig = {
   update: { icon: RefreshCw, bg: "var(--amber-dim)", color: "var(--amber)" },
 };
 
-export default function Activity() {
+export default function Activity({ event }: { event: ActivityEvent }) {
+  const cfg = iconConfig[event.type];
+  const Icon = iconConfig;
+
   return (
     <div>
       <h1>Hello</h1>
