@@ -21,13 +21,29 @@ const iconConfig = {
   update: { icon: RefreshCw, bg: "var(--amber-dim)", color: "var(--amber)" },
 };
 
-export default function Activity({ event }: { event: ActivityEvent }) {
-  const cfg = iconConfig[event.type];
-  const Icon = iconConfig;
+return (
+    <div className="flex gap-2.5 px-3.5 py-2.5 border-b border-(--border) last:border-none hover:bg-(--bg2) transition-colors cursor-default">
+      {/* Icon */}
+      <div
+        className="w-6.5 h-6.5 rounded-[5px] flex items-center justify-center shrink-0 mt-px"
+        style={{ background: cfg.bg }}
+      >
+        <Icon size={12} style={{ color: cfg.color }} />
+      </div>
 
-  return (
-    <div>
-      <h1>Hello</h1>
+      {/* Body */}
+      <div className="flex-1 min-w-0">
+        <div className="text-[12.5px] text-(--text) leading-normal">
+          <span className="font-medium">{event.actor}</span>{" "}
+          <span className="text-(--text2)">{event.action}</span>{" "}
+          <span className="text-(--text2)">{event.target}</span>
+        </div>
+        <div className="flex items-center gap-2 font-mono text-[10px] text-(--text3) mt-0.5">
+          <span>{event.time}</span>
+          <span className="w-0.75 h-0.75 rounded-full bg-[var(--border2)" />
+          <span>{event.project}</span>
+        </div>
+      </div>
     </div>
   );
 }
