@@ -85,7 +85,7 @@ export default function ActivityFeed() {
         dotColor="var(--accent)"
         right={
           <span className="font-mono text-[10px] text-(--text3)">
-            Today · {events.length} events
+            Today &#x2022; {events.length} events
           </span>
         }
       />
