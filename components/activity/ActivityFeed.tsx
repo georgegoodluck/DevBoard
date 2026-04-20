@@ -89,6 +89,13 @@ export default function ActivityFeed() {
           </span>
         }
       />
+
+      <div>
+        {events.map((e) => (
+          <ActivityItem key={e.id} event={e}/>
+        ))}
+      </div>
+      
     </div>
   );
 }

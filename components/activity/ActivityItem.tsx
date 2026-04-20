@@ -22,6 +22,7 @@ const iconConfig = {
 };
 
 export default function ActivityItem({ event }: { event: ActivityEvent }) {
+  // AcitvityItem recieves a prop called event which must be of type ActivityEvent
   const cfg = iconConfig[event.type];
   const Icon = cfg.icon;
 
