@@ -36,7 +36,7 @@ const tasks: Task[] = [
     name: "Set up Drizzle ORM schema",
     status: "Done",
     priority: "low",
-    assignee: "TM",
+    assignee: "TN",
     assigneeColor:
       "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%)",
   },
