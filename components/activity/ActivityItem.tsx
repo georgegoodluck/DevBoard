@@ -17,7 +17,7 @@ const iconConfig = {
     color: "var(--accent)",
   },
   deploy: { icon: Rocket, bg: "var(--green-dim)", color: "var(--green)" },
-  ci: { icon: CircleAlert, bg: "var(--red-dim)", color: "var(--red)" },
+  ci: { icon: CircleAlert, bg: "var(--danger-dim)", color: "var(--danger)" },
   update: { icon: RefreshCw, bg: "var(--amber-dim)", color: "var(--amber)" },
 };
 
