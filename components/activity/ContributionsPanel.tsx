@@ -1,3 +1,6 @@
+import { span } from "framer-motion/client";
+import CardHeader from "../ui/CardHeader";
+
 const contributors = [
   {
     initials: "GG",
@@ -36,7 +39,15 @@ const contributors = [
 export default function ContributionsPanel() {
   return (
     <div>
-      <h1>Hello</h1>
+      <CardHeader
+        title="Contributors"
+        dotColor="var(--amber)"
+        right={
+          <span className="font-mono  text-[10px] text-(--text3)">
+            This week
+          </span>
+        }
+      />
     </div>
   );
 }
