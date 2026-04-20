@@ -21,7 +21,11 @@ const iconConfig = {
   update: { icon: RefreshCw, bg: "var(--amber-dim)", color: "var(--amber)" },
 };
 
-return (
+export default function ActivityItem({ event }: { event: ActivityEvent }) {
+  const cfg = iconConfig[event.type];
+  const Icon = cfg.icon;
+
+  return (
     <div className="flex gap-2.5 px-3.5 py-2.5 border-b border-(--border) last:border-none hover:bg-(--bg2) transition-colors cursor-default">
       {/* Icon */}
       <div
