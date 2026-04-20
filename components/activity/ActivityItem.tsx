@@ -45,7 +45,9 @@ export default function ActivityItem({ event }: { event: ActivityEvent }) {
         </div>
         <div className="flex items-center gap-2 font-mono text-[10px] text-(--text3) mt-0.5">
           <span>{event.time}</span>
-          <span className="w-0.75 h-0.75 rounded-full bg-[var(--border2)" />
+          <span className="text-(--text3) text-[14px] font-bold leading-none">
+            &#x2022;
+          </span>
           <span>{event.project}</span>
         </div>
       </div>
