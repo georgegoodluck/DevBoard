@@ -79,7 +79,7 @@ const events: ActivityEvent[] = [
 
 export default function ActivityFeed() {
   return (
-    <div>
+    <div className="bg-(--bg) border border-(--border) rounded-(--radius) overflow-hidden">
       <CardHeader
         title="Activity Feed"
         dotColor="var(--accent)"
@@ -92,10 +92,9 @@ export default function ActivityFeed() {
 
       <div>
         {events.map((e) => (
-          <ActivityItem key={e.id} event={e}/>
+          <ActivityItem key={e.id} event={e} />
         ))}
       </div>
-      
     </div>
   );
 }
