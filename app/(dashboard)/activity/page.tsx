@@ -1,7 +1,9 @@
+import ActivityFeed from "@/components/activity/ActivityFeed";
+
 export default function ActivityPage() {
-    return (
-        <div>
-            <h1>Activity</h1>
-        </div>
-    )
+  return (
+    <div>
+      <ActivityFeed />
+    </div>
+  );
 }
