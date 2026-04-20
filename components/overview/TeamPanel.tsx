@@ -1,4 +1,5 @@
 import CardHeader from "@/components/ui/CardHeader";
+import Avatar from "@/components/ui/Avatar";
 
 type Member = {
   initials: string;
@@ -88,12 +89,13 @@ export default function TeamPanel() {
               key={m.initials}
               className="flex items-center gap-2 px-3.5 py-3 border-b border-(--border) bg-(--bg1) last:border-none hover:bg-(--bg2) transition-colors cursor-default"
             >
-              <div
+              {/* <div
                 className="w-6.5 h-6.5 rounded-full flex items-center justify-center font-mono text-[10px] text-white shrink-0"
                 style={{ background: m.gradient }}
               >
                 {m.initials}
-              </div>
+              </div> */}
+              <Avatar initials={m.initials} gradient={m.gradient} size={26} />
               <div className="flex-1 min-w-0">
                 <div className="text-[12.5px] font-medium text-(--text)">
                   {formatName(m.name)}

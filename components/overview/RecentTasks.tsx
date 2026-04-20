@@ -1,4 +1,7 @@
 import CardHeader from "@/components/ui/CardHeader";
+import Badge from "@/components/ui/Badge";
+import { BadgeVariant } from "@/components/ui/Badge";
+import Avatar from "@/components/ui/Avatar";
 
 type Task = {
   id: string;
@@ -17,7 +20,7 @@ const tasks: Task[] = [
     priority: "high",
     assignee: "GG",
     assigneeColor:
-      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
+      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
   },
   {
     id: "DBD-040",
@@ -26,7 +29,7 @@ const tasks: Task[] = [
     priority: "medium",
     assignee: "JD",
     assigneeColor:
-      "linear-gradient(0deg,rgba(34, 193, 195, 1) 0%, rgba(187, 189, 90, 1) 73%, rgba(253, 187, 45, 1) 100%);",
+      "linear-gradient(0deg,rgba(34, 193, 195, 1) 0%, rgba(187, 189, 90, 1) 73%, rgba(253, 187, 45, 1) 100%)",
   },
   {
     id: "DBD-039",
@@ -35,7 +38,7 @@ const tasks: Task[] = [
     priority: "low",
     assignee: "TN",
     assigneeColor:
-      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%);",
+      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%)",
   },
   {
     id: "DBD-038",
@@ -44,7 +47,7 @@ const tasks: Task[] = [
     priority: "low",
     assignee: "MO",
     assigneeColor:
-      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(126, 30, 148, 1) 35%, rgba(148, 187, 233, 1) 100%);",
+      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(126, 30, 148, 1) 35%, rgba(148, 187, 233, 1) 100%)",
   },
   {
     id: "DBD-037",
@@ -53,7 +56,7 @@ const tasks: Task[] = [
     priority: "medium",
     assignee: "GG",
     assigneeColor:
-      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%);",
+      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
   },
 ];
 
@@ -63,10 +66,10 @@ const priorityColors: Record<Task["priority"], string> = {
   high: "var(--danger)",
 };
 
-const statusStyle: Record<Task["status"], string> = {
-  "In Progress": "bg-(--amber-dim) text-(--amber)",
-  Todo: "bg-(--accent-dim) text-(--accent)",
-  Done: "bg-(--green-dim) text-(--green)",
+const statusToStyle: Record<Task["status"], BadgeVariant> = {
+  "In Progress": "amber",
+  Todo: "blue",
+  Done: "green",
 };
 
 export default function RecentTasks() {
@@ -75,7 +78,7 @@ export default function RecentTasks() {
       {/* Header */}
       <CardHeader
         title="Recent Tasks"
-        dotColor="var(--orange)"
+        dotColor="var(--amber)"
         action={{ label: "View all \u2192" }}
       />
 
@@ -101,18 +104,24 @@ export default function RecentTasks() {
               {t.name}
             </div>
             {/* Status Badge */}
-            <span
+            {/* <span
               className={`inline-flex items-center gap-2 px-1.5 py-0.2 rounded-(--radius) ${statusStyle[t.status]}`}
             >
               <span className="w-1.5 h-1.5 bg-current rounded-full" />
               {t.status}
-            </span>
-            <div
+            </span> */}
+            <Badge label={t.status} variant={statusToStyle[t.status]} />
+            <Avatar
+              initials={t.assignee}
+              gradient={t.assigneeColor}
+              size={26}
+            />
+            {/* <div
               className="text-right rounded-full px-1.5 py-1"
               style={{ background: t.assigneeColor }}
             >
               {t.assignee}
-            </div>
+            </div> */}
           </div>
         ))}
       </div>
