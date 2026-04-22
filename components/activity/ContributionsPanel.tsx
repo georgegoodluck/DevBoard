@@ -1,5 +1,5 @@
-import { span } from "framer-motion/client";
 import CardHeader from "../ui/CardHeader";
+import Avatar from "../ui/Avatar";
 
 const contributors = [
   {
@@ -36,9 +36,11 @@ const contributors = [
   },
 ];
 
+const max = Math.max(...contributors.map((c) => c.count));
+
 export default function ContributionsPanel() {
   return (
-    <div>
+    <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
       <CardHeader
         title="Contributors"
         dotColor="var(--amber)"
@@ -48,6 +50,25 @@ export default function ContributionsPanel() {
           </span>
         }
       />
+
+      <div className="p-4.5 flex flex-col gap-4.5">
+        {contributors.map((c) => (
+          <div key={c.initials} className="flex items-center gap-2">
+            <Avatar initials={c.initials} gradient={c.gradient} />
+            <span>{c.name}</span>
+            <div className="h-1 w-40 rounded-(--radius) bg-(--bg3) overflow-hidden">
+              <div
+                className="h-full rounded-(--radius)"
+                style={{
+                  width: `${(c.count / max) * 100}%`,
+                  background: c.color,
+                }}
+              />
+            </div>
+            <span className="text-(--text3) font-mono">{c.count}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
