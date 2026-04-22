@@ -1,5 +1,6 @@
-import ActivityFeed from "@/components/activity/ActivityFeed";
+import CicdStatus from "@/components/activity/CicdStatus";
 import ContributionsPanel from "@/components/activity/ContributionsPanel";
+import ActivityFeed from "@/components/activity/ActivityFeed";
 
 export default function ActivityPage() {
   return (
@@ -7,6 +8,7 @@ export default function ActivityPage() {
       <ActivityFeed />
       <div className="flex flex-col">
         <ContributionsPanel />
+        <CicdStatus />
       </div>
     </div>
   );
