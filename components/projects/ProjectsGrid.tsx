@@ -13,7 +13,7 @@ const projects: Project[] = [
     progressColor: "var(--amber)",
     tags: ["Next.js", "Supabase"],
     members: [
-      { initials: "GE", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
+      { initials: "GG", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
       { initials: "TN", gradient: "linear-gradient(135deg,#2dd4a0,#4f8eff)" },
     ],
     taskCount: 18,
@@ -29,7 +29,7 @@ const projects: Project[] = [
     progressColor: "var(--accent)",
     tags: ["Next.js", "GraphQL"],
     members: [
-      { initials: "GE", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
+      { initials: "GG", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
       { initials: "AK", gradient: "linear-gradient(135deg,#f59e0b,#f87171)" },
     ],
     taskCount: 32,
@@ -45,7 +45,7 @@ const projects: Project[] = [
     progressColor: "var(--purple)",
     tags: ["Next.js", "Drizzle"],
     members: [
-      { initials: "GE", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
+      { initials: "GG", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
       { initials: "MO", gradient: "linear-gradient(135deg,#a78bfa,#f87171)" },
     ],
     taskCount: 11,
@@ -61,7 +61,7 @@ const projects: Project[] = [
     progressColor: "var(--green)",
     tags: ["React", "Tailwind"],
     members: [
-      { initials: "GE", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
+      { initials: "GG", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
     ],
     taskCount: 4,
     due: "Mar 22",
@@ -76,7 +76,7 @@ const projects: Project[] = [
     progressColor: "var(--accent)",
     tags: ["Next.js", "Fastify"],
     members: [
-      { initials: "GE", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
+      { initials: "GG", gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)" },
       { initials: "AK", gradient: "linear-gradient(135deg,#f59e0b,#f87171)" },
       { initials: "TN", gradient: "linear-gradient(135deg,#2dd4a0,#4f8eff)" },
       { initials: "MO", gradient: "linear-gradient(135deg,#a78bfa,#f87171)" },

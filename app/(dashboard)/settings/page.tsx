@@ -1,7 +1,9 @@
+import ProfileSettings from "@/components/settings/ProfileSettings";
+
 export default function SettingsPage() {
-    return (
-        <div>
-            <h1>Settings</h1>
-        </div>
-    )
+  return (
+    <div>
+      <ProfileSettings />
+    </div>
+  );
 }
