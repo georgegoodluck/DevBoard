@@ -1,3 +1,5 @@
+import CardHeader from "../ui/CardHeader";
+
 const pipelines = [
   { name: "TickrPay", status: "Passing" as const },
   { name: "Pulse", status: "Failed" as const },
@@ -17,8 +19,8 @@ const statusConfig = {
 
 export default function CicdStatus() {
   return (
-    <>
-      <h1>CI / CD Status</h1>
-    </>
+    <div className="bg-(--bg1)">
+      <CardHeader title="CI / CD Status" dotColor="var(--danger)" />
+    </div>
   );
 }
