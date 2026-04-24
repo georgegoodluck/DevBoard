@@ -1,4 +1,4 @@
-export type BadgeVariant = "green" | "amber" | "red" | "blue" | "purple";
+export type BadgeVariant = "green" | "amber" | "red" | "blue" | "purple" | "gray";
 
 type Props = {
   label: string;
@@ -6,11 +6,12 @@ type Props = {
 };
 
 const variantStyles: Record<BadgeVariant, string> = {
-  green: "bg-[var(--green-dim)] text-[var(--green)]",
-  amber: "bg-[var(--amber-dim)] text-[var(--amber)]",
-  red: "bg-[var(--danger-dim)] text-[var(--danger)]",
-  blue: "bg-[var(--accent-dim)] text-[var(--accent)]",
-  purple: "bg-[var(--purple-dim)] text-[var(--purple)]",
+  green: "bg-(--green-dim) text-(--green)",
+  amber: "bg-(--amber-dim) text-(--amber)",
+  red: "bg-(--danger-dim) text-(--danger)",
+  blue: "bg-(--accent-dim) text-(--accent)",
+  purple: "bg-(--purple-dim) text-(--purple)",
+  gray: "bg-(--gray) text-(--text2)"
 };
 
 export default function Badge({ label, variant }: Props) {
