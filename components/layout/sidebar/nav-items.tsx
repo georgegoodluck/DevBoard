@@ -9,14 +9,14 @@ export const navItems: NavItems[] = [
   },
   {
     label: "Projects",
-    badge: 6,
+    badge: 5,
     href: "/projects",
     icon: <FolderKanban size={14} />,
   },
   {
     label: "Activity",
     href: "/activity",
-    badge: 12,
+    badge: 8,
     icon: <Activity size={14} />,
   },
 ];

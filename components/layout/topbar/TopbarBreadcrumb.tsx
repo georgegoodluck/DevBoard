@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 
 const pageMeta: Record<string, { title: string; sub: string }> = {
   "/overview": { title: "Overview", sub: "Devboard workspace" },
-  "/projects": { title: "Projects", sub: "6 active projects" },
+  "/projects": { title: "Projects", sub: "5 active projects" },
   "/activity": { title: "Activity", sub: "Team feed" },
   "/settings": { title: "Settings", sub: "Account & workspace settings" },
 };
