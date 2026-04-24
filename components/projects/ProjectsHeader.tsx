@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Plus } from "lucide-react";
 
 type Tab = "all" | "active" | "archived";

@@ -2,6 +2,12 @@ import CardHeader from "../ui/CardHeader";
 import ActivityItem from "@/components/activity/ActivityItem";
 import { ActivityEvent } from "@/types/activity";
 
+type Tab = "all" | "commits" | "tasks" | "comments";
+
+type Props = {
+  activeTab?: Tab; // Make it optional for flexibility
+};
+
 const events: ActivityEvent[] = [
   {
     id: "1",
@@ -77,7 +83,30 @@ const events: ActivityEvent[] = [
   },
 ];
 
-export default function ActivityFeed() {
+// Filter function based on tab
+const filterEventsByTab = (
+  events: ActivityEvent[],
+  tab: Tab,
+): ActivityEvent[] => {
+  if (tab === "all") return events;
+
+  switch (tab) {
+    case "commits":
+      return events.filter(
+        (e) => e.type === "merge" || e.action?.includes("commit"),
+      );
+    case "tasks":
+      return events.filter((e) => e.type === "task");
+    case "comments":
+      return events.filter((e) => e.type === "comment");
+    default:
+      return events;
+  }
+};
+
+export default function ActivityFeed({ activeTab = "all" }: Props) {
+  const filteredEvents = filterEventsByTab(events, activeTab);
+
   return (
     <div className="bg-(--bg) border border-(--border) rounded-(--radius) overflow-hidden">
       <CardHeader
@@ -85,15 +114,23 @@ export default function ActivityFeed() {
         dotColor="var(--accent)"
         right={
           <span className="font-mono text-[10px] text-(--text3)">
-            Today &#x2022; {events.length} events
+            {activeTab === "all"
+              ? "Today"
+              : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            {" • "}
+            {filteredEvents.length} events
           </span>
         }
       />
 
       <div>
-        {events.map((e) => (
-          <ActivityItem key={e.id} event={e} />
-        ))}
+        {filteredEvents.length > 0 ? (
+          filteredEvents.map((e) => <ActivityItem key={e.id} event={e} />)
+        ) : (
+          <div className="px-3.5 py-8 text-center text-(--text3) text-[12px]">
+            No {activeTab !== "all" ? activeTab : ""} events found
+          </div>
+        )}
       </div>
     </div>
   );

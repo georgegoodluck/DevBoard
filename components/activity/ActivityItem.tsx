@@ -22,7 +22,6 @@ const iconConfig = {
 };
 
 export default function ActivityItem({ event }: { event: ActivityEvent }) {
-  // AcitvityItem recieves a prop called event which must be of type ActivityEvent
   const cfg = iconConfig[event.type];
   const Icon = cfg.icon;
 
@@ -46,7 +45,7 @@ export default function ActivityItem({ event }: { event: ActivityEvent }) {
         <div className="flex items-center gap-2 font-mono text-[10px] text-(--text3) mt-0.5">
           <span>{event.time}</span>
           <span className="text-(--text3) text-[14px] font-bold leading-none">
-            &#x2022;
+            •
           </span>
           <span>{event.project}</span>
         </div>
