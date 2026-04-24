@@ -6,7 +6,7 @@ export default function ActivityPage() {
   return (
     <div className="grid grid-cols-[1fr_300px] gap-2.5">
       <ActivityFeed />
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-2.5">
         <ContributionsPanel />
         <CicdStatus />
       </div>
