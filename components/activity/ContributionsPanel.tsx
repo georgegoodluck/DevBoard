@@ -40,32 +40,33 @@ const max = Math.max(...contributors.map((c) => c.count));
 
 export default function ContributionsPanel() {
   return (
-    <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
+    <div className="bg-(--bg1) border border-(--border) rounded-md overflow-hidden">
       <CardHeader
-        title="Contributors"
+        title="Contributions"
         dotColor="var(--amber)"
         right={
-          <span className="font-mono  text-[10px] text-(--text3)">
+          <span className="font-mono text-[10px] text-(--text3)">
             This week
           </span>
         }
       />
-
-      <div className="p-4.5 flex flex-col gap-4.5">
+      <div className="p-3.5 flex flex-col gap-2.5">
         {contributors.map((c) => (
           <div key={c.initials} className="flex items-center gap-2">
-            <Avatar initials={c.initials} gradient={c.gradient} />
-            <span>{c.name}</span>
-            <div className="h-1 w-40 rounded-(--radius) bg-(--bg3) overflow-hidden">
+            <Avatar initials={c.initials} gradient={c.gradient} size={22} />
+            <span className="text-[12px] text-(--text) flex-1">{c.name}</span>
+            <div className="w-20 h-1 bg-(--bg3) rounded-xs overflow-hidden">
               <div
-                className="h-full rounded-(--radius)"
+                className="h-full rounded-xs"
                 style={{
                   width: `${(c.count / max) * 100}%`,
                   background: c.color,
                 }}
               />
             </div>
-            <span className="text-(--text3) font-mono">{c.count}</span>
+            <span className="font-mono text-[10px] text-(--text3) w-5 text-right">
+              {c.count}
+            </span>
           </div>
         ))}
       </div>
