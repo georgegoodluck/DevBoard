@@ -1,7 +1,9 @@
+import CardHeader from "@/components/ui/CardHeader";
+
 export default function NotificationSettings() {
   return (
-    <div>
-      <h1>Notification</h1>
+    <div className="border border-(--border) rounded-(--radius) bg-(--bg1 overflow-hidden">
+      <CardHeader title="Notifications" dotColor="var-(--amber)" />
     </div>
   );
 }
