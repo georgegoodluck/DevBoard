@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+```markdown
+# DevBoard - Developer Dashboard
+
+A modern, responsive developer dashboard built with Next.js 15, Tailwind CSS, and TypeScript.
+
+## Tech Stack
+
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS
+- Lucide React (Icons)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm / yarn / pnpm
+
+### Installation
 
 ```bash
+# Clone repository
+git clone <your-repo-url>
+cd devboard
+
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   └── dashboard/
+│       └── page.tsx
+├── components/
+│   ├── ui/
+│   │   └── CardHeader.tsx
+│   └── dashboard/
+│       ├── ActiveProjects.tsx
+│       ├── RecentTasks.tsx
+│       ├── SprintVelocity.tsx
+│       ├── TeamPanel.tsx
+│       ├── Deadlines.tsx
+│       └── StatsCards.tsx
+└── styles/
+    └── globals.css
+```
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- 📊 Sprint velocity chart with gradient bars
+- ✅ Active projects table with progress tracking
+- 👥 Team member panel with status indicators
+- ⏰ Deadline tracker with urgency levels
+- 📱 Fully responsive layout
+- 🎨 Dark theme with CSS variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
 
-## Deploy on Vercel
+## CSS Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Customize colors in `globals.css`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```css
+--bg: #0d0d10
+--accent: #8b5cf6
+--green: #2dd4a0
+--amber: #f59e0b
+--danger: #b30707
