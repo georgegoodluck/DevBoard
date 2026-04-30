@@ -40,6 +40,27 @@ const settings: Setting[] = [
   },
 ];
 
+function Toggle({
+  enabled,
+  onToggle,
+}: {
+  enabled: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className="relative w-8 h-4 rounded-full transition-all shrink-0 cursor-pointer"
+      style={{ background: enabled ? "var(--accent)" : "var(--border2)" }}
+    >
+      <div
+        className="absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all"
+        style={{ left: enabled ? "calc(100% - 14px)" : "2px" }}
+      />
+    </button>
+  );
+}
+
 export default function NotificationSettings() {
   return (
     <div className="bg-(--bg1) rounded-(--radius) border border-(--border) overflow-hidden">
