@@ -1,7 +1,9 @@
+import CardHeader from "../ui/CardHeader";
+
 export default function WorkspaceSettings() {
-    return (
-        <div>
-            <h1>Workspace</h1>
-        </div>
-    )
+  return (
+    <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
+      <CardHeader title="Workspace" dotColor="var(--purple)" />
+    </div>
+  );
 }
