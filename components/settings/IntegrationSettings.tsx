@@ -1,7 +1,9 @@
+import CardHeader from "@/components/ui/CardHeader";
+
 export default function IntegrationSettings() {
-    return (
-        <div>
-            <h1>Integrations</h1>
-        </div>
-    )
+  return (
+    <div className="bg-(--bg1) border border-(--border) rounded-(--radius) overflow-hidden">
+      <CardHeader title="Integrations" dotColor="var(--green)" />
+    </div>
+  );
 }
