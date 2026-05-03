@@ -1,21 +1,34 @@
 import CardHeader from "@/components/ui/CardHeader";
 import Badge from "../ui/Badge";
+import { FaGithub, FaSlack } from "react-icons/fa";
+import { IoLogoVercel } from "react-icons/io5";
+import { SiSentry } from "react-icons/si";
 
 const integrations = [
   {
-    emoji: "🐙",
+    icon: <FaGithub size={18} />,
     name: "GitHub",
     detail: "Connected · @georgedev",
     connected: true,
   },
   {
-    emoji: "▲",
+    icon: <IoLogoVercel size={18} />,
     name: "Vercel",
     detail: "Connected · devboard team",
     connected: true,
   },
-  { emoji: "🔔", name: "Slack", detail: "Not connected", connected: false },
-  { emoji: "🛡️", name: "Sentry", detail: "Not connected", connected: false },
+  {
+    icon: <FaSlack size={18} />,
+    name: "Slack",
+    detail: "Not connected",
+    connected: false,
+  },
+  {
+    icon: <SiSentry size={18} />,
+    name: "Sentry",
+    detail: "Not connected",
+    connected: false,
+  },
 ];
 
 export default function IntegrationSettings() {
@@ -28,7 +41,7 @@ export default function IntegrationSettings() {
             key={item.name}
             className="flex items-center gap-2.5 p-2.5 bg-(--bg2) rounded-(--radius) m-1 border border-(--border)"
           >
-            <span>{item.emoji}</span>
+            <span>{item.icon}</span>
             <div className="flex-1 min-w-0">
               <div className="text-[13px] font-medium text-(--text)">
                 {item.name}
