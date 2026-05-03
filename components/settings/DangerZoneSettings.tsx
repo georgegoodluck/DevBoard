@@ -15,7 +15,7 @@ export default function DangerZoneSettings() {
               Permanently remove everything
             </div>
         </div>
-        <button className="border border-(--danger) bg-(--danger-dim) h-7 px-3.5 rounded-(--radius) text-(--danger) font-semibold">
+        <button className="border border-(--danger) bg-(--danger-dim) h-7 px-3.5 rounded-(--radius) text-(--danger) font-semibold hover:bg-(--danger) hover:text-white transition-colors cursor-pointer">
           Delete
         </button>
       </div>
