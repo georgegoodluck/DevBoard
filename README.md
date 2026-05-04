@@ -134,4 +134,3 @@ You can globalize your brand colors by modifying the CSS variables in `styles/gl
 *   `npm run build`: Compiles the application for production.
 *   `npm run start`: Runs the compiled production build.
 *   `npm run lint`: Performs a static analysis check on your code.
-```
