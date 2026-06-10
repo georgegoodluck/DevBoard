@@ -33,7 +33,7 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   // for programmatic navigation
   const router = useRouter();
-
+  // Command definitions with id, label, optional description, icon, and action to perform when selected. Each command navigates to a different page and closes the command palette afterward.
   const commands: Command[] = [
     {
       id: "overview",
@@ -86,6 +86,34 @@ export default function CommandPalette() {
   const filtered = commands.filter((c) =>
     c.label.toLowerCase().includes(query.toLowerCase()),
   );
+
+  // Effects
+  // Focus input when palette opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 10);
+      setQuery("");
+      setSelected(0);
+    }
+  }, [isOpen]);
+
+  // Keyboard Navigation
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (!isOpen) return;
+      // Arrow Down key moves the selection down the list of filtered commands. It prevents the default behavior (like scrolling) and updates the selected index, ensuring it doesn't go beyond the last item in the filtered list.
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        // moves selection down the list, ensuring it doesn't go beyond the last item.
+        setSelected((prev) => Math.min(prev + 1, filtered.length - 1));
+      }
+      // Arrow Up key moves the selection up the list of filtered commands. It prevents the default behavior and updates the selected index, ensuring it doesn't go below zero.
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelected((prev) => Math.max(prev - 1, 0));
+      }
+    }
+  });
 
   return (
     <>
