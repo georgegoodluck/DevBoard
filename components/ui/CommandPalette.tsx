@@ -16,7 +16,7 @@ import {
 // Define the structure of a command in the palette
 type Command = {
   id: string;
-  name: string;
+  label: string;
   description?: string;
   icon: React.ReactNode;
   action: () => void;
@@ -24,7 +24,7 @@ type Command = {
 
 export default function CommandPalette() {
   // access the command palette state and close function from the context
-  const [isOpen, close] = useCommandPalette();
+  const { isOpen, close } = useCommandPalette();
   // search query state
   const [query, setQuery] = useState("");
   // currently highlighted command index for keyboard navigation
@@ -82,6 +82,10 @@ export default function CommandPalette() {
     },
   ];
 
+  // Filter commands based on the search query, making it case-insensitive and matching any part of the command label.
+  const filtered = commands.filter((c) =>
+    c.label.toLowerCase().includes(query.toLowerCase()),
+  );
 
   return (
     <>
