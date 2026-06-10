@@ -22,6 +22,10 @@ type Command = {
 };
 
 export default function CommandPalette() {
+  const [isOpen, close] = useCommandPalette();
+  const [query, setQuery] = useState("");
+  const [isSelected, setIsSelected] = useState(0);
+
   return (
     <>
       <h1>Command Palette</h1>
