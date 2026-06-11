@@ -112,8 +112,16 @@ export default function CommandPalette() {
         e.preventDefault();
         setSelected((prev) => Math.max(prev - 1, 0));
       }
+      // Enter key
+      if (e.key === "Enter" && filtered[selected]) {
+        filtered[selected].action();
+      }
     }
-  });
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, filtered, selected]);
+
+  if (!isOpen) return null;
 
   return (
     <>
