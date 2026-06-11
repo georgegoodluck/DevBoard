@@ -13,7 +13,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-// Define the structure of a command in the palette
 type Command = {
   id: string;
   label: string;
@@ -23,17 +22,12 @@ type Command = {
 };
 
 export default function CommandPalette() {
-  // access the command palette state and close function from the context
   const { isOpen, close } = useCommandPalette();
-  // search query state
   const [query, setQuery] = useState("");
-  // currently highlighted command index for keyboard navigation
-  const [isSelected, setIsSelected] = useState(0);
-  // reference to the input element for focus management
+  const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  // for programmatic navigation
   const router = useRouter();
-  // Command definitions with id, label, optional description, icon, and action to perform when selected. Each command navigates to a different page and closes the command palette afterward.
+
   const commands: Command[] = [
     {
       id: "overview",
@@ -82,50 +76,139 @@ export default function CommandPalette() {
     },
   ];
 
-  // Filter commands based on the search query, making it case-insensitive and matching any part of the command label.
   const filtered = commands.filter((c) =>
     c.label.toLowerCase().includes(query.toLowerCase()),
   );
 
-  // Effects
-  // Focus input when palette opens
+  // Focus input and reset state when opened
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 10);
-      setQuery("");
-      setSelected(0);
+      setTimeout(() => {
+        inputRef.current?.focus();
+        setQuery("");
+        setSelected(0);
+      }, 10);
     }
   }, [isOpen]);
 
-  // Keyboard Navigation
+  // Keyboard navigation
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+    function handleKey(e: KeyboardEvent) {
       if (!isOpen) return;
-      // Arrow Down key moves the selection down the list of filtered commands. It prevents the default behavior (like scrolling) and updates the selected index, ensuring it doesn't go beyond the last item in the filtered list.
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        // moves selection down the list, ensuring it doesn't go beyond the last item.
         setSelected((prev) => Math.min(prev + 1, filtered.length - 1));
       }
-      // Arrow Up key moves the selection up the list of filtered commands. It prevents the default behavior and updates the selected index, ensuring it doesn't go below zero.
       if (e.key === "ArrowUp") {
         e.preventDefault();
         setSelected((prev) => Math.max(prev - 1, 0));
       }
-      // Enter key
       if (e.key === "Enter" && filtered[selected]) {
         filtered[selected].action();
       }
     }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, filtered, selected]);
 
   if (!isOpen) return null;
 
   return (
     <>
-      <h1>Command Palette</h1>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/50 z-[50]" onClick={close} />
+
+      {/* Palette */}
+      <div
+        className="fixed top-[20%] left-1/2 -translate-x-1/2 w-[520px] bg-[var(--bg1)] border border-[var(--border2)] rounded-[8px] z-[51] overflow-hidden"
+        style={{ boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}
+      >
+        {/* Search input */}
+        <div className="flex items-center gap-[10px] px-[14px] border-b border-[var(--border)]">
+          <Search size={14} className="text-[var(--text3)] shrink-0" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelected(0);
+            }}
+            placeholder="Search commands..."
+            className="flex-1 bg-transparent py-[14px] text-[13px] text-[var(--text)] placeholder:text-[var(--text3)] outline-none font-mono"
+          />
+          <kbd className="font-mono text-[10px] bg-[var(--bg3)] border border-[var(--border2)] rounded-[3px] px-[5px] py-[2px] text-[var(--text3)]">
+            ESC
+          </kbd>
+        </div>
+
+        {/* Results */}
+        <div className="py-[6px]">
+          {filtered.length === 0 ? (
+            <div className="px-[14px] py-[24px] text-center font-mono text-[11px] text-[var(--text3)]">
+              No results for &quot;{query}&quot;
+            </div>
+          ) : (
+            filtered.map((cmd, i) => (
+              <div
+                key={cmd.id}
+                onClick={cmd.action}
+                onMouseEnter={() => setSelected(i)}
+                className={`flex items-center gap-[10px] px-[14px] py-[9px] cursor-pointer transition-colors ${
+                  i === selected ? "bg-[var(--bg3)]" : ""
+                }`}
+              >
+                <div
+                  className={`w-[26px] h-[26px] rounded-[5px] flex items-center justify-center shrink-0 ${
+                    i === selected
+                      ? "bg-[var(--accent-dim)] text-[var(--accent)]"
+                      : "bg-[var(--bg3)] text-[var(--text3)]"
+                  }`}
+                >
+                  {cmd.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12.5px] text-[var(--text)]">
+                    {cmd.label}
+                  </div>
+                  {cmd.description && (
+                    <div className="font-mono text-[10px] text-[var(--text3)]">
+                      {cmd.description}
+                    </div>
+                  )}
+                </div>
+                {i === selected && (
+                  <ArrowRight
+                    size={12}
+                    className="text-[var(--text3)] shrink-0"
+                  />
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center gap-[12px] px-[14px] py-[8px] border-t border-[var(--border)] bg-[var(--bg2)]">
+          <span className="font-mono text-[10px] text-[var(--text3)]">
+            <kbd className="bg-[var(--bg3)] border border-[var(--border2)] rounded-[3px] px-[4px] py-[1px] mr-[4px]">
+              ↑↓
+            </kbd>
+            navigate
+          </span>
+          <span className="font-mono text-[10px] text-[var(--text3)]">
+            <kbd className="bg-[var(--bg3)] border border-[var(--border2)] rounded-[3px] px-[4px] py-[1px] mr-[4px]">
+              ↵
+            </kbd>
+            select
+          </span>
+          <span className="font-mono text-[10px] text-[var(--text3)]">
+            <kbd className="bg-[var(--bg3)] border border-[var(--border2)] rounded-[3px] px-[4px] py-[1px] mr-[4px]">
+              ESC
+            </kbd>
+            close
+          </span>
+        </div>
+      </div>
     </>
   );
 }
