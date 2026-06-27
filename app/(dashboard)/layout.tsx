@@ -16,7 +16,8 @@ export default function DashboardLayout({
     <CommandPaletteProvider>
       <NewTaskProvider>
         <SidebarProvider>
-          <div className="flex h-screen overflow-hidden bg-(--bg2)">
+          <div className="flex h-screen overflow-hidden bg-(--bg)">
+
             {/* Sidebar — hidden on mobile, visible lg+ */}
             <div className="hidden lg:block">
               <Sidebar />
@@ -24,13 +25,14 @@ export default function DashboardLayout({
 
             <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
               <Topbar />
-              <main className="flex-1 overflow-y-auto p-3 lg:p-5 pb-[72px] lg:pb-5">
+              <main className="flex-1 overflow-y-auto p-3 lg:p-5 pb-18 lg:pb-5">
                 {children}
               </main>
             </div>
+
           </div>
 
-          {/* Bottom nav — visible on mobile only */}
+          {/* Bottom nav — mobile only */}
           <div className="lg:hidden">
             <BottomNav />
           </div>
