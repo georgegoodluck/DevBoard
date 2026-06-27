@@ -79,8 +79,7 @@ export default function NewTaskModal() {
           />
 
           {/* Row of selects */}
-          <div className="flex items-center gap-[8px]">
-            {/* Project */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-[8px]">
             <select
               value={form.project}
               onChange={(e) => setForm({ ...form, project: e.target.value })}
@@ -92,8 +91,6 @@ export default function NewTaskModal() {
                 </option>
               ))}
             </select>
-
-            {/* Priority */}
             <select
               value={form.priority}
               onChange={(e) =>
@@ -110,8 +107,6 @@ export default function NewTaskModal() {
                 </option>
               ))}
             </select>
-
-            {/* Status */}
             <select
               value={form.status}
               onChange={(e) =>
