@@ -1,7 +1,7 @@
-import { NavItems } from "@/types/nav";
+import { NavItem } from "@/types/nav";
 import { LayoutGrid, FolderKanban, Activity, Settings } from "lucide-react";
 
-export const navItems: NavItems[] = [
+export const navItems: NavItem[] = [
   {
     label: "Overview",
     href: "/",
@@ -21,7 +21,7 @@ export const navItems: NavItems[] = [
   },
 ];
 
-export const accountItems: NavItems[] = [
+export const accountItems: NavItem[] = [
   {
     label: "Settings",
     href: "/settings",
