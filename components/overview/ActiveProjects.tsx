@@ -74,58 +74,60 @@ export default function ActiveProjects() {
         dotColor="var(--accent)"
         action={{ label: "View all \u2192" }}
       />
+
       {/* Table */}
-
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            {["Project", "Status", "Progress", "Due"].map((h) => (
-              <th
-                key={h}
-                className="text-left font-mono text-[12px] uppercase text-(--text3) px-3.5 py-2 border-b border-(--border)"
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {projects.map((p) => (
-            <tr
-              key={p.name}
-              className="border-b border-(--border) hover:bg-(--bg2) transition-colors"
-            >
-              <td className="px-3.5 py-2.5">
-                <div className="text-[13px] font-medium text-(--text)">
-                  {p.name}
-                </div>
-                <div className="text-(--text3) text-[11px]">
-                  {p.description}
-                </div>
-              </td>
-
-              <td className="px-3.5 py-2.5">
-                <Badge label={p.status} variant={statusToVariant[p.status]} />
-              </td>
-
-              <td className="px-3.5 py-2.5">
-                {/* Progress bar */}
-                <ProgressBar
-                  value={p.progress}
-                  color={progressColors[p.status]}
-                />
-              </td>
-
-              <td className="px-3.5 py-2.5">
-                <span className="text-(--text3) text-[10px] font-mono">
-                  {p.due}
-                </span>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse min-w-[480px]">
+          <thead>
+            <tr>
+              {["Project", "Status", "Progress", "Due"].map((h) => (
+                <th
+                  key={h}
+                  className="text-left font-mono text-[12px] uppercase text-(--text3) px-3.5 py-2 border-b border-(--border)"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {projects.map((p) => (
+              <tr
+                key={p.name}
+                className="border-b border-(--border) hover:bg-(--bg2) transition-colors"
+              >
+                <td className="px-3.5 py-2.5">
+                  <div className="text-[13px] font-medium text-(--text)">
+                    {p.name}
+                  </div>
+                  <div className="text-(--text3) text-[11px] hidden sm:block">
+                    {p.description}
+                  </div>
+                </td>
+
+                <td className="px-3.5 py-2.5">
+                  <Badge label={p.status} variant={statusToVariant[p.status]} />
+                </td>
+
+                <td className="px-3.5 py-2.5">
+                  {/* Progress bar */}
+                  <ProgressBar
+                    value={p.progress}
+                    color={progressColors[p.status]}
+                  />
+                </td>
+
+                <td className="px-3.5 py-2.5">
+                  <span className="text-(--text3) text-[10px] font-mono">
+                    {p.due}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
