@@ -95,14 +95,14 @@ export default function RecentTasks() {
               className={`w-1.75 h-1.75 rounded-full`}
               style={{ backgroundColor: priorityColors[t.priority] }}
             ></span>
-            {/* Task ID */}
-            <div className="text-[10px] text-(--text3) font-mono w-14 shrink-0">
+            {/* Task ID, also hide Task ID on mobile */}
+            <span className="hidden sm:block text-[10px] text-(--text3) font-mono w-14 shrink-0">
               {t.id}
-            </div>
+            </span>
             {/* Task Name */}
-            <div className="flex-1 truncate text-[13px] font-medium text-(--text1)">
+            <span className="flex-1 truncate min-w-0 text-[13px] font-medium text-(--text1)">
               {t.name}
-            </div>
+            </span>
             {/* Status Badge */}
             {/* <span
               className={`inline-flex items-center gap-2 px-1.5 py-0.2 rounded-(--radius) ${statusStyle[t.status]}`}
@@ -114,7 +114,7 @@ export default function RecentTasks() {
             <Avatar
               initials={t.assignee}
               gradient={t.assigneeColor}
-              size={26}
+              size={22}
             />
             {/* <div
               className="text-right rounded-full px-1.5 py-1"
