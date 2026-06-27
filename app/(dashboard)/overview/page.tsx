@@ -7,18 +7,18 @@ import Deadlines from "@/components/overview/Deadlines";
 
 export default function OverviewPage() {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2.5">
       <StatCardGrid />
 
-      {/* Two Column Layout */}
-      <div className="flex gap-2.5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-2.5">
         {/* Left Column */}
-        <div className="flex-1 flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <ActiveProjects />
           <RecentTasks />
         </div>
 
-        <div className="flex flex-col gap-2 w-80">
+        {/* Right - Full width on mobile, sidebar on desktop */}
+        <div className="flex flex-col gap-2.5">
           <SprintVelocity />
           <TeamPanel />
           <Deadlines />
