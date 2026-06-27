@@ -120,7 +120,7 @@ export default function CommandPalette() {
 
       {/* Palette */}
       <div
-        className="fixed top-[20%] left-1/2 -translate-x-1/2 w-[520px] bg-[var(--bg1)] border border-[var(--border2)] rounded-[8px] z-[51] overflow-hidden"
+        className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[calc(100vw-32px)] max-w-[520px] bg-[var(--bg1)] border border-[var(--border2)] rounded-[8px] z-[51] overflow-hidden"
         style={{ boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}
       >
         {/* Search input */}
