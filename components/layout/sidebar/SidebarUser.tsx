@@ -1,3 +1,5 @@
+"use client";
+
 import Avatar from "@/components/ui/Avatar";
 
 export default function SidebarUser({ collapsed }: { collapsed: boolean }) {
