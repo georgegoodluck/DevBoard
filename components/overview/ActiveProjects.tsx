@@ -76,8 +76,8 @@ export default function ActiveProjects() {
       />
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse min-w-[480px]">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-track-(--bg2) scrollbar-thumb-(--border2) hover:scrollbar-thumb-(--accent)">
+        <table className="w-full border-collapse min-w-120">
           <thead>
             <tr>
               {["Project", "Status", "Progress", "Due"].map((h) => (
