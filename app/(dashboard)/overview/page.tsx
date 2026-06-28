@@ -1,4 +1,4 @@
-import StatGrid from "@/components/overview/StatGrid";
+import StatCardGrid from "@/components/overview/StatCardGrid";
 import ActiveProjects from "@/components/overview/ActiveProjects";
 import RecentTasks from "@/components/overview/RecentTasks";
 import SprintVelocity from "@/components/overview/SprintVelocity";
@@ -7,17 +7,18 @@ import Deadlines from "@/components/overview/Deadlines";
 
 export default function OverviewPage() {
   return (
-    <div className="flex flex-col gap-2">
-      <StatGrid />
-      {/* Two Column Layout */}
-      <div className="flex gap-2.5">
+    <div className="flex flex-col gap-2.5">
+      <StatCardGrid />
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-2.5">
         {/* Left Column */}
-        <div className="flex-1 flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <ActiveProjects />
           <RecentTasks />
         </div>
 
-        <div className="flex flex-col gap-2 w-80">
+        {/* Right - Full width on mobile, sidebar on desktop */}
+        <div className="flex flex-col gap-2.5">
           <SprintVelocity />
           <TeamPanel />
           <Deadlines />

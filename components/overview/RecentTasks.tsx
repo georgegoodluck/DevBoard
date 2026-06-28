@@ -88,21 +88,21 @@ export default function RecentTasks() {
         {tasks.map((t) => (
           <div
             key={t.id}
-            className="flex items-center gap-2 px-3 py-2 border-b border-(--border) hover:bg-(--bg2)"
+            className="flex items-center gap-2 px-3 py-2 border-b border-(--border) hover:bg-(--bg2) cursor-pointer transition-colors"
           >
             {/* Priority Dot */}
             <span
-              className={`w-1.75 h-1.75 rounded-full`}
+              className={`w-1.75 h-1.75 rounded-full shrink-0`}
               style={{ backgroundColor: priorityColors[t.priority] }}
             ></span>
-            {/* Task ID */}
-            <div className="text-[10px] text-(--text3) font-mono w-14 shrink-0">
+            {/* Task ID, also hide Task ID on mobile */}
+            <span className="hidden sm:block text-[10px] text-(--text3) font-mono w-13 shrink-0">
               {t.id}
-            </div>
+            </span>
             {/* Task Name */}
-            <div className="flex-1 truncate text-[13px] font-medium text-(--text1)">
+            <span className="flex-1 truncate min-w-0 text-[12.5px] text-(--text1)">
               {t.name}
-            </div>
+            </span>
             {/* Status Badge */}
             {/* <span
               className={`inline-flex items-center gap-2 px-1.5 py-0.2 rounded-(--radius) ${statusStyle[t.status]}`}
@@ -110,11 +110,13 @@ export default function RecentTasks() {
               <span className="w-1.5 h-1.5 bg-current rounded-full" />
               {t.status}
             </span> */}
-            <Badge label={t.status} variant={statusToStyle[t.status]} />
+            <span className="hidden sm:block shrink-0">
+              <Badge label={t.status} variant={statusToStyle[t.status]} />
+            </span>
             <Avatar
               initials={t.assignee}
               gradient={t.assigneeColor}
-              size={26}
+              size={22}
             />
             {/* <div
               className="text-right rounded-full px-1.5 py-1"

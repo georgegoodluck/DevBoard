@@ -52,19 +52,21 @@ export default function ContributionsPanel() {
       />
       <div className="p-3.5 flex flex-col gap-2.5">
         {contributors.map((c) => (
-          <div key={c.initials} className="flex items-center gap-2">
+          <div key={c.initials} className="flex items-center gap-[8px]">
             <Avatar initials={c.initials} gradient={c.gradient} size={22} />
-            <span className="text-[12px] text-(--text) flex-1">{c.name}</span>
-            <div className="w-20 h-1 bg-(--bg3) rounded-xs overflow-hidden">
+            <span className="text-[12px] text-[var(--text)] w-[60px] shrink-0 truncate">
+              {c.name}
+            </span>
+            <div className="flex-1 h-[4px] bg-[var(--bg3)] rounded-[2px] overflow-hidden">
               <div
-                className="h-full rounded-xs"
+                className="h-full rounded-[2px]"
                 style={{
                   width: `${(c.count / max) * 100}%`,
                   background: c.color,
                 }}
               />
             </div>
-            <span className="font-mono text-[10px] text-(--text3) w-5 text-right">
+            <span className="font-mono text-[10px] text-[var(--text3)] w-[20px] text-right shrink-0">
               {c.count}
             </span>
           </div>

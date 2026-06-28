@@ -6,7 +6,7 @@ import IntegrationSettings from "@/components/settings/IntegrationSettings";
 
 export default function SettingsPage() {
   return (
-    <div className="grid grid-cols-2 item-start gap-2.5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 item-start gap-2.5">
       <div className="flex flex-col gap-2.5">
         <ProfileSettings />
         <WorkspaceSettings />

@@ -42,7 +42,7 @@ export default function NewTaskModal() {
 
       {/* Modal */}
       <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] bg-[var(--bg1)] border border-[var(--border2)] rounded-[8px] z-[51] overflow-hidden"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-32px)] max-w-[480px] bg-[var(--bg1)] border border-[var(--border2)] rounded-[8px] z-[51] overflow-hidden"
         style={{ boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}
       >
         {/* Header */}
@@ -79,8 +79,7 @@ export default function NewTaskModal() {
           />
 
           {/* Row of selects */}
-          <div className="flex items-center gap-[8px]">
-            {/* Project */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-[8px]">
             <select
               value={form.project}
               onChange={(e) => setForm({ ...form, project: e.target.value })}
@@ -92,8 +91,6 @@ export default function NewTaskModal() {
                 </option>
               ))}
             </select>
-
-            {/* Priority */}
             <select
               value={form.priority}
               onChange={(e) =>
@@ -110,8 +107,6 @@ export default function NewTaskModal() {
                 </option>
               ))}
             </select>
-
-            {/* Status */}
             <select
               value={form.status}
               onChange={(e) =>

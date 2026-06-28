@@ -107,7 +107,8 @@ export default function ProjectsGrid({ filter }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-2.5">
+    // Single columns on mobile, two on tablet and three on desktop
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
       {filtered.map((p) => (
         <ProjectsCard key={p.name} project={p} />
       ))}

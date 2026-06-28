@@ -16,14 +16,14 @@ const tabs: { label: string; value: Tab }[] = [
 
 export default function ActivityHeader({ activeTab, onTabChange }: Props) {
   return (
-    <div className="flex items-center gap-2.5 mb-4">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-stretch gap-2 p-[10px_14px]">
       {/* Tabs */}
       <div className="flex gap-0.5 p-1 bg-(--bg2) border border-(--border) rounded-[5px]">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => onTabChange(tab.value)}
-            className={`px-5 py-1.25 rounded-[3px] font-mono text-[11px] font-medium cursor-pointer transition-all ${
+            className={`flex-1 px-4 py-1 rounded-[3px] font-mono text-[11px] font-medium cursor-pointer transition-all ${
               activeTab === tab.value
                 ? "bg-(--bg1) text-(--text) shadow-sm"
                 : "text-(--text3) hover:text-(--text)"
@@ -34,11 +34,11 @@ export default function ActivityHeader({ activeTab, onTabChange }: Props) {
         ))}
       </div>
       {/* Actions */}
-      <div className="ml-auto flex items-center gap-2">
-        <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-(--radius) border border-(--border2) bg-(--bg2) text-(--text2) font-mono text-[11px] cursor-pointer hover:bg-(--bg3) hover:text-(--text) transition-colors">
-          Filter by Project
-        </button>
-      </div>
+      {/* <div className="sm:ml-auto flex items-center gap-2"> */}
+      <button className="sm:ml-auto h-[28px] px-[10px] rounded-[var(--radius)] border border-[var(--border2)] bg-[var(--bg2)] text-[var(--text2)] font-mono text-[11px] cursor-pointer hover:bg-[var(--bg3)] hover:text-[var(--text)] transition-colors">
+        Filter by project
+      </button>
+      {/* </div> */}
     </div>
   );
 }
