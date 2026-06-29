@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { PanelLeft } from "lucide-react";
+import { PanelLeft, PanelRight } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 
 export default function SidebarLogo({ collapsed }: { collapsed: boolean }) {
@@ -17,8 +17,8 @@ export default function SidebarLogo({ collapsed }: { collapsed: boolean }) {
           <Image
             src="/icon.svg"
             alt="DevBoard"
-            width={22}
-            height={22}
+            width={20}
+            height={20}
             className="shrink-0"
           />
           <span className="font-mono text-[13px] font-semibold tracking-tight ml-2">
@@ -29,9 +29,9 @@ export default function SidebarLogo({ collapsed }: { collapsed: boolean }) {
       )}
       <button
         onClick={toggle}
-        className={`${collapsed ? "mx-auto" : "ml-auto"} text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer`}
+        className={`${collapsed ? "mx-auto" : "ml-auto"} text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer p-[4px] rounded-[var(--radius)] hover:bg-[var(--bg3)]`}
       >
-        <PanelLeft size={14} />
+        {collapsed ? <PanelRight size={13} /> : <PanelLeft size={13} />}
       </button>
     </div>
   );
