@@ -17,8 +17,8 @@ export default function SidebarLogo({ collapsed }: { collapsed: boolean }) {
           <Image
             src="/icon.svg"
             alt="DevBoard"
-            width={20}
-            height={20}
+            width={40}
+            height={40}
             className="shrink-0"
           />
           <span className="font-mono text-[13px] font-semibold tracking-tight ml-2">
@@ -31,7 +31,7 @@ export default function SidebarLogo({ collapsed }: { collapsed: boolean }) {
         onClick={toggle}
         className={`${collapsed ? "mx-auto" : "ml-auto"} text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer p-[4px] rounded-[var(--radius)] hover:bg-[var(--bg3)]`}
       >
-        {collapsed ? <PanelRight size={13} /> : <PanelLeft size={13} />}
+        {collapsed ? <PanelRight size={20} /> : <PanelLeft size={20} />}
       </button>
     </div>
   );
