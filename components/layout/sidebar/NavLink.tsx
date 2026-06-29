@@ -36,7 +36,7 @@ export default function NavLink({
 
       {item.icon}
 
-      {!collapsed && <span>{item.label}</span>}
+      {!collapsed && <span className="text-sm">{item.label}</span>}
 
       {!collapsed && item.badge !== undefined && (
         <span className="ml-auto font-mono text-[10px] font-medium px-[6px] py-[1px] rounded-[3px] bg-[var(--accent-dim)] text-[var(--accent)]">
