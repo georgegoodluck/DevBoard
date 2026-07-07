@@ -1,3 +1,11 @@
+export type ActivityType =
+  | "merge"
+  | "task"
+  | "comment"
+  | "deploy"
+  | "ci"
+  | "update";
+
 export type ActivityEvent = {
   id: string;
   actor: string;
@@ -5,5 +13,5 @@ export type ActivityEvent = {
   target: string;
   project: string;
   time: string;
-  type: "merge" | "task" | "comment" | "deploy" | "ci" | "update";
+  type: ActivityType;
 };
