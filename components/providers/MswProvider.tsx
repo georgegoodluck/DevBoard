@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 
 export default function MswProvider({
   children,
@@ -8,7 +10,18 @@ export default function MswProvider({
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    
-  })
-  
+    if (process.env.NODE_ENV === "development") {
+      import("@/mocks/browser").then(({ worker }) => {
+        worker
+          .start({ onUnhandledRequest: "bypass" })
+          .then(() => setReady(true));
+      });
+    } else {
+      setReady(true);
+    }
+  }, []);
+
+  if (!ready) return null;
+
+  return <>{children}</>;
 }
