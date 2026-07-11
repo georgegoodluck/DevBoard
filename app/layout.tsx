@@ -34,9 +34,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}>
         <QueryProvider>
-          <MswProvider />
-          {children}
-          <MswProvider />
+          <MswProvider>
+            {children}
+          </MswProvider>
         </QueryProvider>
       </body>
     </html>
