@@ -7,21 +7,40 @@ export default function MswProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [ready, setReady] = useState(false);
+  // Start with true for production, false for development
+  const [ready, setReady] = useState(() => {
+    return process.env.NODE_ENV !== "development";
+  });
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
-      import("@/mocks/browser").then(({ worker }) => {
-        worker
-          .start({ onUnhandledRequest: "bypass" })
-          .then(() => setReady(true));
-      });
-    } else {
-      setReady(true);
+      import("@/mocks/browser")
+        .then(({ worker }) => worker.start({ onUnhandledRequest: "bypass" }))
+        .then(() => {
+          console.log("✅ MSW started successfully");
+          setReady(true);
+        })
+        .catch((error) => {
+          console.error("❌ MSW failed to start:", error);
+          setReady(true); // Still render even if MSW fails
+        });
     }
+    // No else needed - already set to true for production
   }, []);
 
-  if (!ready) return null;
+  // Show loading state while MSW initializes (development only)
+  if (!ready) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-(--bg)">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-(--accent) border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="mt-3 text-sm font-mono text-(--text3)">
+            Starting mock service worker...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return <>{children}</>;
 }
