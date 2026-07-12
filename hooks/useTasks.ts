@@ -11,3 +11,26 @@ export function useTasks() {
     queryFn: () => fetcher("/api/tasks"),
   });
 }
+
+// Hook 2 - Changing Data
+export function useCreateTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (task: Partial<Task>) => {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(task),
+      });
+      if (!res.ok) throw new Error("Failed to create task");
+      return res.json();
+    },
+    onSuccess: () => {
+      // Invalidate tasks cache so the list refetches
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+// How invalidateQueries on success works - After creating a task, the cached task list is stale. It doesn't include the new task yet. Invalidating forces a refetch so the UI updates automatically. This is the React Query pattern for keeping server and client state in sync.
