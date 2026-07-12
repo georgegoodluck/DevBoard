@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
+import MswProvider from "@/components/providers/MswProvider";
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -32,7 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <MswProvider>
+            {children}
+          </MswProvider>
+        </QueryProvider>
       </body>
     </html>
   );
