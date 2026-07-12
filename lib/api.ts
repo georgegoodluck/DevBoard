@@ -5,3 +5,4 @@ async function fetcher<T>(url: string): Promise<T> {
 }
 
 export default fetcher;
+// Shared fetcher because every hook needs to fetch, check for errors, and parse JSON. Centralising it means error handling is consistent and you only change it in one place when you add auth headers later.
