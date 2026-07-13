@@ -5,6 +5,6 @@ import fetcher from "@/lib/api";
 export function useActivity() {
   return useQuery<ActivityEvent[]>({
     queryKey: ["activity"],
-    queryFn: () => fetcher("/api/activity"),
+    queryFn: () => fetcher("/api/activity"),    
   });
 }
