@@ -1,8 +1,12 @@
 type Props = {
-  title: string;
-  dotColor: string;
-  action?: { label: string; onClick?: () => void };
-  right?: React.ReactNode;
+  title: string; // Header text
+  dotColor: string; // Color of decorative dot
+  action?: {
+    // Optional action button
+    label: string; // Button text
+    onClick?: () => void; // Click handler
+  };
+  right?: React.ReactNode; // Custom content on the right
 };
 
 export default function CardHeader({ title, dotColor, action, right }: Props) {

@@ -44,6 +44,14 @@ const members: Member[] = [
   },
 ];
 
+const formatName = (name: string) => {
+  const parts = name.split(" ");
+  if (parts.length === 2) {
+    return `${parts[0]} ${parts[1].charAt(0)}.`;
+  }
+  return name;
+};
+
 const statusConfig = {
   Online: {
     color: "var(--green)",
@@ -90,7 +98,7 @@ export default function TeamPanel() {
               <Avatar initials={m.initials} gradient={m.gradient} size={26} />
               <div className="flex-1 min-w-0">
                 <div className="text-[12.5px] font-medium text-(--text)">
-                  {m.name}
+                  {formatName(m.name)}
                 </div>
                 <div className="text-mono text-[10px] text-(--text3)">
                   {m.role}

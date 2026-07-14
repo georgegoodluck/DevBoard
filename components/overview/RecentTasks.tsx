@@ -1,127 +1,71 @@
+"use client";
+
 import CardHeader from "@/components/ui/CardHeader";
 import Badge from "@/components/ui/Badge";
 import { BadgeVariant } from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
+import { useTasks } from "@/hooks/useTasks";
+import { TaskStatus, TaskPriority } from "@/types/tasks";
 
-type Task = {
-  id: string;
-  name: string;
-  status: "In Progress" | "Todo" | "Done";
-  priority: "low" | "medium" | "high";
-  assignee: string;
-  assigneeColor: string;
+const priorityColors: Record<TaskPriority, string> = {
+  Low: "var(--green)",
+  Medium: "var(--amber)",
+  High: "var(--danger)",
 };
 
-const tasks: Task[] = [
-  {
-    id: "DBD-041",
-    name: "Implement Supabase with auth middleware",
-    status: "In Progress",
-    priority: "high",
-    assignee: "GG",
-    assigneeColor:
-      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
-  },
-  {
-    id: "DBD-040",
-    name: "Design settings page layout",
-    status: "Todo",
-    priority: "medium",
-    assignee: "JD",
-    assigneeColor:
-      "linear-gradient(0deg,rgba(34, 193, 195, 1) 0%, rgba(187, 189, 90, 1) 73%, rgba(253, 187, 45, 1) 100%)",
-  },
-  {
-    id: "DBD-039",
-    name: "Set up Drizzle ORM schema",
-    status: "Done",
-    priority: "low",
-    assignee: "TM",
-    assigneeColor:
-      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(206, 179, 213, 1) 35%, rgba(148, 187, 233, 1) 100%)",
-  },
-  {
-    id: "DBD-038",
-    name: "Fix mobile sidebar overflow",
-    status: "Done",
-    priority: "low",
-    assignee: "MO",
-    assigneeColor:
-      "radial-gradient(circle,rgba(238, 174, 202, 1) 0%, rgba(126, 30, 148, 1) 35%, rgba(148, 187, 233, 1) 100%)",
-  },
-  {
-    id: "DBD-037",
-    name: "Write Playwright E2E for auth flow",
-    status: "Todo",
-    priority: "medium",
-    assignee: "GG",
-    assigneeColor:
-      "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 11%, rgba(0, 212, 255, 1) 100%)",
-  },
-];
-
-const priorityColors: Record<Task["priority"], string> = {
-  low: "var(--green)",
-  medium: "var(--amber)",
-  high: "var(--danger)",
-};
-
-const statusToStyle: Record<Task["status"], BadgeVariant> = {
+const statusToStyle: Record<TaskStatus, BadgeVariant> = {
   "In Progress": "amber",
   Todo: "blue",
   Done: "green",
 };
 
 export default function RecentTasks() {
+  const { data: tasks, isLoading, isError } = useTasks();
+
   return (
-    <div className="border rounded-(--radius) border-(--border2) bg-(--bg1) overflow-hidden mb-2">
-      {/* Header */}
+    <div className="bg-(--bg1) border border-(--border) rounded-md overflow-hidden">
       <CardHeader
         title="Recent Tasks"
-        dotColor="var(--amber)"
-        action={{ label: "View all \u2192" }}
+        dotColor="var(--green)"
+        action={{ label: "View all →" }}
       />
-
-      {/* Tasks */}
-
       <div>
-        {tasks.map((t) => (
+        {isLoading && (
+          <div className="px-3.5 py-8 text-center font-mono text-[11px] text-(--text3)">
+            Loading...
+          </div>
+        )}
+        {isError && (
+          <div className="px-3.5 py-8 text-center font-mono text-[11px] text-(--danger)">
+            Failed to load tasks.
+          </div>
+        )}
+        {!isLoading && !isError && tasks?.length === 0 && (
+          <div className="px-3.5 py-8 text-center font-mono text-[11px] text-(--text3)">
+            No tasks found.
+          </div>
+        )}
+        {tasks?.map((task) => (
           <div
-            key={t.id}
-            className="flex items-center gap-2 px-3 py-2 border-b border-(--border) hover:bg-(--bg2)"
+            key={task.id}
+            className="flex items-center gap-2.5 px-3.5 py-2 border-b border-(--border) last:border-none hover:bg-(--bg2) cursor-pointer transition-colors"
           >
-            {/* Priority Dot */}
             <span
-              className={`w-1.75 h-1.75 rounded-full`}
-              style={{ backgroundColor: priorityColors[t.priority] }}
-            ></span>
-            {/* Task ID */}
-            <div className="text-[10px] text-(--text3) font-mono w-14 shrink-0">
-              {t.id}
-            </div>
-            {/* Task Name */}
-            <div className="flex-1 truncate text-[13px] font-medium text-(--text1)">
-              {t.name}
-            </div>
-            {/* Status Badge */}
-            {/* <span
-              className={`inline-flex items-center gap-2 px-1.5 py-0.2 rounded-(--radius) ${statusStyle[t.status]}`}
-            >
-              <span className="w-1.5 h-1.5 bg-current rounded-full" />
-              {t.status}
-            </span> */}
-            <Badge label={t.status} variant={statusToStyle[t.status]} />
-            <Avatar
-              initials={t.assignee}
-              gradient={t.assigneeColor}
-              size={26}
+              className="w-1.75 h-1.75 rounded-full shrink-0"
+              style={{ background: priorityColors[task.priority] }}
             />
-            {/* <div
-              className="text-right rounded-full px-1.5 py-1"
-              style={{ background: t.assigneeColor }}
-            >
-              {t.assignee}
-            </div> */}
+            <span className="font-mono text-[10px] text-(--text3) w-13 shrink-0">
+              {task.id}
+            </span>
+            <span className="flex-1 text-[12.5px] text-(--text) truncate min-w-0">
+              {task.title}
+            </span>
+            <Badge label={task.status} variant={statusToStyle[task.status]} />
+            <Avatar
+              initials={task.assignee.initials}
+              gradient={task.assignee.gradient}
+              size={22}
+            />
           </div>
         ))}
       </div>

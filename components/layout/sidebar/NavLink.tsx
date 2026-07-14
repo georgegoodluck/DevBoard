@@ -2,37 +2,44 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavItems } from "@/types/nav";
+import { NavItem } from "@/types/nav";
 
-export default function NavLink({ item }: { item: NavItems }) {
+export default function NavLink({
+  item,
+  collapsed,
+}: {
+  item: NavItem;
+  collapsed: boolean;
+}) {
   const pathname = usePathname();
   const isActive = pathname === item.href;
 
   return (
     <Link
       href={item.href}
+      title={collapsed ? item.label : undefined}
       className={`
-        relative flex items-center gap-2.25 mx-1.5 px-3.5 py-1.75
-        rounded-(--radius) text-[12px] no-underline
+        relative flex items-center gap-[9px] mx-[6px] px-[10px] py-[7px]
+        rounded-[var(--radius)] text-[12px] no-underline
         transition-colors duration-100
+        ${collapsed ? "justify-center" : ""}
         ${
           isActive
-            ? "bg-(--accent-dim) text-(--accent)"
-            : "text-(--text2) hover:bg-(--bg3) hover:text-(--text)"
+            ? "bg-[var(--accent-dim)] text-[var(--accent)]"
+            : "text-[var(--text2)] hover:bg-[var(--bg3)] hover:text-[var(--text)]"
         }
       `}
     >
-      {/* Active indicator bar */}
-      {isActive && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-(--accent) rounded-r-0.5" />
+      {isActive && !collapsed && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-[16px] bg-[var(--accent)] rounded-r-[2px]" />
       )}
 
       {item.icon}
-      <span>{item.label}</span>
 
-      {/* Badge */}
-      {item.badge !== undefined && (
-        <span className="ml-auto font-mono text-[10px] font-medium px-1.5 py-px rounded-[3px] bg-(--accent-dim) text-(--accent)">
+      {!collapsed && <span className="text-sm">{item.label}</span>}
+
+      {!collapsed && item.badge !== undefined && (
+        <span className="ml-auto font-mono text-[10px] font-medium px-[6px] py-[1px] rounded-[3px] bg-[var(--accent-dim)] text-[var(--accent)]">
           {item.badge}
         </span>
       )}
