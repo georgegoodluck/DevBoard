@@ -1,9 +1,7 @@
-"use client";
-
 import Avatar from "@/components/ui/Avatar";
-import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { Project } from "@/types/projects";
+import Badge from "@/components/ui/Badge";
 
 export default function ProjectsCard({ project: p }: { project: Project }) {
   return (
