@@ -1,21 +1,9 @@
+"use client";
+
 import Avatar from "@/components/ui/Avatar";
 import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import ProgressBar from "@/components/ui/ProgressBar";
-
-// Project types
-export type Project = {
-  name: string;
-  description: string;
-  emoji: string;
-  status: string;
-  statusVariant: BadgeVariant;
-  progress: number;
-  progressColor: string;
-  tags: string[];
-  members: { initials: string; gradient: string }[];
-  taskCount: number;
-  due: string;
-};
+import { Project } from "@/types/projects";
 
 export default function ProjectsCard({ project: p }: { project: Project }) {
   return (
