@@ -1,9 +1,21 @@
 import Avatar from "@/components/ui/Avatar";
 import ProgressBar from "@/components/ui/ProgressBar";
 import { Project } from "@/types/projects";
-import Badge from "@/components/ui/Badge";
+import Badge, { type BadgeVariant } from "@/components/ui/Badge";
+
+// Map status to badge variant
+const statusVariantMap: Record<string, BadgeVariant> = {
+  "In Progress": "amber",
+  "Planning": "blue",
+  "Review": "purple",
+  "Active": "green",
+  "Done": "green",
+};
 
 export default function ProjectsCard({ project: p }: { project: Project }) {
+  // Get the badge variant from status
+  const badgeVariant = statusVariantMap[p.status] || "gray";
+
   return (
     <div className="bg-(--bg1) border border-(--border) rounded-1.5 p-3.5 cursor-pointer hover:border-(--border2) transition-colors flex flex-col gap-2.5">
       {/* Top row */}
@@ -26,7 +38,8 @@ export default function ProjectsCard({ project: p }: { project: Project }) {
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1.25">
-        <Badge label={p.status} variant={p.statusVariant} />
+        {/*Use badgeVariant instead of p.statusVariant */}
+        <Badge label={p.status} variant={badgeVariant} />
         {p.tags.map((tag) => (
           <Badge key={tag} label={tag} variant="gray" />
         ))}
@@ -34,7 +47,6 @@ export default function ProjectsCard({ project: p }: { project: Project }) {
 
       {/* Footer */}
       <div className="flex items-center gap-2">
-        {/* Stacked avatars */}
         <div className="flex">
           {p.members.map((m, i) => (
             <div key={m.initials} style={{ marginLeft: i === 0 ? 0 : -6 }}>
