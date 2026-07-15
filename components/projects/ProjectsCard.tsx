@@ -12,9 +12,19 @@ const statusVariantMap: Record<string, BadgeVariant> = {
   "Done": "green",
 };
 
+// Map status to progress color
+const statusColorMap: Record<string, string> = {
+  "In Progress": "var(--amber)",
+  "Planning": "var(--accent)",
+  "Review": "var(--purple)",
+  "Active": "var(--green)",
+  "Done": "var(--green)",
+};
+
 export default function ProjectsCard({ project: p }: { project: Project }) {
-  // Get the badge variant from status
   const badgeVariant = statusVariantMap[p.status] || "gray";
+  // Get progress color from status
+  const progressColor = statusColorMap[p.status] || "var(--accent)";
 
   return (
     <div className="bg-(--bg1) border border-(--border) rounded-1.5 p-3.5 cursor-pointer hover:border-(--border2) transition-colors flex flex-col gap-2.5">
@@ -33,12 +43,11 @@ export default function ProjectsCard({ project: p }: { project: Project }) {
         </div>
       </div>
 
-      {/* Progress */}
-      <ProgressBar value={p.progress} color={p.progressColor} />
+      {/* Progress - NOW USES mapped color */}
+      <ProgressBar value={p.progress} color={progressColor} />
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1.25">
-        {/*Use badgeVariant instead of p.statusVariant */}
         <Badge label={p.status} variant={badgeVariant} />
         {p.tags.map((tag) => (
           <Badge key={tag} label={tag} variant="gray" />
