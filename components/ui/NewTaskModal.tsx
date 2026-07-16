@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { useNewTask } from "@/context/NewTaskContext";
 import { X, Plus } from "lucide-react";
+import { useCreateTask } from "@/hooks/useTasks";
 
 const priorities = ["High", "Medium", "Low"] as const;
 const statuses = ["Todo", "In Progress", "Review"] as const;
 const projects = ["TickrPay", "Pulse", "fin·snap", "SubTrack"];
 
 export default function NewTaskModal() {
+  const createTask = useCreateTask();
+
   const { isOpen, close } = useNewTask();
 
   const [form, setForm] = useState({
