@@ -17,6 +17,7 @@ const statusToStyle: Record<TaskStatus, BadgeVariant> = {
   "In Progress": "amber",
   Todo: "blue",
   Done: "green",
+  Review: "purple"
 };
 
 export default function RecentTasks() {
