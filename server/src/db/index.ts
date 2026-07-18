@@ -5,3 +5,6 @@ import { env } from "../env";
 
 // Create the postgres connection
 const client = postgres(env.DATABASE_URL, { max: 10 });
+
+// Create Drizzle instance with schema
+export const db = drizzle(client, { schema });
