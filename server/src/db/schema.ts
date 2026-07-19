@@ -87,3 +87,19 @@ export const tasks = pgTable("tasks", {
   assigneeId: uuid("assignee_id").references(() => members.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// Activity
+
+export const activity = pgTable("activity", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  // Who did it?
+  actor: text("actor").notNull(),
+  // What did they do?
+  action: text("action").notNull(),
+  // What did they interact with?
+  target: text("target").notNull(),
+  // Where did it happen?
+  project: text("project").notNull(),
+  time: timestamp("created_at").defaultNow().notNull(),
+  type: activityTypeEnum("type").notNull(),
+});
