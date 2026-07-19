@@ -70,3 +70,20 @@ export const ProjectMembers = pgTable("project_members", {
     onDelete: "cascade",
   }),
 });
+
+// Tasks
+
+export const tasks = pgTable("tasks", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  title: text("title").notNull(),
+  status: taskStatusEnum("status").notNull().default("Todo"),
+  priority: taskPriorityEnum("priority").notNull().default("mid"),
+  // When a project is deleted, all the tasks assigned to the projects are deleted
+  projectId: uuid("project_id")
+    .references(() => projects.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  assigneeId: uuid("assignee_id").references(() => members.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
