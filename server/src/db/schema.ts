@@ -59,3 +59,14 @@ export const members = pgTable("members", {
   email: text("email").notNull().unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// Project Members(join table)
+
+export const ProjectMembers = pgTable("project_members", {
+  projectId: uuid("project_id").references(() => projects.id, {
+    onDelete: "cascade",
+  }),
+  memberId: uuid("member_id").references(() => members.id, {
+    onDelete: "cascade",
+  }),
+});
