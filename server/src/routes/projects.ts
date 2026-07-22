@@ -13,4 +13,23 @@ export async function projectRoutes(app: FastifyInstance) {
       return reply.status(500).send({ error: "Failed to fetch projects" });
     }
   });
+
+  // GET /api/projects/:id
+  app.get<{ Params: { id: string } }>(
+    "/api/projects/:id",
+    async (req, reply) => {
+      const { id } = req.params;
+      try {
+        const [project] = await db
+          .select()
+          .from(projects)
+          .where(eq(projects.id, id));
+        if (!project)
+          return reply.status(404).send({ error: "Project not found" });
+        return reply.send(project);
+      } catch (err) {
+        return reply.status(500).send({ error: "Failed to fetch project" });
+      }
+    },
+  );
 }
