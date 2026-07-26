@@ -79,7 +79,7 @@ export async function projectRoutes(app: FastifyInstance) {
     async (req, reply) => {
       const { id } = req.params;
       try {
-        await db.delete(projects).where(eq(projects, id, id));
+        await db.delete(projects).where(eq(projects, id));
         return reply.status(204).send();
       } catch (err) {
         return reply.status(500).send({ error: "Failed to delete project" });
