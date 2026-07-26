@@ -14,4 +14,8 @@ async function main() {
   await app.register(projectRoutes);
   await app.register(taskRoutes);
   await app.register(activityRoutes);
+
+  //   Health check
+//   Define GET /health route that returns a status of 'ok'
+  app.get("/health", async () => ({ status: "ok" }));
 }
