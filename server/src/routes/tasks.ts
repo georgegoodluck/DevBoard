@@ -70,4 +70,18 @@ export async function taskRoutes(app: FastifyInstance) {
       }
     },
   );
+
+  // DELETE /api/projects/:id
+  app.delete<{ Params: { id: string } }>(
+    "/api/tasks/:id",
+    async (req, reply) => {
+      const { id } = req.params;
+      try {
+        await db.delete(tasks).where(eq(tasks.id, id));
+        return reply.status(204).send();
+      } catch (err) {
+        return reply.status(500).send({ error: "Failed to delete task" });
+      }
+    },
+  );
 }
