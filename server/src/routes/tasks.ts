@@ -13,4 +13,7 @@ export async function taskRoutes(app: FastifyInstance) {
       return reply.status(500).send({ error: "Failed to fetch tasks" });
     }
   });
+
+  // GET /api/tasks?projectId=xxx
+  app.get<{ Querystring: { projectId: string } }>("/api/tasks");
 }
