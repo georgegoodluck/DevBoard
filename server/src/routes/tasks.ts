@@ -14,7 +14,7 @@ export async function taskRoutes(app: FastifyInstance) {
     }
   });
 
-  // GET /api/tasks?projectId=xxx
+  // GET /api/tasks?projectId=xxx - fetch tasks by their id
   app.get<{ Querystring: { projectId: string } }>(
     "/api/tasks",
     async (req, reply) => {
@@ -44,6 +44,13 @@ export async function taskRoutes(app: FastifyInstance) {
     },
   );
 
-  
+  // PATCH /api/tasks/:id
+  app.patch<{
+    Params: {id: string};
+    // Defines the request body shape
+    Body: Partial<typeof projects.$inferInsert>;
+  }>(
+    
+  )
   
 }
