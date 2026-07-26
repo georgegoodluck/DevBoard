@@ -15,5 +15,17 @@ export async function taskRoutes(app: FastifyInstance) {
   });
 
   // GET /api/tasks?projectId=xxx
-  app.get<{ Querystring: { projectId: string } }>("/api/tasks");
+  app.get<{Querystring: { projectId: string} }>(
+    "/api/tasks",
+    async (req, reply) => {
+      // Extract projectId from incoming URL
+      const { projectId } = req.query;
+      try {
+         const rows = projectId
+        ?  await db.select().from(tasks).where(eq(tasks.projectId, projectId))
+        :  await db.select().from(tasks); 
+      }
+    }
+  )
+    
 }
