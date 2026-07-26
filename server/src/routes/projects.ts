@@ -61,6 +61,8 @@ export async function projectRoutes(app: FastifyInstance) {
       .set({ ...req.body, updatedAt: new Date()})
       .where(eq(projects.id, id))
       .returning();
+      if (!updated) return reply.status(404).send({ error: "Projects not found"})
+        return reply.send(updated);      
     }
   )
 }
