@@ -30,4 +30,20 @@ export async function taskRoutes(app: FastifyInstance) {
       }
     },
   );
+
+  // POST /api/tasks
+  app.post<{ Body: typeof tasks.$inferInsert }>(
+    "/api/tasks",
+    async (req, reply) => {
+      try {
+        const [task] = await db.insert(tasks).values(req.body).returning();
+        return reply.send(task);
+      } catch (err) {
+        return reply.status(500).send({ error: "Failed to create task" });
+      }
+    },
+  );
+
+  
+  
 }
