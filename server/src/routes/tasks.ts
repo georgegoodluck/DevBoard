@@ -46,11 +46,28 @@ export async function taskRoutes(app: FastifyInstance) {
 
   // PATCH /api/tasks/:id
   app.patch<{
-    Params: {id: string};
+    Params: { id: string };
     // Defines the request body shape
-    Body: Partial<typeof projects.$inferInsert>;
+    Body: Partial<typeof tasks.$inferInsert>;
   }>(
-    
-  )
-  
+    "/api/tasks/:id",
+    // DB Update
+    async (req, reply) => {
+      const { id } = req.params;
+      try {
+        const [updated] = await db
+          .update(tasks)
+          .set(req.body)
+          .where(eq(tasks.id, id))
+          .returning();
+        if (!updated)
+          return reply.status(404).send({
+            error: "Projects not found",
+          });
+        return reply.send(updated);
+      } catch (err) {
+        return reply.status(500).send({ error: "Failed to update task" });
+      }
+    },
+  );
 }
