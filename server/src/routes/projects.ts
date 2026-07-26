@@ -50,19 +50,26 @@ export async function projectRoutes(app: FastifyInstance) {
   );
 
   // PATCH /api/projects/:id
-  app.patch<{ Params: {id: string}; Body: Partial<typeof projects.$inferInsert> }>(
+  app.patch<{
+    Params: { id: string };
+    Body: Partial<typeof projects.$inferInsert>;
+  }>(
     "/api/projects/:id",
     // DB Update
     async (req, reply) => {
       const { id } = req.params;
       try {
-      const [updated] = await db
-      .update(projects)
-      .set({ ...req.body, updatedAt: new Date()})
-      .where(eq(projects.id, id))
-      .returning();
-      if (!updated) return reply.status(404).send({ error: "Projects not found"})
-        return reply.send(updated);      
-    }
-  )
+        const [updated] = await db
+          .update(projects)
+          .set({ ...req.body, updatedAt: new Date() })
+          .where(eq(projects.id, id))
+          .returning();
+        if (!updated)
+          return reply.status(404).send({ error: "Projects not found" });
+        return reply.send(updated);
+      } catch (err) {
+        return reply.status(500).send({ error: "Failed to update project" });
+      }
+    },
+  );
 }
