@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { db } from "../db";
-import { projects, tasks } from "../db/schema";
+import { tasks } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export async function taskRoutes(app: FastifyInstance) {
