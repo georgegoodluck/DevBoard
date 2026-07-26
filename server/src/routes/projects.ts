@@ -48,4 +48,12 @@ export async function projectRoutes(app: FastifyInstance) {
       }
     },
   );
+
+  // PATCH /api/projects/:id
+  app.patch<{ Params: {id: string}; Body: Partial<typeof projects.$inferInsert> }>(
+    "/api/projects/:id",
+    
+  )
+  
+  
 }
