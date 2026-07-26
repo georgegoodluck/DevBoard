@@ -100,6 +100,6 @@ export const activity = pgTable("activity", {
   target: text("target").notNull(),
   // Where did it happen?
   project: text("project").notNull(),
-  time: timestamp("created_at").defaultNow().notNull(),
   type: activityTypeEnum("type").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
