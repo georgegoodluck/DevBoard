@@ -17,4 +17,19 @@ export async function activityRoutes(app: FastifyInstance) {
       return reply.status(500).send({ error: "Failed to fetch activity" });
     }
   });
+
+  //   POST /api/activity
+  app.post<{ Body: typeof activity.$inferInsert }>(
+    "/api/activity",
+    async (req, reply) => {
+      try {
+        const [event] = await db.insert(activity).values(req.body).returning();
+        return reply.status(201).send(event);
+      } catch (err) {
+        return reply
+          .status(500)
+          .send({ error: "Failed to create activity event" });
+      }
+    },
+  );
 }
