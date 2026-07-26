@@ -16,6 +16,15 @@ async function main() {
   await app.register(activityRoutes);
 
   //   Health check
-//   Define GET /health route that returns a status of 'ok'
+  //   Define GET /health route that returns a status of 'ok'
   app.get("/health", async () => ({ status: "ok" }));
+
+  //   Start server
+  try {
+    await app.listen({ port: env.PORT, host: "0.0.0.0" });
+    console.log(`Server running on http://localhost:${env.PORT}`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
 }
