@@ -36,16 +36,16 @@ export const activityTypeEnum = pgEnum("activity_type", [
 // Projects
 
 export const projects = pgTable("projects", {
-  id:          uuid("id").defaultRandom().primaryKey(),
-  name:        text("name").notNull(),
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
   description: text("description").notNull(),
-  emoji:       text("emoji").notNull().default("📁"),
-  status:      projectStatusEnum("status").notNull().default("Planning"),
-  progress:    integer("progress").notNull().default(0),
-  due:         text("due"),
-  tags:        text("tags").array().notNull().default([]),
-  createdAt:   timestamp("created_at").defaultNow().notNull(),
-  updatedAt:   timestamp("updated_at").defaultNow().notNull(),
+  emoji: text("emoji").notNull().default("📁"),
+  status: projectStatusEnum("status").notNull().default("Planning"),
+  progress: integer("progress").notNull().default(0),
+  due: text("due"),
+  tags: text("tags").array().notNull().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Members
@@ -75,15 +75,13 @@ export const projectMembers = pgTable("project_members", {
 // Tasks
 
 export const tasks = pgTable("tasks", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: text("id").primaryKey(),
   title: text("title").notNull(),
   status: taskStatusEnum("status").notNull().default("Todo"),
   priority: taskPriorityEnum("priority").notNull().default("mid"),
   // When a project is deleted, all the tasks assigned to the projects are deleted
   projectId: uuid("project_id")
-    .references(() => projects.id, {
-      onDelete: "cascade",
-    })
+    .references(() => projects.id, { onDelete: "cascade" })
     .notNull(),
   assigneeId: uuid("assignee_id").references(() => members.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
