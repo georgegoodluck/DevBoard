@@ -5,19 +5,20 @@ import Badge from "@/components/ui/Badge";
 import { BadgeVariant } from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import { useTasks } from "@/hooks/useTasks";
-import { TaskStatus, TaskPriority } from "@/types/tasks";
+import { TaskStatus } from "@/types/tasks";
 
-const priorityColors: Record<TaskPriority, string> = {
-  Low: "var(--green)",
-  Medium: "var(--amber)",
-  High: "var(--danger)",
+// Map normalized lowercase strings to CSS variables
+const priorityColors: Record<string, string> = {
+  low: "var(--green)",
+  medium: "var(--amber)",
+  high: "var(--danger)",
 };
 
 const statusToStyle: Record<TaskStatus, BadgeVariant> = {
   "In Progress": "amber",
   Todo: "blue",
   Done: "green",
-  Review: "purple"
+  Review: "purple",
 };
 
 export default function RecentTasks() {
@@ -46,29 +47,35 @@ export default function RecentTasks() {
             No tasks found.
           </div>
         )}
-        {tasks?.map((task) => (
-          <div
-            key={task.id}
-            className="flex items-center gap-2.5 px-3.5 py-2 border-b border-(--border) last:border-none hover:bg-(--bg2) cursor-pointer transition-colors"
-          >
-            <span
-              className="w-1.75 h-1.75 rounded-full shrink-0"
-              style={{ background: priorityColors[task.priority] }}
-            />
-            <span className="font-mono text-[10px] text-(--text3) w-13 shrink-0">
-              {task.id}
-            </span>
-            <span className="flex-1 text-[12.5px] text-(--text) truncate min-w-0">
-              {task.title}
-            </span>
-            <Badge label={task.status} variant={statusToStyle[task.status]} />
-            <Avatar
-              initials={task.assignee.initials}
-              gradient={task.assignee.gradient}
-              size={22}
-            />
-          </div>
-        ))}
+        {tasks?.map((task) => {
+          // Normalize priority key so 'High', 'high', 'HIGH' all work
+          const priorityKey = String(task.priority || "low").toLowerCase();
+          const dotColor = priorityColors[priorityKey] || "var(--green)";
+
+          return (
+            <div
+              key={task.id}
+              className="flex items-center gap-2.5 px-3.5 py-2 border-b border-(--border) last:border-none hover:bg-(--bg2) cursor-pointer transition-colors"
+            >
+              <span
+                className="inline-block w-2 h-2 rounded-full shrink-0"
+                style={{ backgroundColor: dotColor }}
+              />
+              <span className="font-mono text-[10px] text-(--text3) w-13 shrink-0">
+                {task.id}
+              </span>
+              <span className="flex-1 text-[12.5px] text-(--text) truncate min-w-0">
+                {task.title}
+              </span>
+              <Badge label={task.status} variant={statusToStyle[task.status]} />
+              <Avatar
+                initials={task.assignee.initials}
+                gradient={task.assignee.gradient}
+                size={22}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
