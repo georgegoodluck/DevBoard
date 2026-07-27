@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { db } from "../db";
-import { tasks, members } from "../db/schema";
-import { eq, desc } from "drizzle-orm";
+import { tasks } from "../db/schema";
+import { eq } from "drizzle-orm";
 
 export async function taskRoutes(app: FastifyInstance) {
   // GET /api/tasks - Get all tasks with assignee info
