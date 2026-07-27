@@ -4,17 +4,28 @@ import { tasks } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export async function taskRoutes(app: FastifyInstance) {
-  // GET /api/tasks?projectId=xxx (projectId is optional)
+  // GET /api/tasks - Get all tasks with assignee info
   app.get<{ Querystring: { projectId?: string } }>(
     "/api/tasks",
     async (req, reply) => {
       const { projectId } = req.query;
       try {
         const rows = projectId
-          ? await db.select().from(tasks).where(eq(tasks.projectId, projectId))
-          : await db.select().from(tasks).orderBy(tasks.createdAt);
+          ? await db.query.tasks.findMany({
+              where: eq(tasks.projectId, projectId),
+              with: {
+                assignee: true, // This will load the related member
+              },
+            })
+          : await db.query.tasks.findMany({
+              with: {
+                assignee: true, // This will load the related member
+              },
+            });
+
         return reply.send(rows);
       } catch (err) {
+        console.error(err);
         return reply.status(500).send({ error: "Failed to fetch tasks" });
       }
     },
@@ -28,6 +39,7 @@ export async function taskRoutes(app: FastifyInstance) {
         const [task] = await db.insert(tasks).values(req.body).returning();
         return reply.status(201).send(task);
       } catch (err) {
+        console.error(err);
         return reply.status(500).send({ error: "Failed to create task" });
       }
     },
@@ -42,12 +54,18 @@ export async function taskRoutes(app: FastifyInstance) {
     try {
       const [updated] = await db
         .update(tasks)
-        .set(req.body)
+        .set({ ...req.body, updatedAt: new Date() })
         .where(eq(tasks.id, id))
         .returning();
-      if (!updated) return reply.status(404).send({ error: "Task not found" });
+
+      if (!updated) {
+        return reply.status(404).send({
+          error: "Task not found",
+        });
+      }
       return reply.send(updated);
     } catch (err) {
+      console.error(err);
       return reply.status(500).send({ error: "Failed to update task" });
     }
   });
@@ -58,9 +76,17 @@ export async function taskRoutes(app: FastifyInstance) {
     async (req, reply) => {
       const { id } = req.params;
       try {
-        await db.delete(tasks).where(eq(tasks.id, id));
+        const [deleted] = await db
+          .delete(tasks)
+          .where(eq(tasks.id, id))
+          .returning();
+
+        if (!deleted) {
+          return reply.status(404).send({ error: "Task not found" });
+        }
         return reply.status(204).send();
       } catch (err) {
+        console.error(err);
         return reply.status(500).send({ error: "Failed to delete task" });
       }
     },
