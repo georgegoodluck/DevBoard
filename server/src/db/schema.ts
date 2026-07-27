@@ -36,15 +36,16 @@ export const activityTypeEnum = pgEnum("activity_type", [
 // Projects
 
 export const projects = pgTable("projects", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
+  id:          uuid("id").defaultRandom().primaryKey(),
+  name:        text("name").notNull(),
   description: text("description").notNull(),
-  emoji: text("emoji").notNull(),
-  status: projectStatusEnum("status").notNull().default("Planning"),
-  due: text("string"),
-  tags: text("tags").array().notNull().default([]),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  emoji:       text("emoji").notNull().default("📁"),
+  status:      projectStatusEnum("status").notNull().default("Planning"),
+  progress:    integer("progress").notNull().default(0),
+  due:         text("due"),
+  tags:        text("tags").array().notNull().default([]),
+  createdAt:   timestamp("created_at").defaultNow().notNull(),
+  updatedAt:   timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Members
@@ -62,7 +63,7 @@ export const members = pgTable("members", {
 
 // Project Members(join table)
 
-export const ProjectMembers = pgTable("project_members", {
+export const projectMembers = pgTable("project_members", {
   projectId: uuid("project_id").references(() => projects.id, {
     onDelete: "cascade",
   }),
