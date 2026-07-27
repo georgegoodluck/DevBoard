@@ -8,25 +8,18 @@ import { activityRoutes } from "./routes/activity";
 const app = Fastify({ logger: true });
 
 async function main() {
-  // Register plugins
-  await corsPlugin(app); // Configures CORS middleware so frontend clients can communicate with the API
+  // Plugins FIRST — always before routes
+  await corsPlugin(app);
 
-  // Register routes
+  // Then routes
   await app.register(projectRoutes);
   await app.register(taskRoutes);
   await app.register(activityRoutes);
 
-  // Health check
   app.get("/health", async () => ({ status: "ok" }));
 
-  // Start server
-  try {
-    await app.listen({ port: env.PORT, host: "0.0.0.0" });
-    console.log(`Server running on http://localhost:${env.PORT}`);
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
+  await app.listen({ port: env.PORT, host: "0.0.0.0" });
+  console.log(`Server running on http://localhost:${env.PORT}`);
 }
 
 main();
