@@ -16,10 +16,10 @@ export default function SidebarUser({ collapsed }: { collapsed: boolean }) {
         {/* Name + role */}
         {!collapsed && ( // ✅ Fixed spelling
           <div className="flex flex-col flex-1 min-w-0">
-            <span className="text-[12px] font-medium text-[var(--text)] truncate">
+            <span className="text-[12px] font-medium text-(--text) truncate">
               George E.
             </span>
-            <span className="font-mono text-[10px] text-[var(--text3)]">
+            <span className="font-mono text-[10px] text-(--text3)">
               admin
             </span>
           </div>
