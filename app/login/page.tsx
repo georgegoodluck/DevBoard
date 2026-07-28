@@ -13,9 +13,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
+
   return (
-    <>
-      <h1>Login Page</h1>
-    </>
+    <div>
+      {/* Logo */}
+      <Image src="/logo.svg" alt="DevBoard" width={28} height={28} />
+    </div>
   );
 }
