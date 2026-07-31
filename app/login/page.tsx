@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,9 +33,31 @@ export default function LoginPage() {
           <h1 className="font-mono text-[15px] font-semibold text-(--text) mb-1">
             Sign in
           </h1>
-          <p className="text-[12px] text-(--text3) mb-[24px]">
+          <p className="text-[12px] text-(--text3) mb-6">
             Welcome back to your workspace
           </p>
+        </div>
+
+        {/* OAuth buttons */}
+        <div className="flex flex-col gap-2 mb-5">
+          <button
+            // onClick={() => handleOAuth("github")}
+            className="flex items-center justify-center gap-2 h-9 w-full rounded-(--radius) border border-(--border2) bg-(--bg2) text-(--text) font-mono text-[12px] cursor-pointer hover:bg-(--bg3) transition-colors"
+          >
+            <span>
+              <FaGithub size={16} className="text-white" />
+            </span>
+            Continue with Github
+          </button>
+          <button
+            // onClick={() => handleOAuth("google")}
+            className="flex items-center justify-center gap-2 h-9 w-full rounded-(--radius) border border-(--border2) bg-(--bg2) text-(--text) font-mono text-[12px] cursor-pointer hover:bg-(--bg3) transition-colors"
+          >
+            <span>
+              <FcGoogle size={16} />
+            </span>
+            Continue with Google
+          </button>
         </div>
       </div>
     </div>
