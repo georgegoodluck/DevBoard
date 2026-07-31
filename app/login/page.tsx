@@ -16,8 +16,16 @@ export default function LoginPage() {
 
   return (
     <div>
-      {/* Logo */}
-      <Image src="/logo.svg" alt="DevBoard" width={28} height={28} />
+      <div className="w-full max-w-95">
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-2 mb-10">
+          <Image src="/logo.svg" alt="DevBoard" width={28} height={28} />
+          <span>
+            <span>Dev</span>
+            <span>Board</span>
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
