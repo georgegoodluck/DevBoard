@@ -59,6 +59,13 @@ export default function LoginPage() {
             Continue with Google
           </button>
         </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-2.5 mb-5">
+          <div className="flex-1 h-px bg-(--border)" />
+          <span className="font-mono text-[10px] text-(--text3)">or</span>
+          <div className="flex-1 h-px bg-(--border)" />
+        </div>
       </div>
     </div>
   );
