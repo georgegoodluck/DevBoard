@@ -8,9 +8,9 @@ function SectionLabel({
   children: React.ReactNode;
   collapsed: boolean;
 }) {
-  if (collapsed) return <div className="h-[20px]" />;
+  if (collapsed) return <div className="h-5" />;
   return (
-    <div className="pt-4 pb-1 pl-[14px] font-mono text-[10px] font-medium tracking-[0.12em] uppercase text-[var(--text3)]">
+    <div className="pt-4 pb-1 pl-3.5 font-mono text-[10px] font-medium tracking-[0.12em] uppercase text-(--text3)">
       {children}
     </div>
   );
