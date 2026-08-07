@@ -2,8 +2,12 @@ import { FastifyInstance } from "fastify";
 import { db } from "../db";
 import { projects } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { authenticate } from "../plugins/auth";
 
 export async function projectRoutes(app: FastifyInstance) {
+  // All project routes require authentication
+  app.addHook("preHandler", authenticate);
+
   // GET /api/projects
   app.get("/api/projects", async (req, reply) => {
     try {
@@ -53,25 +57,21 @@ export async function projectRoutes(app: FastifyInstance) {
   app.patch<{
     Params: { id: string };
     Body: Partial<typeof projects.$inferInsert>;
-  }>(
-    "/api/projects/:id",
-    // DB Update
-    async (req, reply) => {
-      const { id } = req.params;
-      try {
-        const [updated] = await db
-          .update(projects)
-          .set({ ...req.body, updatedAt: new Date() })
-          .where(eq(projects.id, id))
-          .returning();
-        if (!updated)
-          return reply.status(404).send({ error: "Projects not found" });
-        return reply.send(updated);
-      } catch (err) {
-        return reply.status(500).send({ error: "Failed to update project" });
-      }
-    },
-  );
+  }>("/api/projects/:id", async (req, reply) => {
+    const { id } = req.params;
+    try {
+      const [updated] = await db
+        .update(projects)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(projects.id, id))
+        .returning();
+      if (!updated)
+        return reply.status(404).send({ error: "Project not found" });
+      return reply.send(updated);
+    } catch (err) {
+      return reply.status(500).send({ error: "Failed to update project" });
+    }
+  });
 
   // DELETE /api/projects/:id
   app.delete<{ Params: { id: string } }>(
@@ -79,7 +79,7 @@ export async function projectRoutes(app: FastifyInstance) {
     async (req, reply) => {
       const { id } = req.params;
       try {
-        await db.delete(projects).where(eq(projects, id));
+        await db.delete(projects).where(eq(projects.id, id));
         return reply.status(204).send();
       } catch (err) {
         return reply.status(500).send({ error: "Failed to delete project" });
