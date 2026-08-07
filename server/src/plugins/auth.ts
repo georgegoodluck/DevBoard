@@ -19,4 +19,13 @@ export async function authenticate(
     return reply.status(401).send({ error: "Missing authorization header" });
   }
   const token = authHeader.split(" ")[1];
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
+
+  if (error || !user) {
+    return reply.status(401).send({ error: "Invalid or expired token" });
+  }
 }
