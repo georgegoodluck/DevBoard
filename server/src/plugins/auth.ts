@@ -9,4 +9,11 @@ const supabase = createClient(
 export async function authenticate(
   request: FastifyRequest,
   reply: FastifyReply,
-) {}
+) {
+  const authHeader = request.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer")) {
+    return reply.status(401).send({ error: "Missing authorization header" });
+  }
+  const token = authHeader.split(" ")[1];
+}
