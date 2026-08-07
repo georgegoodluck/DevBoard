@@ -5,6 +5,11 @@ import { useSidebar } from "@/context/SidebarContext";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+type Props = {
+  collapsed: boolean;
+  user: { name: string; role: string; initials: string };
+};
+
 export default function SidebarUser({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="border-t border-(--border) p-[10px_6px]">
