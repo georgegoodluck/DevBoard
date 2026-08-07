@@ -1,6 +1,9 @@
 "use client";
 
 import Avatar from "@/components/ui/Avatar";
+import { useSidebar } from "@/context/SidebarContext";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function SidebarUser({ collapsed }: { collapsed: boolean }) {
   return (
@@ -19,9 +22,7 @@ export default function SidebarUser({ collapsed }: { collapsed: boolean }) {
             <span className="text-[12px] font-medium text-(--text) truncate">
               George E.
             </span>
-            <span className="font-mono text-[10px] text-(--text3)">
-              admin
-            </span>
+            <span className="font-mono text-[10px] text-(--text3)">admin</span>
           </div>
         )}
 
