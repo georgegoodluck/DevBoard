@@ -4,28 +4,28 @@ import { tasks } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export async function taskRoutes(app: FastifyInstance) {
-  // GET /api/tasks
-  app.get("/api/tasks", async (req, reply) => {
-    try {
-      const rows = await db.select().from(tasks).orderBy(tasks.createdAt);
-      return reply.send(rows);
-    } catch (err) {
-      return reply.status(500).send({ error: "Failed to fetch tasks" });
-    }
-  });
-
-  // GET /api/tasks?projectId=xxx - fetch tasks by their id
-  app.get<{ Querystring: { projectId: string } }>(
+  // GET /api/tasks - Get all tasks with assignee info
+  app.get<{ Querystring: { projectId?: string } }>(
     "/api/tasks",
     async (req, reply) => {
-      // Extract projectId from incoming URL
       const { projectId } = req.query;
       try {
         const rows = projectId
-          ? await db.select().from(tasks).where(eq(tasks.projectId, projectId))
-          : await db.select().from(tasks);
+          ? await db.query.tasks.findMany({
+              where: eq(tasks.projectId, projectId),
+              with: {
+                assignee: true, // This will load the related member
+              },
+            })
+          : await db.query.tasks.findMany({
+              with: {
+                assignee: true, // This will load the related member
+              },
+            });
+
         return reply.send(rows);
       } catch (err) {
+        console.error(err);
         return reply.status(500).send({ error: "Failed to fetch tasks" });
       }
     },
@@ -37,8 +37,9 @@ export async function taskRoutes(app: FastifyInstance) {
     async (req, reply) => {
       try {
         const [task] = await db.insert(tasks).values(req.body).returning();
-        return reply.send(task);
+        return reply.status(201).send(task);
       } catch (err) {
+        console.error(err);
         return reply.status(500).send({ error: "Failed to create task" });
       }
     },
@@ -47,39 +48,45 @@ export async function taskRoutes(app: FastifyInstance) {
   // PATCH /api/tasks/:id
   app.patch<{
     Params: { id: string };
-    // Defines the request body shape
     Body: Partial<typeof tasks.$inferInsert>;
-  }>(
-    "/api/tasks/:id",
-    // DB Update
-    async (req, reply) => {
-      const { id } = req.params;
-      try {
-        const [updated] = await db
-          .update(tasks)
-          .set(req.body)
-          .where(eq(tasks.id, id))
-          .returning();
-        if (!updated)
-          return reply.status(404).send({
-            error: "Projects not found",
-          });
-        return reply.send(updated);
-      } catch (err) {
-        return reply.status(500).send({ error: "Failed to update task" });
-      }
-    },
-  );
+  }>("/api/tasks/:id", async (req, reply) => {
+    const { id } = req.params;
+    try {
+      const [updated] = await db
+        .update(tasks)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(tasks.id, id))
+        .returning();
 
-  // DELETE /api/projects/:id
+      if (!updated) {
+        return reply.status(404).send({
+          error: "Task not found",
+        });
+      }
+      return reply.send(updated);
+    } catch (err) {
+      console.error(err);
+      return reply.status(500).send({ error: "Failed to update task" });
+    }
+  });
+
+  // DELETE /api/tasks/:id
   app.delete<{ Params: { id: string } }>(
     "/api/tasks/:id",
     async (req, reply) => {
       const { id } = req.params;
       try {
-        await db.delete(tasks).where(eq(tasks.id, id));
+        const [deleted] = await db
+          .delete(tasks)
+          .where(eq(tasks.id, id))
+          .returning();
+
+        if (!deleted) {
+          return reply.status(404).send({ error: "Task not found" });
+        }
         return reply.status(204).send();
       } catch (err) {
+        console.error(err);
         return reply.status(500).send({ error: "Failed to delete task" });
       }
     },
