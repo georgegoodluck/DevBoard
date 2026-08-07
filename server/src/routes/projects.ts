@@ -2,11 +2,13 @@ import { FastifyInstance } from "fastify";
 import { db } from "../db";
 import { projects, projectMembers, members } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { authenticate } from "../plugins/auth";
 
 export async function projectRoutes(app: FastifyInstance) {
-  // --------------------------------------------------------------------------
-  // GET /api/projects - Fetch all projects with their members
-  // --------------------------------------------------------------------------
+  // All project routes require authentication
+  app.addHook("preHandler", authenticate);
+
+  // GET /api/projects
   app.get("/api/projects", async (req, reply) => {
     try {
       // Fetch all projects ordered by creation date
@@ -115,10 +117,13 @@ export async function projectRoutes(app: FastifyInstance) {
         .set({ ...req.body, updatedAt: new Date() })
         .where(eq(projects.id, id))
         .returning();
-
-      if (!updated) {
+      if (!updated)
         return reply.status(404).send({ error: "Project not found" });
-      }
+      return reply.send(updated);
+    } catch (err) {
+      return reply.status(500).send({ error: "Failed to update project" });
+    }
+  });
 
       // Fetch updated project with members
       const projectMemberRows = await db
@@ -147,12 +152,7 @@ export async function projectRoutes(app: FastifyInstance) {
     async (req, reply) => {
       const { id } = req.params;
       try {
-        // Delete project members first (due to foreign key constraint)
-        await db.delete(projectMembers).where(eq(projectMembers.projectId, id));
-
-        // Then delete the project
         await db.delete(projects).where(eq(projects.id, id));
-
         return reply.status(204).send();
       } catch (err) {
         return reply.status(500).send({ error: "Failed to delete project" });
