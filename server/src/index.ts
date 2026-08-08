@@ -5,7 +5,12 @@ import { projectRoutes } from "./routes/projects";
 import { taskRoutes } from "./routes/tasks";
 import { activityRoutes } from "./routes/activity";
 
-const app = Fastify({ logger: true });
+const app = Fastify({
+  logger:
+    process.env.NODE_ENV === "production"
+      ? true
+      : { transport: { target: "pino-pretty" } },
+});
 
 async function main() {
   // Plugins FIRST — always before routes
@@ -16,10 +21,17 @@ async function main() {
   await app.register(taskRoutes);
   await app.register(activityRoutes);
 
-  app.get("/health", async () => ({ status: "ok" }));
-
-  await app.listen({ port: env.PORT, host: "0.0.0.0" });
-  console.log(`Server running on http://localhost:${env.PORT}`);
+  app.get("/health", async () => ({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+  }));
+  try {
+    await app.listen({ port: env.PORT, host: "0.0.0.0" });
+    // console.log(`Server running on http://localhost:${env.PORT}`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
 }
-
 main();
