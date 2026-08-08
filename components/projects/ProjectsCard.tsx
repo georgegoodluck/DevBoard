@@ -6,19 +6,19 @@ import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 // Map status to badge variant
 const statusVariantMap: Record<string, BadgeVariant> = {
   "In Progress": "amber",
-  "Planning": "blue",
-  "Review": "purple",
-  "Active": "green",
-  "Done": "green",
+  Planning: "blue",
+  Review: "purple",
+  Active: "green",
+  Done: "green",
 };
 
 // Map status to progress color
 const statusColorMap: Record<string, string> = {
   "In Progress": "var(--amber)",
-  "Planning": "var(--accent)",
-  "Review": "var(--purple)",
-  "Active": "var(--green)",
-  "Done": "var(--green)",
+  Planning: "var(--accent)",
+  Review: "var(--purple)",
+  Active: "var(--green)",
+  Done: "var(--green)",
 };
 
 export default function ProjectsCard({ project: p }: { project: Project }) {
@@ -49,7 +49,7 @@ export default function ProjectsCard({ project: p }: { project: Project }) {
       {/* Tags */}
       <div className="flex flex-wrap gap-1.25">
         <Badge label={p.status} variant={badgeVariant} />
-        {p.tags.map((tag) => (
+        {p.tags?.map((tag) => (
           <Badge key={tag} label={tag} variant="gray" />
         ))}
       </div>
@@ -57,14 +57,14 @@ export default function ProjectsCard({ project: p }: { project: Project }) {
       {/* Footer */}
       <div className="flex items-center gap-2">
         <div className="flex">
-          {p.members.map((m, i) => (
+          {p.members?.map((m, i) => (
             <div key={m.initials} style={{ marginLeft: i === 0 ? 0 : -6 }}>
               <Avatar initials={m.initials} gradient={m.gradient} size={20} />
             </div>
           ))}
         </div>
-        <span className="font-mono text-[10px] text-(--text3)ml-auto">
-          {p.taskCount} tasks · {p.due}
+        <span className="font-mono text-[10px] text-(--text3) ml-auto">
+          {p.taskCount ?? 0} tasks · {p.due}
         </span>
       </div>
     </div>

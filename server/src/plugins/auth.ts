@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { createClient } from "@supabase/supabase-js";
-import "../types/fastify";
+import "../types/fastify.d.ts";
 
 // Creates a Supabase admin client using the Service Role Key (bypasses Row Level Security)
 const supabase = createClient(
