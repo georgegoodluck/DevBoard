@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
-import { db } from "../db";
-import { projects } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { authenticate } from "../plugins/auth";
+import { db } from "../db/index.js";
+import { projects } from "../db/schema.js";
+import { authenticate } from "../plugins/auth.js";
 
 export async function projectRoutes(app: FastifyInstance) {
   // All project routes require authentication
