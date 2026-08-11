@@ -103,7 +103,7 @@ importers:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0)(supports-color@7.2.0))
       msw:
-        specifier: ^2.14.6
+        specifier: ^2.15.0
         version: 2.15.0(@types/node@20.19.43)(typescript@5.9.3)
       prettier:
         specifier: ^3.8.1
