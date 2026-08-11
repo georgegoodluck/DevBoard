@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
-console.log("USE_MOCK:", USE_MOCK, process.env.NEXT_PUBLIC_USE_MOCK);
 
 export default function MswProvider({
   children,
@@ -11,11 +10,15 @@ export default function MswProvider({
   children: React.ReactNode;
 }) {
   const [ready, setReady] = useState(!USE_MOCK);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!USE_MOCK) {
+    if (!USE_MOCK || initializedRef.current) {
       return;
     }
+
+    initializedRef.current = true;
+
     import("@/mocks/browser").then(({ worker }) => {
       worker.start({ onUnhandledRequest: "bypass" }).then(() => setReady(true));
     });
