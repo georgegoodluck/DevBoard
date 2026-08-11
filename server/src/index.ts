@@ -1,3 +1,11 @@
+import * as Sentry from "@sentry/node";
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+  enabled: process.env.NODE_ENV === "production",
+});
+
 import Fastify from "fastify";
 import { env } from "./env.js";
 import { corsPlugin } from "./plugins/cors.js";
@@ -10,6 +18,16 @@ const app = Fastify({
     process.env.NODE_ENV === "production"
       ? true
       : { transport: { target: "pino-pretty" } },
+});
+
+// Capture unhandled errors in Fastify and report to Sentry
+app.setErrorHandler((error, request, reply) => {
+  Sentry.captureException(error);
+  app.log.error(error);
+  reply.status(error.statusCode || 500).send({
+    error: error.name || "Internal Server Error",
+    message: error.message,
+  });
 });
 
 async function main() {
@@ -26,12 +44,14 @@ async function main() {
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV,
   }));
+
   try {
     await app.listen({ port: env.PORT, host: "0.0.0.0" });
-    // console.log(`Server running on http://localhost:${env.PORT}`);
   } catch (err) {
+    Sentry.captureException(err);
     app.log.error(err);
     process.exit(1);
   }
 }
+
 main();
