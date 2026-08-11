@@ -1,4 +1,4 @@
-export type NavItems = {
+export type NavItem = {
   label: string;
   href: string;
   badge?: number;

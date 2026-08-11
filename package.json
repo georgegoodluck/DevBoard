@@ -10,13 +10,22 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "@sentry/nextjs": "^10.69.0",
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.111.0",
     "@tanstack/react-query": "^5.95.2",
-    "@tanstack/react-query-devtools": "^5.95.2",
+    "@tanstack/react-query-devtools": "^5.101.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.11.2",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
     "next": "^16.2.7",
+    "postgres": "^3.4.9",
     "radix-ui": "^1.4.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -28,14 +37,23 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "eslint-config-prettier": "^10.1.8",
+    "msw": "^2.15.0",
     "prettier": "^3.8.1",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.10",
+    "typescript": "^5.9.3"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
