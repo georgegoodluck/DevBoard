@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { db } from "../db";
-import { activity } from "../db/schema";
+import { db } from "../db/index.js";
+import { activity } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
 
 export async function activityRoutes(app: FastifyInstance) {

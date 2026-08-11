@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { db } from "./index";
-import { projects, members, tasks, activity, projectMembers } from "./schema";
+import { db } from "./index.js";
+import { projects, members, tasks, activity, projectMembers } from "./schema.js";
 
 async function seed() {
   console.log("Seeding database...");
