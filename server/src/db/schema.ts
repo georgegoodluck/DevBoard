@@ -17,6 +17,12 @@ export const workspaceMemberRoleEnum = pgEnum("workspace_member_role", [
   "member",
 ]);
 
+export const inviteStatusEnum = pgEnum("invite_status", [
+  "pending",
+  "accepted",
+  "expired",
+]);
+
 export const projectStatusEnum = pgEnum("project_status", [
   "Planning",
   "In Progress",
