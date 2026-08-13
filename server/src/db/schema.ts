@@ -5,10 +5,18 @@ import {
   timestamp,
   pgEnum,
   uuid,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // Enums
+
+export const workspaceMemberRoleEnum = pgEnum("workspace_member_role", [
+  "owner",
+  "admin",
+  "member",
+]);
+
 export const projectStatusEnum = pgEnum("project_status", [
   "Planning",
   "In Progress",
