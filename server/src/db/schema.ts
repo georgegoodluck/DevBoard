@@ -38,6 +38,7 @@ export const taskStatusEnum = pgEnum("task_status", [
 ]);
 
 export const taskPriorityEnum = pgEnum("task_priority", ["high", "mid", "low"]);
+
 export const activityTypeEnum = pgEnum("activity_type", [
   "merge",
   "task",
@@ -46,6 +47,17 @@ export const activityTypeEnum = pgEnum("activity_type", [
   "ci",
   "update",
 ]);
+
+// Workspaces - One per team. Created during onboarding by the first user(owner)
+
+export const workspaces = pgTable("workspaces", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  ownerUserId: text("owner_user_id").notNull(), // Supabase auth user id
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 // Projects
 export const projects = pgTable("projects", {
