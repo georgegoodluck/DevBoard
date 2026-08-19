@@ -75,6 +75,24 @@ export const workspaceMembers = pgTable("workspace_members", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Invites - Owner invites someone by email, they get a link. When they sign up, we match the email to a pending invite
+
+export const invites = pgTable("invites", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  workspaceId: uuid("workspace_id")
+    .references(() => workspaces.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  email: text("email").notNull(),
+  role: workspaceMemberRoleEnum("role").notNull().default("member"),
+  status: inviteStatusEnum("status").notNull().default("pending"),
+  token: text("token").notNull().unique(),
+  invitedBy: text("invited_by").notNull(),
+  expiresAt: text("expires_at").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 // Projects
 export const projects = pgTable("projects", {
   id: uuid("id").defaultRandom().primaryKey(),
