@@ -59,6 +59,22 @@ export const workspaces = pgTable("workspaces", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Worskpace Members - Join table between Supabase auth users and workspaces. This is how we know which workspace a user belongs to.
+
+export const workspaceMembers = pgTable("workspace_members", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  workspaceId: uuid("workspace_id")
+    .references(() => workspaces.id, { onDelete: "cascade" })
+    .notNull(),
+  userId: text("user_id").notNull(), // Supabase auth user id
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  initials: text("initials").notNull(),
+  role: workspaceMemberRoleEnum("role").notNull().default("member"),
+  online: boolean("online").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Projects
 export const projects = pgTable("projects", {
   id: uuid("id").defaultRandom().primaryKey(),
