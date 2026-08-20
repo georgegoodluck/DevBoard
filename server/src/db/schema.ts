@@ -93,9 +93,13 @@ export const invites = pgTable("invites", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-// Projects
+// Projects - Scoped to a workspace. Only workspace members can see them.
+
 export const projects = pgTable("projects", {
   id: uuid("id").defaultRandom().primaryKey(),
+  workspaceId: uuid("workspace_id")
+    .references(() => workspaces.id, { onDelete: "cascade" })
+    .notNull(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   emoji: text("emoji").notNull().default("📁"),
@@ -103,6 +107,7 @@ export const projects = pgTable("projects", {
   progress: integer("progress").notNull().default(0),
   due: text("due"),
   tags: text("tags").array().notNull().default([]),
+  createdBy: text("created_by").notNull(), // userId
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
