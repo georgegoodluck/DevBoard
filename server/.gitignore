@@ -30,7 +30,7 @@ Thumbs.db
 *.swo
 
 # Drizzle
-drizzle/migrations/
+# drizzle/migrations/
 drizzle/meta/
 # If you want to keep migrations, remove the line above
 
