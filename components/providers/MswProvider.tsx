@@ -1,10 +1,6 @@
 "use client";
 
-<<<<<<< HEAD
-import { useEffect, useRef, useState } from "react";
-=======
 import { useEffect, useState, useRef } from "react";
->>>>>>> bd2248f (fix: fix knows issues)
 
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === "true";
 
@@ -14,21 +10,6 @@ export default function MswProvider({
   children: React.ReactNode;
 }) {
   const [ready, setReady] = useState(!USE_MOCK);
-<<<<<<< HEAD
-  const initializedRef = useRef(false);
-
-  useEffect(() => {
-    if (!USE_MOCK || initializedRef.current) {
-      return;
-    }
-
-    initializedRef.current = true;
-
-    import("@/mocks/browser").then(({ worker }) => {
-      worker.start({ onUnhandledRequest: "bypass" }).then(() => setReady(true));
-    });
-  }, []);
-=======
   const isStarting = useRef(false);
   const isStarted = useRef(false);
 
@@ -36,7 +17,6 @@ export default function MswProvider({
     if (!USE_MOCK || isStarting.current || isStarted.current) {
       return;
     }
->>>>>>> bd2248f (fix: fix knows issues)
 
     isStarting.current = true;
 

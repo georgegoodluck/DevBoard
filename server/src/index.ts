@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { workspaceRoutes } from "./routes/workspaces.js";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -28,6 +29,7 @@ async function main() {
   await app.register(projectRoutes);
   await app.register(taskRoutes);
   await app.register(activityRoutes);
+  await app.register(workspaceRoutes);
 
   app.get("/health", async () => ({
     status: "ok",
