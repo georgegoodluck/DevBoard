@@ -1,160 +1,143 @@
 import { FastifyInstance } from "fastify";
-import { db } from "../db";
-import { projects, projectMembers, members } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { db } from "../db/index.js";
+import { projects, activity } from "../db/schema.js";
+import { eq, and } from "drizzle-orm";
+import { authenticate } from "../plugins/auth.js";
+import { requireWorkspace } from "../lib/workspace.js";
+
+type AuthRequest = {
+  workspaceId: string;
+  user: { id: string };
+  workspaceMember: { name: string };
+};
 
 export async function projectRoutes(app: FastifyInstance) {
-  // --------------------------------------------------------------------------
-  // GET /api/projects - Fetch all projects with their members
-  // --------------------------------------------------------------------------
+  app.addHook("preHandler", authenticate);
+  app.addHook("preHandler", requireWorkspace);
+
+  // GET /api/projects
   app.get("/api/projects", async (req, reply) => {
+    const workspaceId = (req as unknown as AuthRequest).workspaceId;
+
     try {
-      // Fetch all projects ordered by creation date
-      const rows = await db.select().from(projects).orderBy(projects.createdAt);
+      const rows = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.workspaceId, workspaceId))
+        .orderBy(projects.createdAt);
 
-      // For each project, fetch its associated members
-      const result = await Promise.all(
-        rows.map(async (project) => {
-          // Query project members with their details
-          const projectMemberRows = await db
-            .select({ member: members })
-            .from(projectMembers)
-            .innerJoin(members, eq(projectMembers.memberId, members.id))
-            .where(eq(projectMembers.projectId, project.id));
-
-          // Return project with member initials and gradients
-          return {
-            ...project,
-            members: projectMemberRows.map((r) => ({
-              initials: r.member.initials,
-              gradient: r.member.gradient,
-            })),
-          };
-        }),
-      );
-
-      return reply.send(result);
-    } catch (err) {
+      return reply.send(rows);
+    } catch {
       return reply.status(500).send({ error: "Failed to fetch projects" });
     }
   });
 
-  // --------------------------------------------------------------------------
-  // GET /api/projects/:id - Fetch a single project by ID
-  // --------------------------------------------------------------------------
+  // GET /api/projects/:id
   app.get<{ Params: { id: string } }>(
     "/api/projects/:id",
     async (req, reply) => {
+      const workspaceId = (req as unknown as AuthRequest).workspaceId;
       const { id } = req.params;
+
       try {
-        // Fetch the project
         const [project] = await db
           .select()
           .from(projects)
-          .where(eq(projects.id, id));
+          .where(
+            and(
+              eq(projects.id, id),
+              eq(projects.workspaceId, workspaceId), // never leak other workspaces
+            ),
+          );
 
-        if (!project) {
+        if (!project)
           return reply.status(404).send({ error: "Project not found" });
-        }
-
-        // Fetch project members
-        const projectMemberRows = await db
-          .select({ member: members })
-          .from(projectMembers)
-          .innerJoin(members, eq(projectMembers.memberId, members.id))
-          .where(eq(projectMembers.projectId, project.id));
-
-        // Return project with members
-        return reply.send({
-          ...project,
-          members: projectMemberRows.map((r) => ({
-            initials: r.member.initials,
-            gradient: r.member.gradient,
-          })),
-        });
-      } catch (err) {
+        return reply.send(project);
+      } catch {
         return reply.status(500).send({ error: "Failed to fetch project" });
       }
     },
   );
 
-  // --------------------------------------------------------------------------
-  // POST /api/projects - Create a new project
-  // --------------------------------------------------------------------------
-  app.post<{ Body: typeof projects.$inferInsert }>(
-    "/api/projects",
-    async (req, reply) => {
-      try {
-        const [project] = await db
-          .insert(projects)
-          .values(req.body)
-          .returning();
+  // POST /api/projects
+  app.post<{
+    Body: {
+      name: string;
+      description: string;
+      emoji: string;
+      due?: string;
+      tags?: string[];
+    };
+  }>("/api/projects", async (req, reply) => {
+    const workspaceId = (req as unknown as AuthRequest).workspaceId;
+    const userId = (req as unknown as AuthRequest).user.id;
 
-        // Return the created project (without members initially)
-        return reply.status(201).send({
-          ...project,
-          members: [],
-        });
-      } catch (err) {
-        return reply.status(500).send({ error: "Failed to create project" });
-      }
-    },
-  );
+    try {
+      const [project] = await db
+        .insert(projects)
+        .values({
+          ...req.body,
+          workspaceId,
+          createdBy: userId,
+        })
+        .returning();
 
-  // --------------------------------------------------------------------------
-  // PATCH /api/projects/:id - Update a project
-  // --------------------------------------------------------------------------
+      // Log activity
+      await db.insert(activity).values({
+        workspaceId,
+        userId,
+        actor: (req as unknown as AuthRequest).workspaceMember.name,
+        action: "created project",
+        target: project.name,
+        project: project.name,
+        type: "task",
+      });
+
+      return reply.status(201).send(project);
+    } catch {
+      return reply.status(500).send({ error: "Failed to create project" });
+    }
+  });
+
+  // PATCH /api/projects/:id
   app.patch<{
     Params: { id: string };
     Body: Partial<typeof projects.$inferInsert>;
   }>("/api/projects/:id", async (req, reply) => {
+    const workspaceId = (req as unknown as AuthRequest).workspaceId;
     const { id } = req.params;
+
     try {
       const [updated] = await db
         .update(projects)
-        .set({ ...req.body, updatedAt: new Date() })
-        .where(eq(projects.id, id))
+        .set({ ...(req.body as object), updatedAt: new Date() })
+        .where(and(eq(projects.id, id), eq(projects.workspaceId, workspaceId)))
         .returning();
 
-      if (!updated) {
+      if (!updated)
         return reply.status(404).send({ error: "Project not found" });
-      }
-
-      // Fetch updated project with members
-      const projectMemberRows = await db
-        .select({ member: members })
-        .from(projectMembers)
-        .innerJoin(members, eq(projectMembers.memberId, members.id))
-        .where(eq(projectMembers.projectId, updated.id));
-
-      return reply.send({
-        ...updated,
-        members: projectMemberRows.map((r) => ({
-          initials: r.member.initials,
-          gradient: r.member.gradient,
-        })),
-      });
-    } catch (err) {
+      return reply.send(updated);
+    } catch {
       return reply.status(500).send({ error: "Failed to update project" });
     }
   });
 
-  // --------------------------------------------------------------------------
-  // DELETE /api/projects/:id - Delete a project
-  // --------------------------------------------------------------------------
+  // DELETE /api/projects/:id
   app.delete<{ Params: { id: string } }>(
     "/api/projects/:id",
     async (req, reply) => {
+      const workspaceId = (req as unknown as AuthRequest).workspaceId;
       const { id } = req.params;
-      try {
-        // Delete project members first (due to foreign key constraint)
-        await db.delete(projectMembers).where(eq(projectMembers.projectId, id));
 
-        // Then delete the project
-        await db.delete(projects).where(eq(projects.id, id));
+      try {
+        await db
+          .delete(projects)
+          .where(
+            and(eq(projects.id, id), eq(projects.workspaceId, workspaceId)),
+          );
 
         return reply.status(204).send();
-      } catch (err) {
+      } catch {
         return reply.status(500).send({ error: "Failed to delete project" });
       }
     },

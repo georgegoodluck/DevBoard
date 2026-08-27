@@ -10,6 +10,7 @@ build/
 .env
 .env.local
 .env.*.local
+!.env.example
 
 # Logs
 logs/
@@ -29,7 +30,7 @@ Thumbs.db
 *.swo
 
 # Drizzle
-drizzle/migrations/
+# drizzle/migrations/
 drizzle/meta/
 # If you want to keep migrations, remove the line above
 

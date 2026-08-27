@@ -1,24 +1,24 @@
-"use client";
+import { createClient } from "@/lib/supabase/client";
+import SidebarClient from "./SidebarClient";
 
-import { useSidebar } from "@/context/SidebarContext";
-import SidebarLogo from "./SidebarLogo";
-import SidebarNav from "./SidebarNav";
-import SidebarUser from "./SidebarUser";
+export default async function Sidebar() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-export default function Sidebar() {
-  const { collapsed } = useSidebar();
-
-  return (
-    <aside
-      className="flex flex-col shrink-0 overflow-hidden border-r border-[var(--border)] bg-[var(--bg1)] transition-all duration-200"
-      style={{
-        width: collapsed ? "56px" : "var(--sidebar-width)",
-        height: "100vh",
-      }}
-    >
-      <SidebarLogo collapsed={collapsed} />
-      <SidebarNav collapsed={collapsed} />
-      <SidebarUser collapsed={collapsed} />
-    </aside>
-  );
+  const userData = user
+    ? {
+        name: user.user_metadata?.full_name ?? user.email ?? "User",
+        email: user.email ?? "",
+        initials:
+          (user.user_metadata?.full_name as string)
+            ?.split(" ")
+            .map((n: string) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) ?? "U",
+      }
+    : null;
+  return <SidebarClient user={userData} />;
 }
