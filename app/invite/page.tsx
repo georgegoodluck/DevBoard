@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
@@ -11,19 +11,11 @@ export default function InvitePage() {
   const supabase = createClient();
   const token = searchParams.get("token");
 
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
+  // Derive status directly instead of using useEffect
+  const status = token ? "ready" : "error";
+
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      return;
-    }
-    setStatus("ready");
-  }, [token]);
 
   async function handleAccept() {
     setAccepting(true);
@@ -63,27 +55,21 @@ export default function InvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
-      <div className="w-full max-w-[380px] text-center">
-        <div className="flex items-center justify-center gap-2 mb-[40px]">
+    <div className="min-h-screen bg-(--bg) flex items-center justify-center p-4">
+      <div className="w-full max-w-95 text-center">
+        <div className="flex items-center justify-center gap-2 mb-10">
           <Image src="/icon.svg" alt="DevBoard" width={28} height={28} />
           <span className="font-mono text-[16px] font-semibold tracking-tight">
-            <span className="text-[var(--text)]">Dev</span>
+            <span className="text-(--text)">Dev</span>
             <span className="brand-gradient-text">Board</span>
           </span>
         </div>
 
-        <div className="bg-[var(--bg1)] border border-[var(--border)] rounded-[8px] p-[36px]">
-          {status === "loading" && (
-            <p className="font-mono text-[12px] text-[var(--text3)]">
-              Loading...
-            </p>
-          )}
-
+        <div className="bg-(--bg1) border border-(--border) rounded-lg p-9">
           {status === "error" && (
             <>
-              <div className="text-[36px] mb-[12px]">❌</div>
-              <p className="font-mono text-[13px] text-[var(--red)]">
+              <div className="text-[36px] mb-3">❌</div>
+              <p className="font-mono text-[13px] text-(--red)">
                 Invalid invite link
               </p>
             </>
@@ -91,16 +77,16 @@ export default function InvitePage() {
 
           {status === "ready" && (
             <>
-              <div className="text-[36px] mb-[16px]">👋</div>
-              <h1 className="font-mono text-[15px] font-semibold text-[var(--text)] mb-[8px]">
+              <div className="text-[36px] mb-4">👋</div>
+              <h1 className="font-mono text-[15px] font-semibold text-(--text) mb-2">
                 You&apos;ve been invited
               </h1>
-              <p className="text-[12px] text-[var(--text3)] leading-relaxed mb-[24px]">
+              <p className="text-[12px] text-(--text3) leading-relaxed mb-6">
                 Accept the invite to join your team&apos;s DevBoard workspace.
               </p>
 
               {error && (
-                <p className="font-mono text-[11px] text-[var(--red)] mb-[12px]">
+                <p className="font-mono text-[11px] text-(--red) mb-3">
                   {error}
                 </p>
               )}
@@ -108,7 +94,7 @@ export default function InvitePage() {
               <button
                 onClick={handleAccept}
                 disabled={accepting}
-                className="brand-gradient h-[36px] w-full rounded-[var(--radius)] text-white font-mono text-[12px] font-medium cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40"
+                className="brand-gradient h-9 w-full rounded-(--radius) text-white font-mono text-[12px] font-medium cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40"
               >
                 {accepting ? "Joining..." : "Accept invite →"}
               </button>
