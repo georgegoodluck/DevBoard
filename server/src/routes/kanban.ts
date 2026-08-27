@@ -63,4 +63,32 @@ export async function kanbanRoutes(app: FastifyInstance) {
       }
     },
   );
+  // PATCH /api/tasks/:id/move
+  // Called when a card is dragged to a new column or position
+  app.patch<{
+    Params: { id: string };
+    // Change 'string' to your specific enum values
+    Body: {
+      status: "Todo" | "In Progress" | "In Review" | "Done";
+      position: number;
+    };
+  }>("/api/tasks/:id/move", async (req, reply) => {
+    const workspaceId = req.workspaceId;
+    const { id } = req.params;
+    const { status, position } = req.body;
+
+    try {
+      const [updated] = await db
+        .update(tasks)
+        // Now this works perfectly without 'as any'
+        .set({ status, position, updatedAt: new Date() })
+        .where(and(eq(tasks.id, id), eq(tasks.workspaceId, workspaceId)))
+        .returning();
+
+      if (!updated) return reply.status(404).send({ error: "Task not found" });
+      return reply.send(updated);
+    } catch (err) {
+      return reply.status(500).send({ error: "Failed to move task" });
+    }
+  });
 }
