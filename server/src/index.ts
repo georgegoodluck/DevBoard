@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import * as Sentry from "@sentry/node";
 import { workspaceRoutes } from "./routes/workspaces.js";
 
@@ -7,6 +8,8 @@ Sentry.init({
   enabled: process.env.NODE_ENV === "production",
 });
 
+=======
+>>>>>>> 9a259b4 (chore: remove Sentry error monitoring completely)
 import Fastify from "fastify";
 import { env } from "./env.js";
 import { corsPlugin } from "./plugins/cors.js";
@@ -36,6 +39,7 @@ async function main() {
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV,
   }));
+
   try {
     await app.listen({ port: env.PORT, host: "0.0.0.0" });
     // console.log(`Server running on http://localhost:${env.PORT}`);
