@@ -38,7 +38,7 @@ export default function RegisterPage() {
       password: form.password,
       options: {
         data: { full_name: form.name },
-        emailRedirectTo: `${window.location.origin}/onboarding`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
       },
     });
 
@@ -116,7 +116,7 @@ export default function RegisterPage() {
                 label: "Full name",
                 key: "name",
                 type: "text",
-                placeholder: "George Efunboade",
+                placeholder: "George Goodluck",
               },
               {
                 label: "Email",

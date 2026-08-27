@@ -1,7 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_ROUTES = ["/login", "/register", "/invite", "/auth/callback"];
+const PUBLIC_ROUTES = [
+  "/login",
+  "/register",
+  "/invite",
+  "/onboarding",
+  "/auth/callback",
+];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -32,17 +38,17 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isPublic = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
+  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
   const isOnboarding = pathname.startsWith("/onboarding");
 
-  // Not logged in → login
+  // Not logged in → redirect to login (except for public routes)
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Logged in, on public route → check if they need onboarding
+  // Logged in, on public route → redirect to overview (but allow onboarding)
   if (user && isPublic && !isOnboarding) {
     const url = request.nextUrl.clone();
     url.pathname = "/overview";
