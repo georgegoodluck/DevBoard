@@ -1,18 +1,10 @@
-import * as Sentry from "@sentry/node";
-import { workspaceRoutes } from "./routes/workspaces.js";
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  tracesSampleRate: 1.0,
-  enabled: process.env.NODE_ENV === "production",
-});
-
 import Fastify from "fastify";
-import { env } from "./env.js";
-import { corsPlugin } from "./plugins/cors.js";
-import { projectRoutes } from "./routes/projects.js";
-import { taskRoutes } from "./routes/tasks.js";
-import { activityRoutes } from "./routes/activity.js";
+import { env } from "./env";
+import { corsPlugin } from "./plugins/cors";
+import { projectRoutes } from "./routes/projects";
+import { taskRoutes } from "./routes/tasks";
+import { activityRoutes } from "./routes/activity";
+import { workspaceRoutes } from "./routes/workspaces";
 
 const app = Fastify({
   logger:
@@ -36,6 +28,7 @@ async function main() {
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV,
   }));
+
   try {
     await app.listen({ port: env.PORT, host: "0.0.0.0" });
     // console.log(`Server running on http://localhost:${env.PORT}`);
