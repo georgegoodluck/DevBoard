@@ -40,7 +40,9 @@ export default async function DashboardLayout({
   }
 
   // Keep this for workspace validation, but the components will fetch their own data
-  const { workspace } = await res.json();
+  // const { workspace } = await res.json();
+  const { workspace, currentMember } = await res.json();
+  // console.log("currentMember:", currentMember);
 
   return (
     <CommandPaletteProvider>
@@ -49,7 +51,14 @@ export default async function DashboardLayout({
           <div className="flex h-screen overflow-hidden bg-[var(--bg)]">
             {/* Sidebar — hidden on mobile, visible lg+ */}
             <div className="hidden lg:block">
-              <Sidebar />
+              <Sidebar
+                user={{
+                  name: currentMember.name,
+                  email: currentMember.email,
+                  initials: currentMember.initials,
+                  role: currentMember.role,
+                }}
+              />
             </div>
 
             <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
