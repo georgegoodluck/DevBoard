@@ -1,61 +1,88 @@
 import "dotenv/config";
 import { db } from "./index.js";
-import { projects, members, tasks, activity, projectMembers } from "./schema.js";
+import {
+  workspaces,
+  workspaceMembers,
+  projects,
+  projectMembers,
+  tasks,
+  activity,
+} from "./schema.js";
 
 async function seed() {
   console.log("Seeding database...");
 
-  // Clear existing data
+  // Clear existing data (in reverse dependency order)
   await db.delete(activity);
   await db.delete(tasks);
   await db.delete(projectMembers);
-  await db.delete(members);
   await db.delete(projects);
+  await db.delete(workspaceMembers);
+  await db.delete(workspaces);
 
-  // Members
-  const [george, ada, tunde, mide] = await db
-    .insert(members)
+  // 1. Create a Workspace
+  // ownerUserId mimics a Supabase auth UUID
+  const ownerUserId = "auth-user-george-123";
+  const [workspace] = await db
+    .insert(workspaces)
     .values([
       {
-        name: "George E.",
-        initials: "GE",
-        gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)",
-        role: "Lead / Fullstack",
-        status: "online",
-        email: "george@devboard.app",
-      },
-      {
-        name: "Ada K.",
-        initials: "AK",
-        gradient: "linear-gradient(135deg,#f59e0b,#f87171)",
-        role: "Frontend",
-        status: "online",
-        email: "ada@devboard.app",
-      },
-      {
-        name: "Tunde N.",
-        initials: "TN",
-        gradient: "linear-gradient(135deg,#2dd4a0,#4f8eff)",
-        role: "Backend",
-        status: "away",
-        email: "tunde@devboard.app",
-      },
-      {
-        name: "Mide O.",
-        initials: "MO",
-        gradient: "linear-gradient(135deg,#a78bfa,#f87171)",
-        role: "Design",
-        status: "offline",
-        email: "mide@devboard.app",
+        name: "DevBoard HQ",
+        slug: "devboard-hq",
+        ownerUserId: ownerUserId,
       },
     ])
     .returning();
 
-  // Projects
+  // 2. Create Workspace Members
+  const [george, ada, tunde, mide] = await db
+    .insert(workspaceMembers)
+    .values([
+      {
+        workspaceId: workspace.id,
+        userId: ownerUserId,
+        name: "George E.",
+        email: "george@devboard.app",
+        initials: "GE",
+        role: "owner",
+        online: true,
+      },
+      {
+        workspaceId: workspace.id,
+        userId: "auth-user-ada-456",
+        name: "Ada K.",
+        email: "ada@devboard.app",
+        initials: "AK",
+        role: "admin",
+        online: true,
+      },
+      {
+        workspaceId: workspace.id,
+        userId: "auth-user-tunde-789",
+        name: "Tunde N.",
+        email: "tunde@devboard.app",
+        initials: "TN",
+        role: "member",
+        online: false,
+      },
+      {
+        workspaceId: workspace.id,
+        userId: "auth-user-mide-012",
+        name: "Mide O.",
+        email: "mide@devboard.app",
+        initials: "MO",
+        role: "member",
+        online: false,
+      },
+    ])
+    .returning();
+
+  // 3. Create Projects
   const [tickrpay, pulse, finsnap, subtrack, devboard] = await db
     .insert(projects)
     .values([
       {
+        workspaceId: workspace.id,
         name: "TickrPay",
         description: "Event payment registration & ID-issuing platform",
         emoji: "🎟️",
@@ -63,8 +90,10 @@ async function seed() {
         progress: 62,
         due: "Apr 12",
         tags: ["Next.js", "Supabase"],
+        createdBy: george.userId,
       },
       {
+        workspaceId: workspace.id,
         name: "Pulse",
         description: "Developer activity dashboard with terminal aesthetic",
         emoji: "⚡",
@@ -72,8 +101,10 @@ async function seed() {
         progress: 24,
         due: "May 01",
         tags: ["Next.js", "GraphQL"],
+        createdBy: george.userId,
       },
       {
+        workspaceId: workspace.id,
         name: "fin·snap",
         description: "Personal finance tracker with analytics",
         emoji: "💸",
@@ -81,8 +112,10 @@ async function seed() {
         progress: 81,
         due: "Mar 28",
         tags: ["Next.js", "Drizzle"],
+        createdBy: ada.userId,
       },
       {
+        workspaceId: workspace.id,
         name: "SubTrack",
         description: "Subscription tracker SaaS with AI advisor",
         emoji: "📊",
@@ -90,8 +123,10 @@ async function seed() {
         progress: 95,
         due: "Mar 22",
         tags: ["React", "Tailwind"],
+        createdBy: tunde.userId,
       },
       {
+        workspaceId: workspace.id,
         name: "DevBoard",
         description: "Fullstack dev collaboration dashboard",
         emoji: "🧩",
@@ -99,11 +134,12 @@ async function seed() {
         progress: 18,
         due: "Ongoing",
         tags: ["Next.js", "Fastify"],
+        createdBy: george.userId,
       },
     ])
     .returning();
 
-  // Project members
+  // 4. Create Project Members (Assigning via UUID)
   await db.insert(projectMembers).values([
     { projectId: tickrpay.id, memberId: george.id },
     { projectId: tickrpay.id, memberId: tunde.id },
@@ -118,88 +154,105 @@ async function seed() {
     { projectId: devboard.id, memberId: mide.id },
   ]);
 
-  // Tasks
+  // 5. Create Tasks
   await db.insert(tasks).values([
     {
-      id: "DBD-041",
+      workspaceId: workspace.id,
+      projectId: devboard.id,
+      createdBy: george.userId,
+      assigneeId: george.id,
       title: "Implement Supabase auth middleware",
       status: "In Progress",
       priority: "high",
-      projectId: devboard.id,
-      assigneeId: george.id,
     },
     {
-      id: "DBD-040",
+      workspaceId: workspace.id,
+      projectId: devboard.id,
+      createdBy: mide.userId,
+      assigneeId: ada.id,
       title: "Design settings page layout",
       status: "Todo",
       priority: "mid",
-      projectId: devboard.id,
-      assigneeId: ada.id,
     },
     {
-      id: "DBD-039",
+      workspaceId: workspace.id,
+      projectId: devboard.id,
+      createdBy: george.userId,
+      assigneeId: tunde.id,
       title: "Set up Drizzle ORM schema",
       status: "Done",
       priority: "low",
-      projectId: devboard.id,
-      assigneeId: tunde.id,
     },
     {
-      id: "DBD-038",
+      workspaceId: workspace.id,
+      projectId: devboard.id,
+      createdBy: ada.userId,
+      assigneeId: mide.id,
       title: "Fix mobile sidebar overflow",
       status: "Done",
       priority: "high",
-      projectId: devboard.id,
-      assigneeId: mide.id,
     },
     {
-      id: "DBD-037",
+      workspaceId: workspace.id,
+      projectId: devboard.id,
+      createdBy: tunde.userId,
+      assigneeId: george.id,
       title: "Write Playwright E2E for auth flow",
       status: "Todo",
       priority: "mid",
-      projectId: devboard.id,
-      assigneeId: george.id,
     },
   ]);
 
-  // Activity
+  // 6. Create Activity Logs
   await db.insert(activity).values([
     {
-      actor: "George E.",
+      workspaceId: workspace.id,
+      userId: george.userId,
+      actor: george.name,
       action: "merged PR",
       target: "#24 — feat: add Drizzle ORM schema",
       project: "TickrPay",
       type: "merge",
     },
     {
-      actor: "Tunde N.",
+      workspaceId: workspace.id,
+      userId: tunde.userId,
+      actor: tunde.name,
       action: "closed task",
       target: "DBD-039",
       project: "DevBoard",
       type: "task",
     },
     {
-      actor: "Ada K.",
+      workspaceId: workspace.id,
+      userId: ada.userId,
+      actor: ada.name,
       action: "opened task",
       target: "DBD-040",
       project: "DevBoard",
       type: "task",
     },
     {
-      actor: "Mide O.",
+      workspaceId: workspace.id,
+      userId: mide.userId,
+      actor: mide.name,
       action: "updated progress on",
       target: "fin·snap to 81%",
       project: "fin·snap",
       type: "update",
     },
     {
-      actor: "George E.",
+      workspaceId: workspace.id,
+      userId: george.userId,
+      actor: george.name,
       action: "pushed 3 commits to",
       target: "feat/auth-middleware",
       project: "TickrPay",
       type: "merge",
     },
     {
+      workspaceId: workspace.id,
+      userId: "system-ci",
       actor: "CI/CD",
       action: "build failed on",
       target: "feat/realtime-updates",
@@ -207,7 +260,9 @@ async function seed() {
       type: "ci",
     },
     {
-      actor: "George E.",
+      workspaceId: workspace.id,
+      userId: george.userId,
+      actor: george.name,
       action: "deployed",
       target: "SubTrack to production",
       project: "SubTrack",

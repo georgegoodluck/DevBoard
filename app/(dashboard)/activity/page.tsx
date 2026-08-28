@@ -16,9 +16,9 @@ export default function ActivityPage() {
       <ActivityHeader activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-2.5">
         <ActivityFeed activeTab={activeTab} /> {/* ✅ Pass activeTab */}
-        <div className="flex flex-col gap-2.5">
-          <ContributionsPanel />
-          <CicdStatus />
+        <div className="flex flex-col gap-[10px]">
+          <ContributionsPanel members={[]} />
+          <CicdStatus pipelines={[]} />
         </div>
       </div>
     </div>

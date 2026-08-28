@@ -5,6 +5,7 @@ import { projectRoutes } from "./routes/projects";
 import { taskRoutes } from "./routes/tasks";
 import { activityRoutes } from "./routes/activity";
 import { workspaceRoutes } from "./routes/workspaces";
+import { kanbanRoutes } from "./routes/kanban";
 
 const app = Fastify({
   logger:
@@ -22,6 +23,7 @@ async function main() {
   await app.register(taskRoutes);
   await app.register(activityRoutes);
   await app.register(workspaceRoutes);
+  await app.register(kanbanRoutes);
 
   app.get("/health", async () => ({
     status: "ok",
