@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const origin = req.nextUrl.origin;
+  const { searchParams, origin } = new URL(req.url);
   const code = searchParams.get("code");
+  const next = searchParams.get("next") ?? "/overview";
 
   if (code) {
     const supabase = await createClient();
@@ -16,16 +16,16 @@ export async function GET(req: NextRequest) {
       const isDev = process.env.NODE_ENV === "development";
 
       if (isDev) {
-        return NextResponse.redirect(`${origin}/overview`);
+        return NextResponse.redirect(`${origin}${next}`);
       } else {
         const redirectUrl = forwardedHost
-          ? `https://${forwardedHost}/overview`
-          : `${origin}/overview`;
+          ? `https://${forwardedHost}${next}`
+          : `${origin}${next}`;
         return NextResponse.redirect(redirectUrl);
       }
     }
 
-    console.error("Google Auth Exchange Error:", error.message);
+    console.error("Auth Exchange Error:", error.message);
   }
 
   return NextResponse.redirect(`${origin}/login?error=auth_failed`);

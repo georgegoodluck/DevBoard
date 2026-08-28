@@ -1,6 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
+const PUBLIC_ROUTES = [
+  "/login",
+  "/register",
+  "/invite",
+  "/onboarding",
+  "/auth/callback",
+];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -25,23 +33,23 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // Refresh session — must be called before any other supabase calls
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users to login
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/login");
-  const isDashboardRoute = !isAuthRoute && request.nextUrl.pathname !== "/";
+  const pathname = request.nextUrl.pathname;
+  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
+  const isOnboarding = pathname.startsWith("/onboarding");
 
-  if (!user && isDashboardRoute) {
+  // Not logged in → redirect to login (except for public routes)
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from login
-  if (user && isAuthRoute) {
+  // Logged in, on public route → redirect to overview (but allow onboarding)
+  if (user && isPublic && !isOnboarding) {
     const url = request.nextUrl.clone();
     url.pathname = "/overview";
     return NextResponse.redirect(url);

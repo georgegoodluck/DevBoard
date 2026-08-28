@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -138,9 +139,9 @@ export default function LoginPage() {
 
         <p className="text-center font-mono text-[11px] text-(--text3) mt-5">
           Don&apos;t have an account?{" "}
-          <span className="text-(--accent) cursor-pointer hover:opacity-70">
-            Contact your admin
-          </span>
+          <Link href="/register" className="text-[var(--accent)] hover:opacity-70">
+            Sign up
+          </Link>
         </p>
       </div>
     </div>
