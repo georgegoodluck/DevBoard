@@ -1,4 +1,4 @@
-export type KanbanStatus = "Todo" | "In Progrss" | "In Review" | "Done";
+export type KanbanStatus = "Todo" | "In Progress" | "In Review" | "Done";
 
 export type KanbanAssignee = {
   id: string;

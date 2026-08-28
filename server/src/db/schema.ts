@@ -149,7 +149,7 @@ export const tasks = pgTable("tasks", {
   description: text("description").default(""),
   status: taskStatusEnum("status").notNull().default("Todo"),
   priority: taskPriorityEnum("priority").notNull().default("mid"),
-  position: integer("postion").notNull().default(0), // order within the column
+  position: integer("position").notNull().default(0), // order within the column
   due: text("due"),
   labels: text("labels").array().notNull().default([]),
   createdBy: text("created_by").notNull(), // userId
