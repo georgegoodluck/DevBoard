@@ -11,10 +11,11 @@ export type KanbanTask = {
   title: string;
   description: string;
   status: KanbanStatus;
-  priority: number;
+  priority: "high" | "mid" | "low";
+  position: number;
   due: string | null;
   labels: string[];
-  assignee: KanbanAssignee[];
+  assignee: KanbanAssignee | null;
   createdAt: string;
 };
 
