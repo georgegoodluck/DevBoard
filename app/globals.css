@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0d0d10;
+  --color-bg1: #111115;
+  --color-bg2: #16161c;
+  --color-bg3: #1c1c24;
+  --color-border: #232330;
+  --color-border2: #2a2a38;
+  --color-text: #e8e8f0;
+  --color-text2: #9090a8;
+  --color-text3: #55556a;
+  --color-accent: #8b5cf6;
+  --color-accent-end: #06b6d4;
+  --color-green: #2dd4a0;
+  --color-amber: #f59e0b;
+  --color-red: #f87171;
+  --color-purple: #a78bfa;
+
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --spacing-sidebar: 220px;
+  --spacing-topbar: 48px;
+  --radius-devboard: 5px;
+}
+
+:root {
+  --accent-dim: rgba(139, 92, 246, 0.12);
+  --green-dim: rgba(45, 212, 160, 0.1);
+  --amber-dim: rgba(245, 158, 11, 0.1);
+  --red-dim: rgba(248, 113, 113, 0.1);
+  --purple-dim: rgba(167, 139, 250, 0.1);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
