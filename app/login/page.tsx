@@ -18,17 +18,37 @@ export default function LoginPage() {
     setError(null);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    setLoading(false);
     if (error) {
+      setLoading(false);
       setError(error.message);
       return;
     }
-    router.push("/overview");
+
+    // The cookie only ever gets set by onboarding/invite-accept, so a
+    // fresh session (cleared cookies, new device, incognito) would
+    // otherwise look indistinguishable from "never onboarded" and wrongly
+    // bounce an existing member back to onboarding. Ask the backend for
+    // the real answer instead of assuming.
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/workspaces/me`,
+      {
+        headers: { Authorization: `Bearer ${data.session.access_token}` },
+      },
+    );
+
+    setLoading(false);
+
+    if (res.ok) {
+      document.cookie = "devboard_has_workspace=1; path=/; max-age=31536000";
+      router.push("/overview");
+    } else {
+      router.push("/onboarding");
+    }
     router.refresh();
   }
 
