@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectCard } from "./ProjectCard";
+import { ProjectCard } from "./ProjectsCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import type { Project } from "@/types/project";
