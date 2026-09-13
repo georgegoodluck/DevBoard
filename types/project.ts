@@ -19,4 +19,5 @@ export interface Project {
   createdAt: string;
   updatedAt: string;
   taskCount?: number;
+  memberIds?: string[];
 }
