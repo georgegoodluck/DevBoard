@@ -1,27 +1,13 @@
 import { http, HttpResponse } from "msw";
-import { mockProjects } from "./data/projects";
-import { mockTasks } from "./data/tasks";
-import { mockActivity } from "./data/activity";
+import { mockMembers, mockWorkspace } from "./data/workspace";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export const handlers = [
-  http.get("/api/projects", () => {
-    return HttpResponse.json(mockProjects);
-  }),
-
-  http.get("/api/tasks", () => {
-    return HttpResponse.json(mockTasks);
-  }),
-
-  http.post("/api/tasks", async ({ request }) => {
-    const body = await request.json();
-    const newTask = {
-      id: `DBD-0${mockTasks.length + 42}`,
-      ...(body as object),
-    };
-    return HttpResponse.json(newTask, { status: 201 });
-  }),
-
-  http.get("/api/activity", () => {
-    return HttpResponse.json(mockActivity);
-  }),
+  http.get(`${API_URL}/api/workspaces/me`, () =>
+    HttpResponse.json({ workspace: mockWorkspace, members: mockMembers, role: "owner" }),
+  ),
+  http.get(`${API_URL}/api/projects`, () => HttpResponse.json({ projects: [] })),
+  http.get(`${API_URL}/api/activity`, () => HttpResponse.json({ activity: [] })),
+  http.get(`${API_URL}/api/notifications`, () => HttpResponse.json({ notifications: [] })),
 ];

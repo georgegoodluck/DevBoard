@@ -1,6 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+// Server Components can't set cookies (only read them) — the try/catch
+// swallows that specific failure. Session refresh in that case is handled
+// by middleware.ts on the next request instead.
 export async function createClient() {
   const cookieStore = await cookies();
 
@@ -9,18 +12,16 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        // Reads all cookies from the incoming request so supabase can read the session auth token(JWT)
         getAll() {
           return cookieStore.getAll();
         },
-        // Allows supabase to automatically refresh expired auth tokens and write updated session cookies back to the response headers
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set({ name, value, ...options });
-            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
           } catch {
-            // SetAll called from a server component
+            // Called from a Server Component — safe to ignore.
           }
         },
       },

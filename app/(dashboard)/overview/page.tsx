@@ -1,62 +1,50 @@
-import StatCardGrid from "@/components/overview/StatCardGrid";
-import ActiveProjects from "@/components/overview/ActiveProjects";
-import RecentTasks from "@/components/overview/RecentTasks";
-import SprintVelocity from "@/components/overview/SprintVelocity";
-import TeamPanel from "@/components/overview/TeamPanel";
-import Deadlines from "@/components/overview/Deadlines";
-import EmptyState from "@/components/ui/EmptyState";
-import { LayoutGrid } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+"use client";
 
-export default async function OverviewPage() {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+import Link from "next/link";
+import { StatCardGrid } from "@/components/overview/StatCardGrid";
+// import { ActiveProjects } from "@/components/overview/ActiveProjects";
+// import { RecentTasks } from "@/components/overview/RecentTasks";
+// import { SprintVelocity } from "@/components/overview/SprintVelocity";
+// import { TeamPanel } from "@/components/overview/TeamPanel";
+// import { Deadlines } from "@/components/overview/Deadlines";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { useProjects } from "@/hooks/useProjects";
+import { LayoutDashboard, Plus } from "lucide-react";
 
-  // Fetch data just to check if workspace is empty
-  const headers = { Authorization: `Bearer ${session?.access_token}` };
-  const base = process.env.NEXT_PUBLIC_API_URL;
+export default function OverviewPage() {
+  const { data: projects, isLoading } = useProjects();
 
-  const [projectsRes, tasksRes] = await Promise.all([
-    fetch(`${base}/api/projects`, { headers, cache: "no-store" }),
-    fetch(`${base}/api/tasks`, { headers, cache: "no-store" }),
-  ]);
-
-  const projects = await projectsRes.json();
-  const tasks = await tasksRes.json();
-
-  const isEmpty = projects.length === 0 && tasks.length === 0;
-
-  if (isEmpty) {
+  if (!isLoading && (projects ?? []).length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <EmptyState
-          icon={LayoutGrid}
-          title="Your workspace is empty"
-          description="Create your first project to get started. Invite your team to collaborate."
-          action={{ label: "+ New Project" }}
-        />
-      </div>
+      <EmptyState
+        icon={LayoutDashboard}
+        title="Welcome to your workspace"
+        description="Create your first project to start tracking work."
+        action={
+          <Link
+            href="/projects"
+            className="mt-2 inline-flex items-center gap-1.5 rounded-devboard px-4 py-2 text-sm font-medium text-white brand-gradient"
+          >
+            <Plus className="h-4 w-4" />
+            Create a project
+          </Link>
+        }
+      />
     );
   }
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-6">
       <StatCardGrid />
-
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-2.5">
-        {/* Left Column */}
-        <div className="flex flex-col gap-2">
-          <ActiveProjects />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="flex flex-col gap-6 lg:col-span-2">
+          {/* <ActiveProjects />
           <RecentTasks />
+          <SprintVelocity /> */}
         </div>
-
-        {/* Right - Full width on mobile, sidebar on desktop */}
-        <div className="flex flex-col gap-2.5">
-          <SprintVelocity />
-          <TeamPanel />
-          <Deadlines />
+        <div className="flex flex-col gap-6">
+          {/* <TeamPanel />
+          <Deadlines /> */}
         </div>
       </div>
     </div>

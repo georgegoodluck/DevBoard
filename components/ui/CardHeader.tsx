@@ -1,34 +1,27 @@
-type Props = {
-  title: string; // Header text
-  dotColor: string; // Color of decorative dot
-  action?: {
-    // Optional action button
-    label: string; // Button text
-    onClick?: () => void; // Click handler
-  };
-  right?: React.ReactNode; // Custom content on the right
-};
+import { cn } from "@/lib/cn";
 
-export default function CardHeader({ title, dotColor, action, right }: Props) {
+interface CardHeaderProps {
+  title: string;
+  subtitle?: string;
+  action?: React.ReactNode;
+  className?: string;
+}
+
+export function CardHeader({
+  title,
+  subtitle,
+  action,
+  className,
+}: CardHeaderProps) {
   return (
-    <div className="flex items-center justify-between px-3.5 py-3 border-b border-(--border)">
-      <div className="flex items-center gap-2 text-[13px] text-(--text2) font-mono tracking-[0.02em] uppercase font-semibold">
-        <span
-          className="w-1.5 h-1.5 rounded-full shrink-0"
-          style={{ background: dotColor }}
-        />
-        {title}
+    <div
+      className={cn("flex items-start justify-between gap-4 pb-3", className)}
+    >
+      <div>
+        <h3 className="text-sm font-semibold text-text">{title}</h3>
+        {subtitle && <p className="mt-0.5 text-xs text-text2">{subtitle}</p>}
       </div>
-      {action && (
-        <span
-          onClick={action.onClick}
-          className="font-mono text-[10px] cursor-pointer hover:opacity-70 transition-opacity"
-          style={{ color: dotColor }}
-        >
-          {action.label}
-        </span>
-      )}
-      {right && !action && right}
+      {action}
     </div>
   );
 }

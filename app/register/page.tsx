@@ -1,180 +1,160 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import Image from "next/image";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { Github } from "lucide-react";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const supabase = createClient();
-
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirm: "",
-  });
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
-  async function handleRegister() {
-    if (!form.name || !form.email || !form.password) return;
-    if (form.password !== form.confirm) {
-      setError("Passwords do not match");
-      return;
-    }
-    if (form.password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
+  async function handleEmailSignup(e: React.FormEvent) {
+    e.preventDefault();
     setLoading(true);
-    setError("");
+    setError(null);
 
+    const supabase = createClient();
     const { error } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        data: { full_name: form.name },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-      },
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
 
+    setLoading(false);
     if (error) {
       setError(error.message);
-      setLoading(false);
       return;
     }
-
-    // Supabase sends a confirmation email
-    // Redirect to a "check your email" screen
-    router.push("/register/verify");
+    setSubmitted(true);
   }
 
   async function handleOAuth(provider: "github" | "google") {
+    const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: { next: "/onboarding" },
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   }
 
-  return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
-      <div className="w-full max-w-[380px]">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-[40px]">
-          <Image src="/icon.svg" alt="DevBoard" width={28} height={28} />
-          <span className="font-mono text-[16px] font-semibold tracking-tight">
-            <span className="text-[var(--text)]">Dev</span>
-            <span className="brand-gradient-text">Board</span>
-          </span>
-        </div>
-
-        {/* Card */}
-        <div className="bg-[var(--bg1)] border border-[var(--border)] rounded-[8px] p-[28px]">
-          <h1 className="font-mono text-[15px] font-semibold text-[var(--text)] mb-[4px]">
-            Create your account
-          </h1>
-          <p className="text-[12px] text-[var(--text3)] mb-[24px]">
-            Set up your team workspace in minutes
-          </p>
-
-          {/* OAuth */}
-          <div className="flex flex-col gap-[8px] mb-[20px]">
-            <button
-              onClick={() => handleOAuth("github")}
-              className="flex items-center justify-center gap-[8px] h-[36px] w-full rounded-[var(--radius)] border border-[var(--border2)] bg-[var(--bg2)] text-[var(--text)] font-mono text-[12px] cursor-pointer hover:bg-[var(--bg3)] transition-colors"
-            >
-              <span>🐙</span> Continue with GitHub
-            </button>
-            <button
-              onClick={() => handleOAuth("google")}
-              className="flex items-center justify-center gap-[8px] h-[36px] w-full rounded-[var(--radius)] border border-[var(--border2)] bg-[var(--bg2)] text-[var(--text)] font-mono text-[12px] cursor-pointer hover:bg-[var(--bg3)] transition-colors"
-            >
-              <span>G</span> Continue with Google
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-[10px] mb-[20px]">
-            <div className="flex-1 h-[1px] bg-[var(--border)]" />
-            <span className="font-mono text-[10px] text-[var(--text3)]">
-              or
-            </span>
-            <div className="flex-1 h-[1px] bg-[var(--border)]" />
-          </div>
-
-          {/* Fields */}
-          <div className="flex flex-col gap-[10px]">
-            {[
-              {
-                label: "Full name",
-                key: "name",
-                type: "text",
-                placeholder: "George Goodluck",
-              },
-              {
-                label: "Email",
-                key: "email",
-                type: "email",
-                placeholder: "george@company.com",
-              },
-              {
-                label: "Password",
-                key: "password",
-                type: "password",
-                placeholder: "Min. 8 characters",
-              },
-              {
-                label: "Confirm password",
-                key: "confirm",
-                type: "password",
-                placeholder: "••••••••",
-              },
-            ].map((field) => (
-              <div key={field.key}>
-                <label className="font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--text3)] mb-[4px] block">
-                  {field.label}
-                </label>
-                <input
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  value={form[field.key as keyof typeof form]}
-                  onChange={(e) =>
-                    setForm({ ...form, [field.key]: e.target.value })
-                  }
-                  onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                  className="w-full bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] px-[10px] py-[7px] text-[12.5px] text-[var(--text)] placeholder:text-[var(--text3)] outline-none focus:border-[var(--accent)] transition-colors"
-                />
-              </div>
-            ))}
-
-            {error && (
-              <p className="font-mono text-[11px] text-[var(--red)]">{error}</p>
-            )}
-
-            <button
-              onClick={handleRegister}
-              disabled={loading || !form.name || !form.email || !form.password}
-              className="brand-gradient h-[36px] w-full rounded-[var(--radius)] text-white font-mono text-[12px] font-medium cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed mt-[4px]"
-            >
-              {loading ? "Creating account..." : "Create account"}
-            </button>
-          </div>
-        </div>
-
-        <p className="text-center font-mono text-[11px] text-[var(--text3)] mt-[20px]">
-          Already have an account?{" "}
-          <Link href="/login" className="text-[var(--accent)] hover:opacity-70">
-            Sign in
-          </Link>
+  if (submitted) {
+    return (
+      <AuthShell>
+        <h1 className="text-lg font-semibold">Check your inbox</h1>
+        <p className="mt-2 text-sm text-text2">
+          We sent a verification link to <strong>{email}</strong>. Click it to
+          activate your account.
         </p>
+      </AuthShell>
+    );
+  }
+
+  return (
+    <AuthShell>
+      <h1 className="text-lg font-semibold">Create your account</h1>
+      <p className="mt-1 text-sm text-text2">
+        Start managing your team&apos;s work in minutes.
+      </p>
+
+      <div className="mt-6 flex flex-col gap-2">
+        <OAuthButton provider="github" onClick={() => handleOAuth("github")} />
+        <OAuthButton provider="google" onClick={() => handleOAuth("google")} />
+      </div>
+
+      <div className="my-5 flex items-center gap-3 text-xs text-text3">
+        <div className="h-px flex-1 bg-border" />
+        or
+        <div className="h-px flex-1 bg-border" />
+      </div>
+
+      <form onSubmit={handleEmailSignup} className="flex flex-col gap-3">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
+        />
+        <input
+          type="password"
+          required
+          minLength={8}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password (min. 8 characters)"
+          className="rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
+        />
+        {error && <p className="text-xs text-red">{error}</p>}
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-devboard py-2 text-sm font-medium text-white brand-gradient disabled:opacity-50"
+        >
+          {loading ? "Creating account…" : "Create account"}
+        </button>
+      </form>
+
+      <p className="mt-5 text-center text-xs text-text3">
+        Already have an account?{" "}
+        <Link href="/login" className="text-accent">
+          Log in
+        </Link>
+      </p>
+    </AuthShell>
+  );
+}
+
+function AuthShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-bg px-4">
+      <div className="w-full max-w-sm rounded-devboard border border-border bg-bg1 p-6">
+        {children}
       </div>
     </div>
+  );
+}
+
+function OAuthButton({
+  provider,
+  onClick,
+}: {
+  provider: "github" | "google";
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center justify-center gap-2 rounded-devboard border border-border2 bg-bg2 py-2 text-sm font-medium text-text hover:bg-bg3"
+    >
+      {provider === "github" ? <Github className="h-4 w-4" /> : <GoogleIcon />}
+      Continue with {provider === "github" ? "GitHub" : "Google"}
+    </button>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4">
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.85A11 11 0 0 0 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09A6.6 6.6 0 0 1 5.5 12c0-.73.12-1.43.34-2.09V7.06H2.18A11 11 0 0 0 1 12c0 1.77.43 3.45 1.18 4.94z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1a11 11 0 0 0-9.82 6.06l3.66 2.85C6.71 7.31 9.14 5.38 12 5.38z"
+      />
+    </svg>
   );
 }

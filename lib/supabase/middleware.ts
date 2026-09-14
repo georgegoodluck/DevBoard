@@ -1,16 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_ROUTES = [
-  "/login",
-  "/register",
-  "/invite",
-  "/onboarding",
-  "/auth/callback",
-];
-
+/**
+ * Refreshes the Supabase auth cookie on every request and returns both the
+ * response (with the refreshed cookie attached) and the current user, so
+ * middleware.ts can make a routing decision without a second round-trip.
+ */
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,39 +18,17 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            response.cookies.set(name, value, options),
           );
         },
       },
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
-  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
-  const isOnboarding = pathname.startsWith("/onboarding");
-
-  // Not logged in → redirect to login (except for public routes)
-  if (!user && !isPublic) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
-
-  // Logged in, on public route → redirect to overview (but allow onboarding)
-  if (user && isPublic && !isOnboarding) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/overview";
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
+  return { response, user };
 }

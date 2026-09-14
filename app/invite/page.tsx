@@ -1,117 +1,84 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import Image from "next/image";
+import { api } from "@/lib/api";
 
-// 1. Move the main logic into a separate component
-function InviteContent() {
+export default function InvitePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
   const token = searchParams.get("token");
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  const status = token ? "ready" : "error";
-
-  const [accepting, setAccepting] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handleAccept() {
-    setAccepting(true);
-    setError("");
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      router.push(`/register?invite=${token}`);
-      return;
+  useEffect(() => {
+    async function check() {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        router.push(
+          `/register?redirectTo=${encodeURIComponent(`/invite?token=${token}`)}`,
+        );
+        return;
+      }
+      setCheckingAuth(false);
     }
+    check();
+  }, [router, token]);
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/workspaces/invite/accept`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ token }),
-      },
+  const acceptInvite = useMutation({
+    mutationFn: () => api.post("/api/workspaces/invite/accept", { token }),
+    onSuccess: () => {
+      document.cookie = "devboard_has_workspace=1; path=/; max-age=31536000";
+      router.push("/overview");
+    },
+  });
+
+  if (!token) {
+    return (
+      <AuthShell>
+        <p className="text-sm text-red">This invite link is missing a token.</p>
+      </AuthShell>
     );
-
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "Failed to accept invite");
-      setAccepting(false);
-      return;
-    }
-
-    router.push("/overview");
-    router.refresh();
+  }
+  if (checkingAuth) {
+    return (
+      <AuthShell>
+        <p className="text-sm text-text2">Checking your account…</p>
+      </AuthShell>
+    );
   }
 
   return (
-    <div className="bg-(--bg1) border border-(--border) rounded-lg p-9">
-      {status === "error" && (
-        <>
-          <div className="text-[36px] mb-3">❌</div>
-          <p className="font-mono text-[13px] text-(--red)">
-            Invalid invite link
-          </p>
-        </>
+    <AuthShell>
+      <h1 className="text-lg font-semibold">You&apos;ve been invited</h1>
+      <p className="mt-2 text-sm text-text2">
+        Accept to join the workspace and get started.
+      </p>
+      {acceptInvite.isError && (
+        <p className="mt-3 text-xs text-red">
+          {(acceptInvite.error as Error).message}
+        </p>
       )}
-
-      {status === "ready" && (
-        <>
-          <div className="text-[36px] mb-4">👋</div>
-          <h1 className="font-mono text-[15px] font-semibold text-(--text) mb-2">
-            You&apos;ve been invited
-          </h1>
-          <p className="text-[12px] text-(--text3) leading-relaxed mb-6">
-            Accept the invite to join your team&apos;s DevBoard workspace.
-          </p>
-
-          {error && (
-            <p className="font-mono text-[11px] text-(--red) mb-3">{error}</p>
-          )}
-
-          <button
-            onClick={handleAccept}
-            disabled={accepting}
-            className="brand-gradient h-9 w-full rounded-(--radius) text-white font-mono text-[12px] font-medium cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40"
-          >
-            {accepting ? "Joining..." : "Accept invite →"}
-          </button>
-        </>
-      )}
-    </div>
+      <button
+        onClick={() => acceptInvite.mutate()}
+        disabled={acceptInvite.isPending}
+        className="mt-5 w-full rounded-devboard py-2 text-sm font-medium text-white brand-gradient disabled:opacity-50"
+      >
+        {acceptInvite.isPending ? "Joining…" : "Accept invite"}
+      </button>
+    </AuthShell>
   );
 }
 
-// 2. Export a default component that wraps the content in Suspense
-export default function InvitePage() {
+function AuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-(--bg) flex items-center justify-center p-4">
-      <div className="w-full max-w-95 text-center">
-        <div className="flex items-center justify-center gap-2 mb-10">
-          <Image src="/icon.svg" alt="DevBoard" width={28} height={28} />
-          <span className="font-mono text-[16px] font-semibold tracking-tight">
-            <span className="text-(--text)">Dev</span>
-            <span className="brand-gradient-text">Board</span>
-          </span>
-        </div>
-
-        {/* 3. The Suspense boundary lets Next.js safely prerender the layout */}
-        <Suspense
-          fallback={
-            <div className="bg-(--bg1) border border-(--border) rounded-lg p-9 h-[250px] animate-pulse"></div>
-          }
-        >
-          <InviteContent />
-        </Suspense>
+    <div className="flex min-h-screen items-center justify-center bg-bg px-4">
+      <div className="w-full max-w-sm rounded-devboard border border-border bg-bg1 p-6 text-center">
+        {children}
       </div>
     </div>
   );

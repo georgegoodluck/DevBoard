@@ -1,18 +1,24 @@
-type Props = {
-  value: number;
-  color?: string;
-};
+import { cn } from "@/lib/cn";
 
-export default function ProgressBar({ value, color = "var(--accent)" }: Props) {
+interface ProgressBarProps {
+  value: number; // 0–100
+  className?: string;
+  showLabel?: boolean;
+}
+
+export function ProgressBar({ value, className, showLabel }: ProgressBarProps) {
+  const clamped = Math.max(0, Math.min(100, value));
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-1 bg-(--bg3) rounded-(--radius) overflow-hidden">
+    <div className={cn("flex items-center gap-2", className)}>
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-bg3">
         <div
-          className="rounded-(--radius) h-full transition-all"
-          style={{ width: `${value}%`, background: color }}
+          className="h-full rounded-full brand-gradient transition-[width] duration-300"
+          style={{ width: `${clamped}%` }}
         />
       </div>
-      <span className="text-(--text3) text-[10px]">{value}%</span>
+      {showLabel && (
+        <span className="text-xs text-text2 tabular-nums">{clamped}%</span>
+      )}
     </div>
   );
 }

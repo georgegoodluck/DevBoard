@@ -1,24 +1,39 @@
 "use client";
-import { usePathname } from "next/navigation";
 
-const pageMeta: Record<string, { title: string; sub: string }> = {
-  "/overview": { title: "Overview", sub: "Devboard workspace" },
-  "/projects": { title: "Projects", sub: "5 active projects" },
-  "/activity": { title: "Activity", sub: "Team feed" },
-  "/settings": { title: "Settings", sub: "Account & workspace settings" },
+import { usePathname } from "next/navigation";
+import { ChevronRight } from "lucide-react";
+import { useProject } from "@/hooks/useProjects";
+
+const LABELS: Record<string, string> = {
+  overview: "Overview",
+  projects: "Projects",
+  activity: "Activity",
+  settings: "Settings",
 };
 
-export default function TopbarBreadcrumb() {
+export function TopbarBreadcrumb() {
   const pathname = usePathname();
-  const meta = pageMeta[pathname] ?? { title: "DevBoard", sub: "" };
+  const segments = pathname.split("/").filter(Boolean);
+  const isProjectDetail = segments[0] === "projects" && segments.length > 1;
+
+  const { data } = useProject(isProjectDetail ? segments[1]! : "");
+
+  if (segments.length === 0) return null;
+
+  const crumbs = isProjectDetail
+    ? ["Projects", data?.project.name ?? "…", "board"]
+    : segments.map((s) => LABELS[s] ?? s);
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="font-mono text-[15px] font-semibold">{meta.title}</span>
-      <span className="text-(--border2) text-base leading-none select-none">
-        /
-      </span>
-      <span className="text-[12px] text-(--text3)">{meta.sub}</span>
+    <div className="flex items-center gap-1.5 text-sm text-text2">
+      {crumbs.map((label, i) => (
+        <span key={i} className="flex items-center gap-1.5">
+          {i > 0 && <ChevronRight className="h-3 w-3 text-text3" />}
+          <span className={i === crumbs.length - 1 ? "text-text" : ""}>
+            {label}
+          </span>
+        </span>
+      ))}
     </div>
   );
 }

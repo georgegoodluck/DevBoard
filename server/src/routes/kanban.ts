@@ -1,94 +1,53 @@
-import { FastifyInstance } from "fastify";
-import { db } from "../db";
-import { tasks, workspaceMembers } from "../db/schema";
+import type { FastifyPluginAsync } from "fastify";
+import { z } from "zod";
 import { eq, and, asc } from "drizzle-orm";
-import { authenticate } from "../plugins/auth";
-import { requireWorkspace } from "../lib/workspace";
+import { db } from "../db/index.js";
+import { tasks, projects, taskStatusEnum } from "../db/schema.js";
+import { requireWorkspace } from "../lib/workspace.js";
 
-export async function kanbanRoutes(app: FastifyInstance) {
-  app.addHook("preHandler", authenticate);
-  app.addHook("preHandler", requireWorkspace);
+const moveSchema = z.object({
+  status: z.enum(taskStatusEnum.enumValues),
+  // Fractional position, computed client-side as the midpoint between the
+  // two cards the dragged card now sits between (or ±1 at column ends).
+  position: z.number(),
+});
 
-  // GET /api/projects/:projectId/kanban
-  // Returns tasks grouped by status, ordered by position
+const kanbanRoutes: FastifyPluginAsync = async (fastify) => {
+  fastify.addHook("preHandler", fastify.authenticate);
+  fastify.addHook("preHandler", requireWorkspace);
 
-  app.get<{ Params: { projectId: string } }>(
-    "/api/projects/:projectId/kanban",
-    async (req, reply) => {
-      const workspaceId = req.workspaceId;
-      const { projectId } = req.params;
-      //   Start a try block to catch errors and initiate db query
-      try {
-        const rows = await db
-          .select({
-            id: tasks.id,
-            title: tasks.title,
-            description: tasks.description,
-            status: tasks.status,
-            priority: tasks.priority,
-            position: tasks.position,
-            due: tasks.due,
-            labels: tasks.labels,
-            createdAt: tasks.createdAt,
-            assignee: {
-              id: workspaceMembers.id,
-              name: workspaceMembers.name,
-              initials: workspaceMembers.initials,
-            },
-          })
-          .from(tasks)
-          .leftJoin(workspaceMembers, eq(tasks.assigneeId, workspaceMembers.id))
-          .where(
-            and(
-              eq(tasks.workspaceId, workspaceId),
-              eq(tasks.projectId, projectId),
-            ),
-          )
-          .orderBy(asc(tasks.position)); // Group by status
-        const columns = {
-          Todo: [] as typeof rows,
-          "In Progress": [] as typeof rows,
-          "In Review": [] as typeof rows,
-          Done: [] as typeof rows,
-        };
+  // GET /api/projects/:projectId/kanban — tasks grouped by status, each
+  // column pre-sorted by position so the frontend can render directly.
+  fastify.get<{ Params: { projectId: string } }>("/api/projects/:projectId/kanban", async (request, reply) => {
+    const [project] = await db.select({ id: projects.id }).from(projects)
+      .where(and(eq(projects.id, request.params.projectId), eq(projects.workspaceId, request.workspaceId!))).limit(1);
+    if (!project) return reply.code(404).send({ error: "Project not found" });
 
-        for (const task of rows) {
-          const col = task.status as keyof typeof columns;
-          if (columns[col]) columns[col].push(task);
-        }
+    const rows = await db.select().from(tasks)
+      .where(eq(tasks.projectId, project.id)).orderBy(asc(tasks.position));
 
-        return reply.send(columns);
-      } catch (err) {
-        return reply.status(500).send({ error: "Failed to fetch kanban data" });
-      }
-    },
-  );
-  // PATCH /api/tasks/:id/move
-  // Called when a card is dragged to a new column or position
-  app.patch<{
-    Params: { id: string };
-    // Change 'string' to your specific enum values
-    Body: {
-      status: "Todo" | "In Progress" | "In Review" | "Done";
-      position: number;
-    };
-  }>("/api/tasks/:id/move", async (req, reply) => {
-    const workspaceId = req.workspaceId;
-    const { id } = req.params;
-    const { status, position } = req.body;
+    const columns: Record<string, typeof rows> = { Todo: [], "In Progress": [], "In Review": [], Done: [] };
+    for (const row of rows) columns[row.status]!.push(row);
 
-    try {
-      const [updated] = await db
-        .update(tasks)
-        // Now this works perfectly without 'as any'
-        .set({ status, position, updatedAt: new Date() })
-        .where(and(eq(tasks.id, id), eq(tasks.workspaceId, workspaceId)))
-        .returning();
-
-      if (!updated) return reply.status(404).send({ error: "Task not found" });
-      return reply.send(updated);
-    } catch (err) {
-      return reply.status(500).send({ error: "Failed to move task" });
-    }
+    return reply.send({ columns });
   });
-}
+
+  // PATCH /api/tasks/:id/move — cross-column drag AND reorder-within-column,
+  // both expressed as "set status + set fractional position".
+  fastify.patch<{ Params: { id: string } }>("/api/tasks/:id/move", async (request, reply) => {
+    const parsed = moveSchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: parsed.error.flatten() });
+
+    const [existing] = await db.select({ id: tasks.id }).from(tasks)
+      .where(and(eq(tasks.id, request.params.id), eq(tasks.workspaceId, request.workspaceId!))).limit(1);
+    if (!existing) return reply.code(404).send({ error: "Task not found" });
+
+    const [task] = await db.update(tasks)
+      .set({ status: parsed.data.status, position: parsed.data.position, updatedAt: new Date() })
+      .where(eq(tasks.id, request.params.id)).returning();
+
+    return reply.send({ task });
+  });
+};
+
+export default kanbanRoutes;

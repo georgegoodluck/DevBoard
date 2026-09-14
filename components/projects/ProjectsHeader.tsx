@@ -1,50 +1,53 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { cn } from "@/lib/cn";
 
-type Tab = "all" | "active" | "archived";
+export type ProjectTab = "all" | "active" | "archived";
 
-type Props = {
-  activeTab: Tab;
-  onTabChange: (tab: Tab) => void;
-};
-
-const tabs: { label: string; value: Tab }[] = [
-  { label: "All", value: "all" },
-  { label: "Active", value: "active" },
-  { label: "Archived", value: "archived" },
+const TABS: { id: ProjectTab; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "active", label: "Active" },
+  { id: "archived", label: "Archived" },
 ];
 
-export default function ProjectsHeader({ activeTab, onTabChange }: Props) {
+interface ProjectsHeaderProps {
+  activeTab: ProjectTab;
+  onTabChange: (tab: ProjectTab) => void;
+  onNewProject: () => void;
+}
+
+export function ProjectsHeader({
+  activeTab,
+  onTabChange,
+  onNewProject,
+}: ProjectsHeaderProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4">
-      {/* Tabs - full width on mobile */}
-      <div className="flex gap-0.5 p-1 bg-(--bg2) border border-(--border) rounded-[5px]">
-        {tabs.map((tab) => (
+    <div className="flex items-center justify-between">
+      <div className="flex gap-1 rounded-devboard border border-border bg-bg1 p-1">
+        {TABS.map((tab) => (
           <button
-            key={tab.value}
-            onClick={() => onTabChange(tab.value)}
-            className={`flex-1 px-2.5 py-1.25 rounded-[3px] font-mono text-[11px] font-medium cursor-pointer transition-all ${
-              activeTab === tab.value
-                ? "bg-(--bg1) text-(--text) shadow-sm"
-                : "text-(--text3) hover:text-(--text)"
-            }`}
+            key={tab.id}
+            onClick={() => onTabChange(tab.id)}
+            className={cn(
+              "rounded-devboard px-3 py-1.5 text-sm font-medium transition-colors",
+              activeTab === tab.id
+                ? "bg-[var(--accent-dim)] text-accent"
+                : "text-text2 hover:text-text",
+            )}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-2 sm:ml-auto">
-        <button className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 h-8.5 sm:h-7 px-2.5 rounded-(--radius) border border-(--border2) bg-(--bg2) text-(--text2) font-mono text-[11px] cursor-pointer hover:bg-(--bg3) hover:text-(--text) transition-colors">
-          Filter
-        </button>
-        <button className="brand-gradient flex-1 sm:flex-none flex items-center justify-center gap-1.5 h-8.5 sm:h-7 px-2.5 rounded-(--radius) text-white font-mono text-[11px] cursor-pointer transition-opacity hover:opacity-90">
-          <Plus size={12} />
-          New Project
-        </button>
-      </div>
+      <button
+        onClick={onNewProject}
+        className="flex items-center gap-1.5 rounded-devboard px-3 py-1.5 text-sm font-medium text-white brand-gradient"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        New project
+      </button>
     </div>
   );
 }

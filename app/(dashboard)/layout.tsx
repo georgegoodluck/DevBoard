@@ -1,13 +1,13 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import Sidebar from "@/components/layout/sidebar/Sidebar";
-import Topbar from "@/components/layout/topbar/Topbar";
-import BottomNav from "@/components/layout/mobile/BottomNav";
-import CommandPalette from "@/components/ui/CommandPalette";
-import NewTaskModal from "@/components/ui/NewTaskModal";
+import { createClient } from "@/lib/supabase/server";
+import { Sidebar } from "@/components/layout/sidebar/Sidebar";
+import { Topbar } from "@/components/layout/topbar/Topbar";
+import { SidebarProvider } from "@/context/SidebarContext";
 import { CommandPaletteProvider } from "@/context/CommandPaletteContext";
 import { NewTaskProvider } from "@/context/NewTaskContext";
-import { SidebarProvider } from "@/context/SidebarContext";
+import { CommandPalette } from "@/components/ui/CommandPalette";
+import { NewTaskModal } from "@/components/ui/NewTaskModal";
+import { EnsureWorkspaceCookie } from "./EnsureWorkspaceCookie";
 
 export default async function DashboardLayout({
   children,
@@ -16,15 +16,12 @@ export default async function DashboardLayout({
 }) {
   const supabase = await createClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-
-  // Check if user has a workspace
-  const {
     data: { session },
   } = await supabase.auth.getSession();
+
+  // Middleware already redirected unauthenticated visitors away, but that
+  // check is cookie-based and can be a request stale — confirm here with a
+  // real call to the backend, which is the actual source of truth.
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/workspaces/me`,
     {
@@ -33,51 +30,29 @@ export default async function DashboardLayout({
     },
   );
 
+  if (res.status === 403) {
+    redirect("/onboarding");
+  }
   if (!res.ok) {
-    const data = await res.json();
-    if (data.code === "NO_WORKSPACE") redirect("/onboarding");
     redirect("/login");
   }
 
-  // Keep this for workspace validation, but the components will fetch their own data
-  // const { workspace } = await res.json();
-  const { workspace, currentMember } = await res.json();
-  // console.log("currentMember:", currentMember);
-
   return (
-    <CommandPaletteProvider>
-      <NewTaskProvider>
-        <SidebarProvider>
-          <div className="flex h-screen overflow-hidden bg-[var(--bg)]">
-            {/* Sidebar — hidden on mobile, visible lg+ */}
-            <div className="hidden lg:block">
-              <Sidebar
-                user={{
-                  name: currentMember.name,
-                  email: currentMember.email,
-                  initials: currentMember.initials,
-                  role: currentMember.role,
-                }}
-              />
-            </div>
-
-            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+    <SidebarProvider>
+      <CommandPaletteProvider>
+        <NewTaskProvider>
+          <EnsureWorkspaceCookie />
+          <div className="flex h-screen overflow-hidden bg-bg">
+            <Sidebar />
+            <div className="flex flex-1 flex-col overflow-hidden">
               <Topbar />
-              <main className="flex-1 overflow-y-auto p-3 lg:p-5 pb-18 lg:pb-5">
-                {children}
-              </main>
+              <main className="flex-1 overflow-y-auto p-6">{children}</main>
             </div>
           </div>
-
-          {/* Bottom nav — mobile only */}
-          <div className="lg:hidden">
-            <BottomNav />
-          </div>
-
           <CommandPalette />
           <NewTaskModal />
-        </SidebarProvider>
-      </NewTaskProvider>
-    </CommandPaletteProvider>
+        </NewTaskProvider>
+      </CommandPaletteProvider>
+    </SidebarProvider>
   );
 }

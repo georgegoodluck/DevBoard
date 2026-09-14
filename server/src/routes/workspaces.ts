@@ -1,231 +1,108 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
+import { randomBytes } from "node:crypto";
+import { z } from "zod";
+import { eq, and } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { workspaces, workspaceMembers, invites } from "../db/schema.js";
-import { eq, and } from "drizzle-orm";
-import { authenticate } from "../plugins/auth.js";
-import { requireWorkspace, getWorkspaceMember } from "../lib/workspace.js";
-import crypto from "crypto";
+import { requireWorkspace, requireAdmin } from "../lib/workspace.js";
+import { sendInviteEmail } from "../lib/email.js";
+import { createNotification } from "../lib/notifications.js";
 
-type AuthRequest = {
-  workspaceId: string;
-  user: {
-    id: string;
-    email: string;
-    user_metadata?: {
-      full_name?: string;
-    };
-  };
-  workspaceMember: {
-    name: string;
-    role: string;
-  };
-};
+const createWorkspaceSchema = z.object({
+  name: z.string().trim().min(2).max(60),
+  slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only").min(2).max(40),
+  memberName: z.string().trim().min(1).max(80),
+});
+const inviteSchema = z.object({ email: z.string().trim().toLowerCase().email(), role: z.enum(["admin", "member"]) });
+const acceptInviteSchema = z.object({ token: z.string().min(1) });
 
-export async function workspaceRoutes(app: FastifyInstance) {
-  // POST /api/workspaces
-  // Called during onboarding — creates workspace and sets user as owner
-  // No requireWorkspace here — user doesn't have one yet
-  app.post<{
-    Body: { name: string; slug: string };
-  }>("/api/workspaces", { preHandler: [authenticate] }, async (req, reply) => {
-    const userId = (req as unknown as AuthRequest).user.id;
-    const user = (req as unknown as AuthRequest).user;
+function initialsOf(name: string): string {
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]!.toUpperCase()).join("");
+}
 
-    // Check user doesn't already have a workspace
-    const existing = await getWorkspaceMember(userId);
-    if (existing) {
-      return reply.status(409).send({ error: "Already in a workspace" });
-    }
+const workspaceRoutes: FastifyPluginAsync = async (fastify) => {
+  fastify.post("/api/workspaces", { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const parsed = createWorkspaceSchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: parsed.error.flatten() });
+    const { name, slug, memberName } = parsed.data;
+    const user = request.user!;
 
-    // Check slug is available
-    const [slugTaken] = await db
-      .select()
-      .from(workspaces)
-      .where(eq(workspaces.slug, req.body.slug));
+    const [existingSlug] = await db.select({ id: workspaces.id }).from(workspaces).where(eq(workspaces.slug, slug)).limit(1);
+    if (existingSlug) return reply.code(409).send({ error: "That workspace URL is already taken" });
 
-    if (slugTaken) {
-      return reply.status(409).send({ error: "Slug already taken" });
-    }
+    const [existingMembership] = await db.select({ id: workspaceMembers.id }).from(workspaceMembers).where(eq(workspaceMembers.userId, user.id)).limit(1);
+    if (existingMembership) return reply.code(409).send({ error: "You already belong to a workspace" });
 
-    try {
-      // Create workspace
-      const [workspace] = await db
-        .insert(workspaces)
-        .values({
-          name: req.body.name,
-          slug: req.body.slug,
-          ownerUserId: userId,
-        })
-        .returning();
+    const [workspace] = await db.insert(workspaces).values({ name, slug, ownerUserId: user.id }).returning();
+    if (!workspace) return reply.code(500).send({ error: "Failed to create workspace" });
 
-      // Add user as owner member
-      const fullName = user.user_metadata?.full_name ?? user.email ?? "User";
-      const initials = fullName
-        .split(" ")
-        .map((n: string) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+    await db.insert(workspaceMembers).values({
+      workspaceId: workspace.id, userId: user.id, name: memberName, email: user.email ?? "",
+      initials: initialsOf(memberName), role: "owner", online: true,
+    });
 
-      await db.insert(workspaceMembers).values({
-        workspaceId: workspace.id,
-        userId,
-        name: fullName,
-        email: user.email,
-        initials,
-        role: "owner",
-        online: true,
-      });
-
-      return reply.status(201).send(workspace);
-    } catch {
-      return reply.status(500).send({ error: "Failed to create workspace" });
-    }
+    return reply.code(201).send({ workspace });
   });
 
-  // GET /api/workspaces/me
-  // Returns current user's workspace + their member record
-  app.get(
-    "/api/workspaces/me",
-    {
-      preHandler: [authenticate, requireWorkspace],
-    },
-    async (req, reply) => {
-      const workspaceId = (req as unknown as AuthRequest).workspaceId;
+  fastify.get("/api/workspaces/me", { preHandler: [fastify.authenticate, requireWorkspace] }, async (request, reply) => {
+    const [workspace] = await db.select().from(workspaces).where(eq(workspaces.id, request.workspaceId!)).limit(1);
+    if (!workspace) return reply.code(404).send({ error: "Workspace not found" });
+    const members = await db.select().from(workspaceMembers).where(eq(workspaceMembers.workspaceId, request.workspaceId!));
+    return reply.send({ workspace, members, role: request.workspaceRole });
+  });
 
-      try {
-        const [workspace] = await db
-          .select()
-          .from(workspaces)
-          .where(eq(workspaces.id, workspaceId));
+  fastify.post("/api/workspaces/invite", { preHandler: [fastify.authenticate, requireWorkspace, requireAdmin] }, async (request, reply) => {
+    const parsed = inviteSchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: parsed.error.flatten() });
+    const { email, role } = parsed.data;
+    const workspaceId = request.workspaceId!;
 
-        const members = await db
-          .select()
-          .from(workspaceMembers)
-          .where(eq(workspaceMembers.workspaceId, workspaceId));
+    const [alreadyMember] = await db.select({ id: workspaceMembers.id }).from(workspaceMembers)
+      .where(and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.email, email))).limit(1);
+    if (alreadyMember) return reply.code(409).send({ error: "This person is already a member" });
 
-        return reply.send({
-          workspace,
-          members,
-          currentMember: (req as unknown as AuthRequest).workspaceMember,
-        });
-      } catch {
-        return reply.status(500).send({ error: "Failed to fetch workspace" });
-      }
-    },
-  );
+    const [workspace] = await db.select({ name: workspaces.name }).from(workspaces).where(eq(workspaces.id, workspaceId)).limit(1);
+    const [inviter] = await db.select({ name: workspaceMembers.name }).from(workspaceMembers).where(eq(workspaceMembers.userId, request.user!.id)).limit(1);
 
-  // POST /api/workspaces/invite
-  // Send an invite to an email address
-  app.post<{
-    Body: { email: string; role?: "admin" | "member" };
-  }>(
-    "/api/workspaces/invite",
-    {
-      preHandler: [authenticate, requireWorkspace],
-    },
-    async (req, reply) => {
-      const workspaceId = (req as unknown as AuthRequest).workspaceId;
-      const userId = (req as unknown as AuthRequest).user.id;
-      const member = (req as unknown as AuthRequest).workspaceMember;
+    const token = randomBytes(24).toString("hex");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-      // Only owners and admins can invite
-      if (!["owner", "admin"].includes(member.role)) {
-        return reply
-          .status(403)
-          .send({ error: "Only admins can send invites" });
-      }
+    const [invite] = await db.insert(invites).values({ workspaceId, email, role, token, invitedBy: request.user!.id, expiresAt }).returning();
+    await sendInviteEmail({ to: email, workspaceName: workspace?.name ?? "DevBoard", inviterName: inviter?.name ?? "A teammate", token });
 
-      const token = crypto.randomBytes(32).toString("hex");
-      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    return reply.code(201).send({ invite });
+  });
 
-      try {
-        const [invite] = await db
-          .insert(invites)
-          .values({
-            workspaceId,
-            email: req.body.email,
-            role: req.body.role ?? "member",
-            token,
-            invitedBy: userId,
-            expiresAt,
-          })
-          .returning();
+  fastify.post("/api/workspaces/invite/accept", { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const parsed = acceptInviteSchema.safeParse(request.body);
+    if (!parsed.success) return reply.code(400).send({ error: parsed.error.flatten() });
+    const user = request.user!;
 
-        // In production: send email with invite link here
-        // e.g. https://devboard.app/invite?token=xxx
-        const inviteLink = `${process.env.FRONTEND_URL}/invite?token=${token}`;
+    const [invite] = await db.select().from(invites).where(eq(invites.token, parsed.data.token)).limit(1);
+    if (!invite) return reply.code(404).send({ error: "Invite not found" });
+    if (invite.status !== "pending") return reply.code(410).send({ error: `This invite was already ${invite.status}` });
+    if (invite.expiresAt.getTime() < Date.now()) {
+      await db.update(invites).set({ status: "expired" }).where(eq(invites.id, invite.id));
+      return reply.code(410).send({ error: "This invite has expired" });
+    }
+    if (user.email?.toLowerCase() !== invite.email.toLowerCase()) {
+      return reply.code(403).send({ error: "This invite was sent to a different email address" });
+    }
 
-        return reply.status(201).send({ invite, inviteLink });
-      } catch {
-        return reply.status(500).send({ error: "Failed to create invite" });
-      }
-    },
-  );
+    const memberName = user.email?.split("@")[0] ?? "New member";
+    await db.insert(workspaceMembers).values({
+      workspaceId: invite.workspaceId, userId: user.id, name: memberName, email: invite.email,
+      initials: initialsOf(memberName), role: invite.role,
+    });
+    await db.update(invites).set({ status: "accepted" }).where(eq(invites.id, invite.id));
 
-  // POST /api/workspaces/invite/accept
-  // Called when an invited user signs up and accepts
-  app.post<{
-    Body: { token: string };
-  }>(
-    "/api/workspaces/invite/accept",
-    {
-      preHandler: [authenticate],
-    },
-    async (req, reply) => {
-      const userId = (req as unknown as AuthRequest).user.id;
-      const user = (req as unknown as AuthRequest).user;
+    await createNotification({
+      workspaceId: invite.workspaceId, recipientId: invite.invitedBy, type: "invite_accepted",
+      title: `${memberName} accepted your invite`, actorId: user.id, actorName: memberName,
+    });
 
-      // Find the invite
-      const [invite] = await db
-        .select()
-        .from(invites)
-        .where(
-          and(eq(invites.token, req.body.token), eq(invites.status, "pending")),
-        );
+    return reply.send({ workspaceId: invite.workspaceId });
+  });
+};
 
-      if (!invite) {
-        return reply.status(404).send({ error: "Invalid or expired invite" });
-      }
-
-      if (new Date() > invite.expiresAt) {
-        await db
-          .update(invites)
-          .set({ status: "expired" })
-          .where(eq(invites.id, invite.id));
-        return reply.status(410).send({ error: "Invite has expired" });
-      }
-
-      try {
-        const fullName = user.user_metadata?.full_name ?? user.email ?? "User";
-        const initials = fullName
-          .split(" ")
-          .map((n: string) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2);
-
-        // Add user to workspace
-        await db.insert(workspaceMembers).values({
-          workspaceId: invite.workspaceId,
-          userId,
-          name: fullName,
-          email: user.email,
-          initials,
-          role: invite.role,
-          online: true,
-        });
-
-        // Mark invite as accepted
-        await db
-          .update(invites)
-          .set({ status: "accepted" })
-          .where(eq(invites.id, invite.id));
-
-        return reply.send({ success: true, workspaceId: invite.workspaceId });
-      } catch {
-        return reply.status(500).send({ error: "Failed to accept invite" });
-      }
-    },
-  );
-}
+export default workspaceRoutes;

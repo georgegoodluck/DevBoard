@@ -1,183 +1,151 @@
 "use client";
 
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { X } from "lucide-react";
 import { useNewTask } from "@/context/NewTaskContext";
-import { X, Plus } from "lucide-react";
-import { useCreateTask } from "@/hooks/useTasks";
-import type { TaskPriority, TaskStatus } from "@/types/tasks";
+import { api } from "@/lib/api";
+import { cn } from "@/lib/cn";
+import type { Project } from "@/types/project";
+import type { TaskPriority, TaskStatus } from "@/types/task";
 
-const priorities = ["High", "Medium", "Low"] as const;
-const statuses: TaskStatus[] = ["Todo", "In Progress", "Done"];
-const projects = ["TickrPay", "Pulse", "fin·snap", "SubTrack", "DevBoard"];
+const STATUSES: TaskStatus[] = ["Todo", "In Progress", "In Review", "Done"];
+const PRIORITIES: TaskPriority[] = ["high", "mid", "low"];
 
-// Map project names to IDs
-const projectIdMap: Record<string, string> = {
-  TickrPay: "proj-1",
-  Pulse: "proj-2",
-  "fin·snap": "proj-3",
-  SubTrack: "proj-4",
-  DevBoard: "proj-5",
-};
+export function NewTaskModal() {
+  const { isOpen, prefill, closeNewTask } = useNewTask();
+  const queryClient = useQueryClient();
 
-export default function NewTaskModal() {
-  const createTask = useCreateTask();
-  const { isOpen, close } = useNewTask();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [projectId, setProjectId] = useState(prefill.projectId ?? "");
+  const [status, setStatus] = useState<TaskStatus>(prefill.status ?? "Todo");
+  const [priority, setPriority] = useState<TaskPriority>("mid");
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    priority: "Medium" as (typeof priorities)[number],
-    status: "Todo" as TaskStatus,
-    project: "DevBoard",
+  const { data } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => api.get<{ projects: Project[] }>("/api/projects"),
+    enabled: isOpen,
   });
 
-  const isSubmitting = createTask.isPending ?? false;
+  const createTask = useMutation({
+    mutationFn: () =>
+      api.post("/api/tasks", {
+        title,
+        description,
+        projectId,
+        status,
+        priority,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["kanban"] });
+      reset();
+      closeNewTask();
+    },
+  });
 
-  function handleSubmit() {
-    if (!form.title.trim()) return;
-
-    createTask.mutate(
-      {
-        title: form.title,
-        description: form.description,
-        priority: form.priority as TaskPriority,
-        status: form.status,
-        projectId: projectIdMap[form.project] || "proj-5",
-        assignee: {
-          initials: "GG",
-          gradient: "linear-gradient(135deg,#8b5cf6,#06b6d4)",
-        },
-        createdAt: new Date().toISOString(),
-      },
-      {
-        onSuccess: () => {
-          close();
-          setForm({
-            title: "",
-            description: "",
-            priority: "Medium",
-            status: "Todo",
-            project: "DevBoard",
-          });
-        },
-        onError: (error) => {
-          console.error("Failed to create task:", error);
-        },
-      },
-    );
+  function reset() {
+    setTitle("");
+    setDescription("");
+    setProjectId("");
+    setStatus("Todo");
+    setPriority("mid");
   }
 
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 z-[50]" onClick={close} />
-
-      {/* Modal */}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      onClick={closeNewTask}
+    >
       <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-32px)] max-w-[480px] bg-[var(--bg1)] border border-[var(--border2)] rounded-[8px] z-[51] overflow-hidden"
-        style={{ boxShadow: "0 24px 48px rgba(0,0,0,0.5)" }}
+        className="w-full max-w-md rounded-devboard border border-border bg-bg2 p-5 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-[16px] py-[12px] border-b border-[var(--border)]">
-          <span className="font-mono text-[12px] font-medium text-[var(--text)]">
-            New Task
-          </span>
-          <button
-            onClick={close}
-            className="text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer"
-          >
-            <X size={14} />
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">New task</h2>
+          <button onClick={closeNewTask} className="text-text3 hover:text-text">
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-[16px] flex flex-col gap-[12px]">
-          {/* Title */}
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (title.trim() && projectId) createTask.mutate();
+          }}
+        >
           <input
             autoFocus
-            placeholder="Task title..."
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full bg-transparent text-[14px] font-medium text-[var(--text)] placeholder:text-[var(--text3)] outline-none border-b border-[var(--border)] pb-[8px] focus:border-[var(--accent)] transition-colors"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Task title"
+            className="rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
           />
-
-          {/* Description */}
           <textarea
-            placeholder="Add a description..."
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description (optional)"
             rows={3}
-            className="w-full bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] px-[10px] py-[8px] text-[12.5px] text-[var(--text)] placeholder:text-[var(--text3)] outline-none focus:border-[var(--accent)] transition-colors resize-none"
+            className="resize-none rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
           />
 
-          {/* Row of selects */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-[8px]">
+          <select
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
+            className="rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
+          >
+            <option value="" disabled>
+              Select a project
+            </option>
+            {data?.projects.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.emoji} {p.name}
+              </option>
+            ))}
+          </select>
+
+          <div className="flex gap-3">
             <select
-              value={form.project}
-              onChange={(e) => setForm({ ...form, project: e.target.value })}
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] px-[10px] py-[6px] text-[11.5px] font-mono text-[var(--text)] outline-none focus:border-[var(--accent)] transition-colors cursor-pointer"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as TaskStatus)}
+              className="flex-1 rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
             >
-              {projects.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-            <select
-              value={form.priority}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  priority: e.target.value as (typeof priorities)[number],
-                })
-              }
-              className="bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] px-[10px] py-[6px] text-[11.5px] font-mono text-[var(--text)] outline-none focus:border-[var(--accent)] transition-colors cursor-pointer"
-            >
-              {priorities.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-            <select
-              value={form.status}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  status: e.target.value as TaskStatus,
-                })
-              }
-              className="bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--radius)] px-[10px] py-[6px] text-[11.5px] font-mono text-[var(--text)] outline-none focus:border-[var(--accent)] transition-colors cursor-pointer"
-            >
-              {statuses.map((s) => (
+              {STATUSES.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
               ))}
             </select>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as TaskPriority)}
+              className="flex-1 rounded-devboard border border-border bg-bg1 px-3 py-2 text-sm outline-none focus:border-accent"
+            >
+              {PRIORITIES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-[8px] px-[16px] py-[12px] border-t border-[var(--border)] bg-[var(--bg2)]">
           <button
-            onClick={close}
-            className="font-mono text-[11px] h-[28px] px-[12px] rounded-[var(--radius)] border border-[var(--border2)] text-[var(--text2)] hover:bg-[var(--bg3)] hover:text-[var(--text)] transition-colors cursor-pointer"
+            type="submit"
+            disabled={createTask.isPending || !title.trim() || !projectId}
+            className={cn(
+              "mt-1 rounded-devboard py-2 text-sm font-medium text-white brand-gradient",
+              (createTask.isPending || !title.trim() || !projectId) &&
+                "opacity-50",
+            )}
           >
-            Cancel
+            {createTask.isPending ? "Creating…" : "Create task"}
           </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!form.title.trim() || isSubmitting}
-            className="brand-gradient flex items-center gap-[6px] font-mono text-[11px] h-[28px] px-[12px] rounded-[var(--radius)] text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <Plus size={12} />
-            {isSubmitting ? "Creating..." : "Create Task"}
-          </button>
-        </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,26 +1,63 @@
-export type BadgeVariant = "green" | "amber" | "red" | "blue" | "purple" | "gray";
+import { cn } from "@/lib/cn";
+import type { TaskStatus, TaskPriority } from "@/types/task";
+import type { ProjectStatus } from "@/types/project";
 
-type Props = {
-  label: string;
-  variant: BadgeVariant;
+type BadgeTone = "neutral" | "green" | "amber" | "red" | "purple" | "accent";
+
+const TONE_CLASSES: Record<BadgeTone, string> = {
+  neutral: "bg-bg3 text-text2 border-border2",
+  green: "bg-[var(--green-dim)] text-green border-transparent",
+  amber: "bg-[var(--amber-dim)] text-amber border-transparent",
+  red: "bg-[var(--red-dim)] text-red border-transparent",
+  purple: "bg-[var(--purple-dim)] text-purple border-transparent",
+  accent: "bg-[var(--accent-dim)] text-accent border-transparent",
 };
 
-const variantStyles: Record<BadgeVariant, string> = {
-  green: "bg-(--green-dim) text-(--green)",
-  amber: "bg-(--amber-dim) text-(--amber)",
-  red: "bg-(--danger-dim) text-(--danger)",
-  blue: "bg-(--accent-dim) text-(--accent)",
-  purple: "bg-(--purple-dim) text-(--purple)",
-  gray: "bg-(--gray) text-(--text2)"
+const STATUS_TONE: Record<TaskStatus | ProjectStatus, BadgeTone> = {
+  Todo: "neutral",
+  "In Progress": "accent",
+  "In Review": "amber",
+  Done: "green",
+  Planning: "neutral",
+  Review: "amber",
+  Active: "green",
+  Archived: "neutral",
 };
 
-export default function Badge({ label, variant }: Props) {
+const PRIORITY_TONE: Record<TaskPriority, BadgeTone> = {
+  high: "red",
+  mid: "amber",
+  low: "neutral",
+};
+
+interface BadgeProps {
+  children: React.ReactNode;
+  tone?: BadgeTone;
+  className?: string;
+}
+
+export function Badge({ children, tone = "neutral", className }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1 font-mono text-[10px] font-medium px-1.75 py-0.5 rounded-[3px] whitespace-nowrap ${variantStyles[variant]}`}
+      className={cn(
+        "inline-flex items-center rounded-devboard border px-2 py-0.5 text-xs font-medium",
+        TONE_CLASSES[tone],
+        className,
+      )}
     >
-      <span className="w-1.25 h-1.25 rounded-full bg-current shrink-0" />
-      {label}
+      {children}
     </span>
   );
+}
+
+export function StatusBadge({
+  status,
+}: {
+  status: TaskStatus | ProjectStatus;
+}) {
+  return <Badge tone={STATUS_TONE[status]}>{status}</Badge>;
+}
+
+export function PriorityBadge({ priority }: { priority: TaskPriority }) {
+  return <Badge tone={PRIORITY_TONE[priority]}>{priority}</Badge>;
 }

@@ -1,52 +1,38 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/cn";
 
-type Props = {
+interface StatCardProps {
   label: string;
-  value: string;
-  delta: string;
-  unit: string;
-  subLabel: string;
-  deltaType: "up" | "down" | "neutral";
+  value: string | number;
   icon: LucideIcon;
+  tone?: "accent" | "green" | "amber" | "purple";
+}
+
+const TONE_CLASSES = {
+  accent: "text-accent bg-[var(--accent-dim)]",
+  green: "text-green bg-[var(--green-dim)]",
+  amber: "text-amber bg-[var(--amber-dim)]",
+  purple: "text-purple bg-[var(--purple-dim)]",
 };
 
-export default function StatCard({
+export function StatCard({
   label,
   value,
-  delta,
-  unit,
-  subLabel,
-  deltaType,
   icon: Icon,
-}: Props) {
-  const deltaColor =
-    deltaType === "up"
-      ? "text-(--green)"
-      : deltaType === "down"
-        ? "text-(--danger)"
-        : "text-(--text3)";
-  // Arrow logic
-  const arrow = deltaType === "up" ? "↑" : deltaType === "down" ? "↓" : "";
-
+  tone = "accent",
+}: StatCardProps) {
   return (
-    <div className="border rounded-(--radius) p-3.5 border-(--border) bg-(--bg1)">
-      {/* Label */}
-      <div className="flex gap-2 items-center text-mono uppercase text-[12px] text-(--text3) mb-2">
-        <Icon size={14} />
-        {label}
-      </div>
-      {/* Value */}
-      <div className="flex items-baseline text(--text) font-mono text-[24px] font-semibold tracking-tight leading-none">
-        {value}
-        {unit && (
-          <span className="text-[20px] text-(--text3) font-normal ml-1">{unit}</span>
+    <div className="rounded-devboard border border-border bg-bg1 p-4">
+      <div
+        className={cn(
+          "mb-3 flex h-8 w-8 items-center justify-center rounded-devboard",
+          TONE_CLASSES[tone],
         )}
+      >
+        <Icon className="h-4 w-4" />
       </div>
-      {/* Delta */}
-      <div className={`mt-1.5 text-[12px] font-medium ${deltaColor}`}>
-        {arrow} <span className="ml-1">{delta}</span>
-        <span className="text-(--text3) ml-1"> vs {subLabel}</span>
-      </div>
+      <p className="text-2xl font-semibold text-text">{value}</p>
+      <p className="mt-1 text-xs text-text2">{label}</p>
     </div>
   );
 }

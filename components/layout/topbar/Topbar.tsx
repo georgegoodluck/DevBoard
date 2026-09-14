@@ -1,26 +1,15 @@
-import TopbarActions from "./TopbarActions";
-import TopbarBreadcrumb from "./TopbarBreadcrumb";
-import TopbarSearch from "./TopbarSearch";
-import MobileTopbar from "../mobile/MobileTopbar";
+import { TopbarBreadcrumb } from "./TopbarBreadcrumb";
+import { TopbarSearch } from "./TopbarSearch";
+import { TopbarActions } from "./TopbarActions";
 
-export default function Topbar() {
+export function Topbar() {
   return (
-    <>
-      {/* Mobile Topbar */}
-      <div className="lg:hidden">
-        <MobileTopbar />
+    <header className="flex h-topbar shrink-0 items-center justify-between border-b border-border bg-bg1 px-4">
+      <TopbarBreadcrumb />
+      <div className="flex items-center gap-4">
+        <TopbarSearch />
+        <TopbarActions />
       </div>
-      {/* Desktop Topbar */}
-      <header
-        className="hidden lg:flex items-center gap-3 px-5 bg-(--bg1) border-b border-(--border)"
-        style={{ height: "var(--topbar-height)" }}
-      >
-        <TopbarBreadcrumb />
-        <div className="flex items-center gap-3 ml-auto">
-          <TopbarSearch />
-          <TopbarActions />
-        </div>
-      </header>
-    </>
+    </header>
   );
 }

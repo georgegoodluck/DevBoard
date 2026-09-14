@@ -1,28 +1,24 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+// @ts-expect-error Next.js processes CSS imports at build time.
 import "./globals.css";
-import QueryProvider from "@/components/providers/QueryProvider";
-import MswProvider from "@/components/providers/MswProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { MswProvider } from "@/components/providers/MswProvider";
 
-const ibmPlexMono = IBM_Plex_Mono({
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plex-sans",
 });
-
-const ibmPlexSans = IBM_Plex_Sans({
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-ibm-plex-sans",
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
 });
 
 export const metadata: Metadata = {
   title: "DevBoard",
-  description: "Project & team collaboration dashboard",
-  icons: {
-    icon: "/favicon.svg",
-    apple: "/icon.svg",
-  },
+  description: "Team-based project management, done right.",
 };
 
 export default function RootLayout({
@@ -31,13 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}>
-        <QueryProvider>
-          <MswProvider>
-            {children}
-          </MswProvider>
-        </QueryProvider>
+    <html lang="en" className={`${plexSans.variable} ${plexMono.variable}`}>
+      <body>
+        <MswProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </MswProvider>
       </body>
     </html>
   );

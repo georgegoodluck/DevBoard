@@ -1,46 +1,41 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyRequest, FastifyReply } from "fastify";
+import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { workspaceMembers } from "../db/schema.js";
-import { eq } from "drizzle-orm";
 
-export async function getWorkspaceMember(userId: string) {
-  const [member] = await db
-    .select()
-    .from(workspaceMembers)
-    .where(eq(workspaceMembers.userId, userId));
-
-  return member ?? null;
-}
-
-// Define an extended request type to avoid using 'any'
-type WorkspaceRequest = FastifyRequest & {
-  user?: { id: string };
-  workspaceMember?: NonNullable<Awaited<ReturnType<typeof getWorkspaceMember>>>;
-  workspaceId?: string;
-};
-
+// preHandler run after fastify.authenticate. Resolves which workspace the
+// caller belongs to and attaches it to the request — routes filter by
+// request.workspaceId, never by a workspaceId supplied by the client.
 export async function requireWorkspace(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  // Cast once to our explicitly defined type
-  const req = request as WorkspaceRequest;
-  const userId = req.user?.id;
+  if (!request.user)
+    return reply.code(401).send({ error: "Not authenticated" });
 
-  if (!userId) {
-    return reply.status(401).send({ error: "Unauthorized" });
+  const [membership] = await db
+    .select({
+      workspaceId: workspaceMembers.workspaceId,
+      role: workspaceMembers.role,
+    })
+    .from(workspaceMembers)
+    .where(eq(workspaceMembers.userId, request.user.id))
+    .limit(1);
+
+  if (!membership)
+    return reply
+      .code(403)
+      .send({ error: "No workspace membership found", code: "NO_WORKSPACE" });
+
+  request.workspaceId = membership.workspaceId;
+  request.workspaceRole = membership.role;
+}
+
+export async function requireAdmin(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  if (request.workspaceRole !== "owner" && request.workspaceRole !== "admin") {
+    return reply.code(403).send({ error: "Admin or owner role required" });
   }
-
-  const member = await getWorkspaceMember(userId);
-
-  if (!member) {
-    return reply.status(403).send({
-      error: "No workspace found",
-      code: "NO_WORKSPACE",
-    });
-  }
-
-  // Attach to request for route handlers safely
-  req.workspaceMember = member;
-  req.workspaceId = member.workspaceId;
 }

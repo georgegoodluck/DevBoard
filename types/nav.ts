@@ -1,6 +1,7 @@
-export type NavItem = {
+import type { LucideIcon } from "lucide-react";
+
+export interface NavItem {
   label: string;
   href: string;
-  badge?: number;
-  icon: React.ReactNode;
-};
+  icon: LucideIcon;
+}

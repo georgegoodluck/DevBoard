@@ -1,15 +1,13 @@
-import { FastifyInstance } from "fastify";
 import cors from "@fastify/cors";
+import fp from "fastify-plugin";
+import type { FastifyInstance } from "fastify";
+import { env } from "../env.js";
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  process.env.FRONTEND_URL,
-].filter(Boolean) as string[];
-
-export async function corsPlugin(app: FastifyInstance) {
-  await app.register(cors, {
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+export default fp(async function corsPlugin(fastify: FastifyInstance) {
+  await fastify.register(cors, {
+    origin: env.FRONTEND_URL,
     credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   });
-}
+});

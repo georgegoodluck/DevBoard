@@ -1,42 +1,41 @@
 import Fastify from "fastify";
-import { env } from "./env";
-import { corsPlugin } from "./plugins/cors";
-import { projectRoutes } from "./routes/projects";
-import { taskRoutes } from "./routes/tasks";
-import { activityRoutes } from "./routes/activity";
-import { workspaceRoutes } from "./routes/workspaces";
-import { kanbanRoutes } from "./routes/kanban";
+import { env } from "./env.js";
+import corsPlugin from "./plugins/cors.js";
+import rateLimitPlugin from "./plugins/rateLimit.js";
+import authPlugin from "./plugins/auth.js";
+import workspaceRoutes from "./routes/workspaces.js";
+import projectRoutes from "./routes/projects.js";
+import taskRoutes from "./routes/tasks.js";
+import kanbanRoutes from "./routes/kanban.js";
+import sprintRoutes from "./routes/sprints.js";
+import activityRoutes from "./routes/activity.js";
+import notificationRoutes from "./routes/notifications.js";
+import githubRoutes from "./routes/github.js";
+import searchRoutes from "./routes/search.js";
 
-const app = Fastify({
-  logger:
-    process.env.NODE_ENV === "production"
-      ? true
-      : { transport: { target: "pino-pretty" } },
+const fastify = Fastify({
+  logger: env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : true,
 });
 
-async function main() {
-  // Plugins FIRST — always before routes
-  await corsPlugin(app);
+await fastify.register(corsPlugin);
+await fastify.register(rateLimitPlugin);
+await fastify.register(authPlugin);
 
-  // Then routes
-  await app.register(projectRoutes);
-  await app.register(taskRoutes);
-  await app.register(activityRoutes);
-  await app.register(workspaceRoutes);
-  await app.register(kanbanRoutes);
+fastify.get("/health", async () => ({ status: "ok" }));
 
-  app.get("/health", async () => ({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV,
-  }));
+await fastify.register(workspaceRoutes);
+await fastify.register(projectRoutes);
+await fastify.register(taskRoutes);
+await fastify.register(kanbanRoutes);
+await fastify.register(sprintRoutes);
+await fastify.register(activityRoutes);
+await fastify.register(notificationRoutes);
+await fastify.register(githubRoutes);
+await fastify.register(searchRoutes);
 
-  try {
-    await app.listen({ port: env.PORT, host: "0.0.0.0" });
-    // console.log(`Server running on http://localhost:${env.PORT}`);
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
+try {
+  await fastify.listen({ port: env.PORT, host: "0.0.0.0" });
+} catch (err) {
+  fastify.log.error(err);
+  process.exit(1);
 }
-main();

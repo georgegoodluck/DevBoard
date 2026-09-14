@@ -1,42 +1,35 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { KanbanColumns, KanbanStatus } from "@/types/kanban";
-import fetcher from "@/lib/api";
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import type { KanbanColumns } from "@/types/kanban";
+import type { TaskStatus } from "@/types/task";
 
 export function useKanban(projectId: string) {
-  return useQuery<KanbanColumns>({
+  return useQuery({
     queryKey: ["kanban", projectId],
-    queryFn: () => fetcher(`/api/projects/${projectId}/kanban`),
+    queryFn: () =>
+      api.get<{ columns: KanbanColumns }>(`/api/projects/${projectId}/kanban`),
+    select: (data) => data.columns,
     enabled: !!projectId,
   });
 }
 
-export function useMoveTask(projectId: string) {
+interface MoveParams {
+  taskId: string;
+  projectId: string;
+  status: TaskStatus;
+  position: number;
+}
+
+export function useMoveTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      taskId,
-      status,
-      position,
-    }: {
-      taskId: string;
-      status: KanbanStatus;
-      position: number;
-    }) => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${taskId}/move`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status, position }),
-        },
-      );
-      if (!res.ok) throw new Error("Failed to move task");
-      return res.json();
-    },
+    mutationFn: ({ taskId, status, position }: MoveParams) =>
+      api.patch(`/api/tasks/${taskId}/move`, { status, position }),
 
-    // Optimistic update — move the card immediately, sync with server after
-    onMutate: async ({ taskId, status, position }) => {
+    onMutate: async ({ taskId, projectId, status, position }) => {
       await queryClient.cancelQueries({ queryKey: ["kanban", projectId] });
       const previous = queryClient.getQueryData<KanbanColumns>([
         "kanban",
@@ -45,40 +38,40 @@ export function useMoveTask(projectId: string) {
 
       queryClient.setQueryData<KanbanColumns>(["kanban", projectId], (old) => {
         if (!old) return old;
-        const next = { ...old };
-
-        // Find and remove from current column
-        let movedTask = null;
-        for (const col of Object.keys(next) as KanbanStatus[]) {
-          const idx = next[col].findIndex((t) => t.id === taskId);
+        const next: KanbanColumns = {
+          Todo: [...old.Todo],
+          "In Progress": [...old["In Progress"]],
+          "In Review": [...old["In Review"]],
+          Done: [...old.Done],
+        };
+        let moved;
+        for (const key of Object.keys(next) as TaskStatus[]) {
+          const idx = next[key].findIndex((t) => t.id === taskId);
           if (idx !== -1) {
-            [movedTask] = next[col].splice(idx, 1);
-            next[col] = [...next[col]];
+            [moved] = next[key].splice(idx, 1);
             break;
           }
         }
-
-        // Insert into new column at new position
-        if (movedTask) {
-          movedTask = { ...movedTask, status, position };
-          next[status] = [...next[status]];
-          next[status].splice(position, 0, movedTask);
+        if (moved) {
+          next[status].push({ ...moved, status, position });
+          next[status].sort((a, b) => a.position - b.position);
         }
-
         return next;
       });
 
-      return { previous };
+      return { previous, projectId };
     },
 
-    // Roll back on error
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(["kanban", projectId], context.previous);
+        queryClient.setQueryData(
+          ["kanban", context.projectId],
+          context.previous,
+        );
       }
     },
 
-    onSettled: () => {
+    onSettled: (_data, _err, { projectId }) => {
       queryClient.invalidateQueries({ queryKey: ["kanban", projectId] });
     },
   });

@@ -1,44 +1,47 @@
-import StatCard from "./StatCard";
-import { SquareCheckBig, Clock, Gauge, Star } from "lucide-react";
+"use client";
 
-export default function StatCardGrid() {
+import { ListTodo, Loader, TrendingUp, CheckCircle2 } from "lucide-react";
+import { StatCard } from "./StatCard";
+import { useTasks } from "@/hooks/useTasks";
+import { useVelocity } from "@/hooks/useVelocity";
+
+export function StatCardGrid() {
+  const { data: tasks } = useTasks();
+  const { average } = useVelocity();
+
+  const active = (tasks ?? []).filter((t) => t.status !== "Done").length;
+  const inProgress = (tasks ?? []).filter(
+    (t) => t.status === "In Progress",
+  ).length;
+  const done = (tasks ?? []).filter((t) => t.status === "Done").length;
+  const total = tasks?.length ?? 0;
+  const completion = total > 0 ? Math.round((done / total) * 100) : 0;
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mb-2.5">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <StatCard
-        label="Active Tasks"
-        value="142"
-        delta="8"
-        unit=""
-        subLabel="last week"
-        deltaType="up"
-        icon={SquareCheckBig}
+        label="Active tasks"
+        value={active}
+        icon={ListTodo}
+        tone="accent"
       />
       <StatCard
-        label="In Progress"
-        value="38"
-        delta="3"
-        unit=""
-        subLabel="last week"
-        deltaType="up"
-        icon={Clock}
+        label="In progress"
+        value={inProgress}
+        icon={Loader}
+        tone="purple"
       />
       <StatCard
         label="Velocity"
-        value="24"
-        delta="2"
-        unit="pts"
-        subLabel="last sprint"
-        deltaType="down"
-        icon={Gauge}
+        value={average}
+        icon={TrendingUp}
+        tone="green"
       />
       <StatCard
         label="Completion"
-        value="68"
-        delta="4%"
-        unit="%"
-        subLabel="this sprint"
-        deltaType="up"
-        icon={Star}
+        value={`${completion}%`}
+        icon={CheckCircle2}
+        tone="amber"
       />
     </div>
   );

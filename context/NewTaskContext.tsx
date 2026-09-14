@@ -1,24 +1,36 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
+import type { TaskStatus } from "@/types/task";
 
-type ContextType = {
+interface NewTaskPrefill {
+  projectId?: string;
+  status?: TaskStatus;
+}
+
+interface NewTaskContextValue {
   isOpen: boolean;
-  open: () => void;
-  close: () => void;
-};
+  prefill: NewTaskPrefill;
+  openNewTask: (prefill?: NewTaskPrefill) => void;
+  closeNewTask: () => void;
+}
 
-const NewTaskContext = createContext<ContextType | null>(null);
+const NewTaskContext = createContext<NewTaskContextValue | null>(null);
 
-export function NewTaskProvider({ children }: { children: React.ReactNode }) {
+export function NewTaskProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [prefill, setPrefill] = useState<NewTaskPrefill>({});
 
   return (
     <NewTaskContext.Provider
       value={{
         isOpen,
-        open: () => setIsOpen(true),
-        close: () => setIsOpen(false),
+        prefill,
+        openNewTask: (p = {}) => {
+          setPrefill(p);
+          setIsOpen(true);
+        },
+        closeNewTask: () => setIsOpen(false),
       }}
     >
       {children}
@@ -28,6 +40,6 @@ export function NewTaskProvider({ children }: { children: React.ReactNode }) {
 
 export function useNewTask() {
   const ctx = useContext(NewTaskContext);
-  if (!ctx) throw new Error("useNewTask must be used inside NewTaskProvider");
+  if (!ctx) throw new Error("useNewTask must be used within NewTaskProvider");
   return ctx;
 }

@@ -1,78 +1,71 @@
 "use client";
 
-import CardHeader from "@/components/ui/CardHeader";
-import Badge from "@/components/ui/Badge";
-import { BadgeVariant } from "@/components/ui/Badge";
-import Avatar from "@/components/ui/Avatar";
+import { CardHeader } from "@/components/ui/CardHeader";
+import { StatusBadge } from "@/components/ui/Badge";
+import { Avatar } from "@/components/ui/Avatar";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { useTasks } from "@/hooks/useTasks";
-import { TaskStatus } from "@/types/tasks";
+import { useWorkspace } from "@/hooks/useWorkspace";
+import { ListTodo } from "lucide-react";
+import { cn } from "@/lib/cn";
 
-// Map normalized lowercase strings to CSS variables
-const priorityColors: Record<string, string> = {
-  low: "var(--green)",
-  medium: "var(--amber)",
-  high: "var(--danger)",
-};
+const PRIORITY_DOT = { high: "bg-red", mid: "bg-amber", low: "bg-text3" };
 
-const statusToStyle: Record<TaskStatus, BadgeVariant> = {
-  "In Progress": "amber",
-  Todo: "blue",
-  Done: "green",
-  Review: "purple",
-};
+export function RecentTasks() {
+  const { data: tasks, isLoading } = useTasks();
+  const { members } = useWorkspace();
 
-export default function RecentTasks() {
-  const { data: tasks, isLoading, isError } = useTasks();
+  const recent = [...(tasks ?? [])]
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    )
+    .slice(0, 8);
+
+  if (!isLoading && recent.length === 0) {
+    return (
+      <div className="rounded-devboard border border-border bg-bg1 p-4">
+        <CardHeader title="Recent tasks" />
+        <EmptyState
+          icon={ListTodo}
+          title="No tasks yet"
+          description="Tasks you create will show up here."
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-(--bg1) border border-(--border) rounded-md overflow-hidden">
-      <CardHeader
-        title="Recent Tasks"
-        dotColor="var(--green)"
-        action={{ label: "View all →" }}
-      />
-      <div>
-        {isLoading && (
-          <div className="px-3.5 py-8 text-center font-mono text-[11px] text-(--text3)">
-            Loading...
-          </div>
-        )}
-        {isError && (
-          <div className="px-3.5 py-8 text-center font-mono text-[11px] text-(--danger)">
-            Failed to load tasks.
-          </div>
-        )}
-        {!isLoading && !isError && tasks?.length === 0 && (
-          <div className="px-3.5 py-8 text-center font-mono text-[11px] text-(--text3)">
-            No tasks found.
-          </div>
-        )}
-        {tasks?.map((task) => {
-          // Normalize priority key so 'High', 'high', 'HIGH' all work
-          const priorityKey = String(task.priority || "low").toLowerCase();
-          const dotColor = priorityColors[priorityKey] || "var(--green)";
-
+    <div className="rounded-devboard border border-border bg-bg1 p-4">
+      <CardHeader title="Recent tasks" />
+      <div className="flex flex-col divide-y divide-border">
+        {recent.map((task) => {
+          const assignee = members.find((m) => m.id === task.assigneeId);
           return (
             <div
               key={task.id}
-              className="flex items-center gap-2.5 px-3.5 py-2 border-b border-(--border) last:border-none hover:bg-(--bg2) cursor-pointer transition-colors"
+              className="flex items-center gap-3 py-2.5 text-sm"
             >
               <span
-                className="inline-block w-2 h-2 rounded-full shrink-0"
-                style={{ backgroundColor: dotColor }}
+                className={cn(
+                  "h-1.5 w-1.5 shrink-0 rounded-full",
+                  PRIORITY_DOT[task.priority],
+                )}
               />
-              <span className="font-mono text-[10px] text-(--text3) w-13 shrink-0">
-                {task.id}
+              <span className="w-16 shrink-0 font-mono text-xs text-text3">
+                {task.externalRef}
               </span>
-              <span className="flex-1 text-[12.5px] text-(--text) truncate min-w-0">
-                {task.title}
-              </span>
-              <Badge label={task.status} variant={statusToStyle[task.status]} />
-              <Avatar
-                initials={task.assignee.initials}
-                gradient={task.assignee.gradient}
-                size={22}
-              />
+              <span className="flex-1 truncate text-text">{task.title}</span>
+              <StatusBadge status={task.status} />
+              {assignee ? (
+                <Avatar
+                  name={assignee.name}
+                  initials={assignee.initials}
+                  size="sm"
+                />
+              ) : (
+                <div className="h-6 w-6 rounded-full border border-dashed border-border2" />
+              )}
             </div>
           );
         })}

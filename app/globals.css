@@ -1,70 +1,51 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --bg: #0d0d10;
-    --bg1: #111115;
-    --bg2: #16161c;
-    --bg3: #1c1c24;
-    --border: #232330;
-    --border2: #2a2a38;
-    --text: #e8e8f0;
-    --text2: #9090a8;
-    --text3: #55556a;
-    --accent: #4f8eff;
-    --accent-end: #2f466c;
-    --accent-dim: rgba(139, 92, 246, 0.12);
-    --green: #2dd4a0;
-    --green-dim: rgba(45, 212, 160, 0.1);
-    --gray: rgba(85, 85, 106, 0.349);
-    --orange: rgba(184, 125, 16, 0.9);
-    --orange-dim: rgba(161, 136, 91, 0.9);
-    --amber: #f59e0b;
-    --amber-dim: rgba(245, 158, 11, 0.1);
-    --danger: #b30707;
-    --danger-dim: rgba(255, 117, 117, 0.1);
-    --purple: #a78bfa;
-    --purple-dim: rgba(167, 139, 250, 0.1);
-    --sidebar-width: 220px;
-    --topbar-height: 48px;
-    --radius: 5px;
-  }
+@theme {
+  --color-bg: #0d0d10;
+  --color-bg1: #111115;
+  --color-bg2: #16161c;
+  --color-bg3: #1c1c24;
+  --color-border: #232330;
+  --color-border2: #2a2a38;
+  --color-text: #e8e8f0;
+  --color-text2: #9090a8;
+  --color-text3: #55556a;
+  --color-accent: #8b5cf6;
+  --color-accent-end: #06b6d4;
+  --color-green: #2dd4a0;
+  --color-amber: #f59e0b;
+  --color-red: #f87171;
+  --color-purple: #a78bfa;
 
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: "IBM Plex Sans", sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--border2);
-    border-radius: 3px;
-  }
+  --spacing-sidebar: 220px;
+  --spacing-topbar: 48px;
+  --radius-devboard: 5px;
 }
 
-@layer utilities {
-  .brand-gradient {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-  }
-  .brand-gradient-text {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+:root {
+  --accent-dim: rgba(139, 92, 246, 0.12);
+  --green-dim: rgba(45, 212, 160, 0.1);
+  --amber-dim: rgba(245, 158, 11, 0.1);
+  --red-dim: rgba(248, 113, 113, 0.1);
+  --purple-dim: rgba(167, 139, 250, 0.1);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

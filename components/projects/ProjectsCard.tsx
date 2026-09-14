@@ -1,72 +1,87 @@
-import Avatar from "@/components/ui/Avatar";
-import ProgressBar from "@/components/ui/ProgressBar";
-import { Project } from "@/types/projects";
-import Badge, { type BadgeVariant } from "@/components/ui/Badge";
+import Link from "next/link";
+import { CalendarClock, ListTodo } from "lucide-react";
+import { StatusBadge } from "@/components/ui/Badge";
+import { Avatar } from "@/components/ui/Avatar";
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import type { Project } from "@/types/project";
+import type { WorkspaceMember } from "@/types/workspace";
 
-// Map status to badge variant
-const statusVariantMap: Record<string, BadgeVariant> = {
-  "In Progress": "amber",
-  Planning: "blue",
-  Review: "purple",
-  Active: "green",
-  Done: "green",
-};
+interface ProjectCardProps {
+  project: Project;
+  members: WorkspaceMember[];
+}
 
-// Map status to progress color
-const statusColorMap: Record<string, string> = {
-  "In Progress": "var(--amber)",
-  Planning: "var(--accent)",
-  Review: "var(--purple)",
-  Active: "var(--green)",
-  Done: "var(--green)",
-};
-
-export default function ProjectsCard({ project: p }: { project: Project }) {
-  const badgeVariant = statusVariantMap[p.status] || "gray";
-  // Get progress color from status
-  const progressColor = statusColorMap[p.status] || "var(--accent)";
+export function ProjectCard({ project, members }: ProjectCardProps) {
+  const projectMembers = members.filter((m) =>
+    project.memberIds?.includes(m.id),
+  );
 
   return (
-    <div className="bg-(--bg1) border border-(--border) rounded-1.5 p-3.5 cursor-pointer hover:border-(--border2) transition-colors flex flex-col gap-2.5">
-      {/* Top row */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-[13px] font-semibold text-(--text) mb-0.75">
-            {p.name}
-          </div>
-          <div className="text-[11.5px] text-(--text3) leading-relaxed">
-            {p.description}
-          </div>
+    <Link
+      href={`/projects/${project.id}`}
+      className="flex flex-col gap-3 rounded-devboard border border-border bg-bg1 p-4 transition-colors hover:border-border2 hover:bg-bg2"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="text-lg">{project.emoji ?? "📁"}</span>
+          <h3 className="truncate text-sm font-semibold text-text">
+            {project.name}
+          </h3>
         </div>
-        <div className="w-7.5 h-7.5 rounded-1.5 bg-(--bg3) flex items-center justify-center text-[14px] shrink-0">
-          {p.emoji}
-        </div>
+        <StatusBadge status={project.status} />
       </div>
 
-      {/* Progress - NOW USES mapped color */}
-      <ProgressBar value={p.progress} color={progressColor} />
+      {project.description && (
+        <p className="line-clamp-2 text-xs text-text2">{project.description}</p>
+      )}
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-1.25">
-        <Badge label={p.status} variant={badgeVariant} />
-        {p.tags?.map((tag) => (
-          <Badge key={tag} label={tag} variant="gray" />
-        ))}
-      </div>
+      <ProgressBar value={project.progress} showLabel />
 
-      {/* Footer */}
-      <div className="flex items-center gap-2">
-        <div className="flex">
-          {p.members?.map((m, i) => (
-            <div key={m.initials} style={{ marginLeft: i === 0 ? 0 : -6 }}>
-              <Avatar initials={m.initials} gradient={m.gradient} size={20} />
-            </div>
+      {project.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-devboard bg-bg3 px-2 py-0.5 text-[10px] text-text2"
+            >
+              {tag}
+            </span>
           ))}
         </div>
-        <span className="font-mono text-[10px] text-(--text3) ml-auto">
-          {p.taskCount ?? 0} tasks · {p.due}
-        </span>
+      )}
+
+      <div className="mt-1 flex items-center justify-between text-xs text-text3">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <ListTodo className="h-3.5 w-3.5" />
+            {project.taskCount ?? 0}
+          </span>
+          {project.due && (
+            <span className="flex items-center gap-1">
+              <CalendarClock className="h-3.5 w-3.5" />
+              {new Date(project.due).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+        {projectMembers.length > 0 && (
+          <div className="flex -space-x-2">
+            {projectMembers.slice(0, 4).map((m) => (
+              <Avatar
+                key={m.id}
+                name={m.name}
+                initials={m.initials}
+                size="sm"
+                className="ring-2 ring-bg1"
+              />
+            ))}
+            {projectMembers.length > 4 && (
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-bg3 text-[10px] text-text2 ring-2 ring-bg1">
+                +{projectMembers.length - 4}
+              </div>
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </Link>
   );
 }
